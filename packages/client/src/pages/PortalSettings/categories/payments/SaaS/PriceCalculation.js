@@ -61,8 +61,6 @@ const PriceCalculation = ({
 
   const isDisabled = !canUpdateTariff;
 
-  const isNeedPlusSign = managersCount > maxAvailableManagersCount;
-
   return (
     <StyledPriceCalculation
       className="price-calculation-container"
@@ -79,16 +77,9 @@ const PriceCalculation = ({
           : t("PriceCalculation")}
       </Text>
       {isGracePeriod || isNotPaidPeriod || isFreeAfterPaidPeriod ? (
-        <CurrentUsersCountContainer
-          isNeedPlusSign={isNeedPlusSign}
-          t={t}
-          isDisabled={isDisabled}
-        />
+        <CurrentUsersCountContainer t={t} isDisabled={isDisabled} />
       ) : (
-        <SelectUsersCountContainer
-          isNeedPlusSign={isNeedPlusSign}
-          isDisabled={isDisabled}
-        />
+        <SelectUsersCountContainer isDisabled={isDisabled} />
       )}
 
       <PricePerUser t={t} isDisabled={isDisabled} />

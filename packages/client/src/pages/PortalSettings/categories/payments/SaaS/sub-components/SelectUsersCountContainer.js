@@ -22,7 +22,7 @@ const SelectUsersCountContainer = ({
   isLessCountThanAcceptable,
   step,
   addedManagersCountTitle,
-  isNeedPlusSign,
+  isNeedRequest,
 }) => {
   const onSliderChange = (e) => {
     const count = parseFloat(e.target.value);
@@ -82,7 +82,7 @@ const SelectUsersCountContainer = ({
     setTotalPrice(numberValue);
   };
 
-  const value = isNeedPlusSign
+  const value = isNeedRequest
     ? maxAvailableManagersCount + "+"
     : managersCount + "";
 
@@ -103,7 +103,7 @@ const SelectUsersCountContainer = ({
       <Text noSelect fontWeight={600} className="payment-users_text">
         {addedManagersCountTitle}
       </Text>
-      <SelectTotalSizeContainer isNeedPlusSign={isNeedPlusSign} />
+      <SelectTotalSizeContainer />
       <div className="payment-users">
         <div
           className="circle minus-icon"
@@ -172,12 +172,14 @@ export default inject(({ auth, payments }) => {
     isLessCountThanAcceptable,
     stepByQuotaForManager,
     isAlreadyPaid,
+    isNeedRequest,
   } = payments;
   const { addedManagersCountTitle } = paymentQuotasStore;
 
   const step = stepByQuotaForManager;
 
   return {
+    isNeedRequest,
     isAlreadyPaid,
     isLoading,
     minAvailableManagersValue,

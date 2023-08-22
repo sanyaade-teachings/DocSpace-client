@@ -5,7 +5,6 @@ import styled from "styled-components";
 import toastr from "@docspace/components/toast/toastr";
 import DowngradePlanButtonContainer from "./DowngradePlanButtonContainer";
 import api from "@docspace/common/api";
-import { Trans } from "react-i18next";
 import { updatePayment } from "@docspace/common/api/portal";
 
 const StyledBody = styled.div`
@@ -199,7 +198,6 @@ export default inject(({ auth, payments }) => {
   const {
     setIsLoading,
     paymentLink,
-    isNeedRequest,
     isLoading,
     managersCount,
     isLessCountThanAcceptable,
@@ -213,7 +211,6 @@ export default inject(({ auth, payments }) => {
     isAlreadyPaid,
     setIsLoading,
     paymentLink,
-    isNeedRequest,
     isLoading,
     managersCount,
     maxCountManagersByQuota,

@@ -6,7 +6,6 @@ import { StyledCurrentUsersContainer } from "../StyledComponent";
 
 const CurrentUsersCountContainer = (props) => {
   const {
-    isNeedPlusSign,
     maxCountManagersByQuota,
     isDisabled,
     addedManagersCountTitle,
@@ -30,7 +29,7 @@ const CurrentUsersCountContainer = (props) => {
       >
         {maxCountManagersByQuota}
       </Text>
-      <SelectTotalSizeContainer isNeedPlusSign={isNeedPlusSign} />
+      <SelectTotalSizeContainer />
     </StyledCurrentUsersContainer>
   );
 };
