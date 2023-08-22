@@ -2,28 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import StyledText from "./styled-text";
 
-const Text = ({
-  title,
-  tag,
-  as,
-  fontSize,
-  fontWeight,
-  color,
-  textAlign,
-  ...rest
-}) => {
-  return (
-    <StyledText
-      fontSizeProp={fontSize}
-      fontWeightProp={fontWeight}
-      colorProp={color}
-      textAlign={textAlign}
-      as={!as && tag ? tag : as}
-      title={title}
-      dir="auto"
-      {...rest}
-    />
-  );
+const Text = ({ tag, as, ...rest }) => {
+  return <StyledText as={!as && tag ? tag : as} dir="auto" {...rest} />;
 };
 
 Text.propTypes = {

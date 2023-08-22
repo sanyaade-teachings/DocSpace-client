@@ -5,8 +5,7 @@ const commonTextStyles = css`
   font-family: ${(props) => props.theme.fontFamily};
   text-align: ${(props) =>
     getCorrectTextAlign(props.textAlign, props.theme.interfaceDirection)};
-  color: ${(props) =>
-    props.colorProp ? props.colorProp : props.theme.text.color};
+  color: ${(props) => (props.color ? props.color : props.theme.text.color)};
   ${(props) =>
     props.truncate &&
     css`

@@ -3,12 +3,12 @@ import commonTextStyles from "./common-text-styles";
 import Base from "../themes/base";
 import NoUserSelect from "@docspace/components/utils/commonStyles";
 const styleCss = css`
-  font-size: ${(props) => props.fontSizeProp};
+  font-size: ${(props) => props.fontSize};
   outline: 0 !important;
   margin: 0;
   font-weight: ${(props) =>
-    props.fontWeightProp
-      ? props.fontWeightProp
+    props.fontWeight
+      ? props.fontWeight
       : props.isBold == true
       ? 700
       : props.theme.text.fontWeight};

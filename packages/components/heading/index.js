@@ -7,7 +7,7 @@ const Heading = ({ level, color, className, ...rest }) => {
     <StyledHeading
       className={`${className} not-selectable`}
       as={`h${level}`}
-      colorProp={color}
+      color={color}
       dir="auto"
       {...rest}
     ></StyledHeading>

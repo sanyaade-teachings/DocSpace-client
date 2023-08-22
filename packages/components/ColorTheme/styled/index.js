@@ -57,3 +57,5 @@ export { default as IndicatorLoaderTheme } from "./indicatorLoader";
 export { default as ProgressTheme } from "./progress";
 
 export { default as MobileProgressBarTheme } from "./mobileProgressBar";
+
+export { default as TextTheme } from "./text";

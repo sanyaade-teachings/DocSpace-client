@@ -31,6 +31,7 @@ import {
   IndicatorLoaderTheme,
   ProgressTheme,
   MobileProgressBarTheme,
+  TextTheme,
 } from "./styled";
 import { ThemeType } from "./constants";
 
@@ -304,6 +305,15 @@ const ColorTheme = forwardRef(
       case ThemeType.MobileProgressBar: {
         return (
           <MobileProgressBarTheme
+            {...props}
+            $currentColorScheme={currentColorScheme}
+            ref={ref}
+          />
+        );
+      }
+      case ThemeType.Text: {
+        return (
+          <TextTheme
             {...props}
             $currentColorScheme={currentColorScheme}
             ref={ref}
