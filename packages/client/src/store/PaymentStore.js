@@ -50,8 +50,8 @@ class PaymentStore {
   }
 
   setIsInitPaymentPage = (value) => {
-    this.isInitPaymentPage = value
-  }
+    this.isInitPaymentPage = value;
+  };
 
   setIsUpdatingBasicSettings = (isUpdatingBasicSettings) => {
     this.isUpdatingBasicSettings = isUpdatingBasicSettings;
@@ -89,11 +89,8 @@ class PaymentStore {
       return;
     }
 
-    const {
-      paymentQuotasStore,
-      currentTariffStatusStore,
-      currentQuotaStore,
-    } = authStore;
+    const { paymentQuotasStore, currentTariffStatusStore, currentQuotaStore } =
+      authStore;
     const { setPayerInfo } = currentTariffStatusStore;
     const { addedManagersCount } = currentQuotaStore;
     const { setPortalPaymentQuotas } = paymentQuotasStore;
@@ -295,11 +292,8 @@ class PaymentStore {
   };
   setBasicTariffContainer = () => {
     const { currentQuotaStore } = authStore;
-    const {
-      currentPlanCost,
-      maxCountManagersByQuota,
-      addedManagersCount,
-    } = currentQuotaStore;
+    const { currentPlanCost, maxCountManagersByQuota, addedManagersCount } =
+      currentQuotaStore;
     const currentTotalPrice = currentPlanCost.value;
 
     if (this.isAlreadyPaid) {
@@ -392,10 +386,8 @@ class PaymentStore {
 
   setRangeStepByQuota = () => {
     const { paymentQuotasStore } = authStore;
-    const {
-      stepAddingQuotaManagers,
-      stepAddingQuotaTotalSize,
-    } = paymentQuotasStore;
+    const { stepAddingQuotaManagers, stepAddingQuotaTotalSize } =
+      paymentQuotasStore;
 
     this.stepByQuotaForManager = stepAddingQuotaManagers;
     this.minAvailableManagersValue = this.stepByQuotaForManager;

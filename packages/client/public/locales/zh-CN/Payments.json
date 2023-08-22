@@ -33,7 +33,7 @@
   "StartupSuggestion": "升级为{{planName}}版获得更多权限",
   "StartupTitle": "您正在使用免费{{planName}}版本",
   "StripeCustomerPortal": "前往 Stripe 客户门户",
-  "TotalPricePerMonth": "<1>{{currencySymbol}}</1><2>{{price}}</2><3>/月</3>",
+  "TotalPricePerMonth": "<1>{{price}}</1><2>/月</2>",
   "UpgradeNow": "立即升级",
   "UpgradePlan": "升级版本",
   "UpgradePlanInfo": "新用户添加后将超出您当前版本允许的最大房间数或成员数限制。",

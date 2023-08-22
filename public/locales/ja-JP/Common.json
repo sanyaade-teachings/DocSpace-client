@@ -185,7 +185,7 @@
   "PayBeforeTheEndGracePeriod": "猶予期間内に必ずお支払いください。",
   "PaymentsTitle": "お支払い",
   "People": "方々",
-  "PerUserMonth": "<1>{{currencySymbol}}</1><1>{{price}}</1> 管理者 / パワーユザーあたり / 月額",
+  "PerUserMonth": "<1>{{oldPrice}}</1><2>{{price}}</2> 管理者 / パワーユザーあたり / 月額",
   "Petabyte": "PB",
   "Phone": "電話",
   "Plugin": "プラグイン",

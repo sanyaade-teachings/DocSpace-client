@@ -33,7 +33,7 @@
   "StartupSuggestion": "{{planName}} planıyla daha fazlasını yapın",
   "StartupTitle": "Ücretsiz {{planName}} planı kullanıyorsunuz",
   "StripeCustomerPortal": "Stripe müşteri portalına gidin",
-  "TotalPricePerMonth": "<1>{{currencySymbol}}</1><2>{{price}}</2><3>/ay</3>",
+  "TotalPricePerMonth": "<1>{{price}}</1><2>/ay</2>",
   "UpgradeNow": "Şimdi Yükselt",
   "UpgradePlan": "Yükseltme planı",
   "UpgradePlanInfo": "Yeni kullanıcılar eklemek, mevcut fiyatlandırma planınızın izin verdiği maksimum oda üyesi sayısını aşacaktır.",

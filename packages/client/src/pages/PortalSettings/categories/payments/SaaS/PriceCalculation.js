@@ -7,6 +7,7 @@ import TotalTariffContainer from "./sub-components/TotalTariffContainer";
 import ButtonContainer from "./sub-components/ButtonContainer";
 import { Trans } from "react-i18next";
 import CurrentUsersCountContainer from "./sub-components/CurrentUsersCount";
+import PricePerUser from "./sub-components/PricePerUser";
 
 const StyledBody = styled.div`
   border-radius: 12px;
@@ -22,27 +23,50 @@ const StyledBody = styled.div`
   .payment_main-title {
     margin-bottom: 24px;
     ${(props) =>
-    props.isDisabled &&
-    css`
+      props.isDisabled &&
+      css`
         color: ${props.theme.client.settings.payment.priceContainer
-        .disableColor};
+          .disableColor};
       `}
   }
   .payment_price_user {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: center;
     background: ${(props) =>
-    props.theme.client.settings.payment.priceContainer.backgroundText};
+      props.theme.client.settings.payment.priceContainer.backgroundText};
     margin-top: 24px;
     min-height: 38px;
     border-radius: 6px;
 
+    margin-bottom: 5px;
+    margin-top: 5px;
+    /* padding-left: 16px;
+    padding-right: 16px; */
+
     p {
-      margin-bottom: 5px;
-      margin-top: 5px;
-      padding-left: 16px;
-      padding-right: 16px;
+      text-align: center;
+      margin: auto;
+      color: ${(props) => props.theme.client.settings.payment.priceColor};
+    }
+
+    .payment_user-price {
+      margin-right: 8px;
+    }
+    .payment_discount-price {
+      text-decoration: line-through;
+      margin-right: 5px;
+      color: ${(props) =>
+        props.theme.client.settings.payment.contactContainer.textColor};
+    }
+
+    .payment_per-user {
+      ${(props) =>
+        props.isDisabled &&
+        css`
+          color: ${props.theme.client.settings.payment.priceContainer
+            .disablePriceColor};
+        `}
     }
   }
 `;
@@ -51,15 +75,13 @@ let timeout = null,
   controller;
 const PriceCalculation = ({
   t,
-  theme,
+
   setIsLoading,
   maxAvailableManagersCount,
   canUpdateTariff,
   isGracePeriod,
   isNotPaidPeriod,
 
-  priceManagerPerMonth,
-  currencySymbol,
   isAlreadyPaid,
   isFreeAfterPaidPeriod,
   managersCount,
@@ -101,42 +123,6 @@ const PriceCalculation = ({
 
   const isDisabled = !canUpdateTariff;
 
-  const priceInfoPerManager = (
-    <div className="payment_price_user">
-      <Text
-        noSelect
-        fontSize={"13px"}
-        color={
-          isDisabled
-            ? theme.client.settings.payment.priceContainer.disablePriceColor
-            : theme.client.settings.payment.priceColor
-        }
-        fontWeight={600}
-      >
-        <Trans t={t} i18nKey="PerUserMonth" ns="Common">
-          ""
-          <Text
-            fontSize="16px"
-            isBold
-            as="span"
-            fontWeight={600}
-            color={
-              isDisabled
-                ? theme.client.settings.payment.priceContainer.disablePriceColor
-                : theme.client.settings.payment.priceColor
-            }
-          >
-            {{ currencySymbol }}
-          </Text>
-          <Text fontSize="16px" isBold as="span" fontWeight={600}>
-            {{ price: priceManagerPerMonth }}
-          </Text>
-          per manager/month
-        </Trans>
-      </Text>
-    </div>
-  );
-
   const isNeedPlusSign = managersCount > maxAvailableManagersCount;
 
   return (
@@ -164,7 +150,7 @@ const PriceCalculation = ({
         />
       )}
 
-      {priceInfoPerManager}
+      <PricePerUser t={t} isDisabled={isDisabled} />
 
       <TotalTariffContainer t={t} isDisabled={isDisabled} />
       <ButtonContainer
@@ -188,14 +174,8 @@ export default inject(({ auth, payments }) => {
     getPaymentLink,
     canUpdateTariff,
   } = payments;
-  const { theme } = auth.settingsStore;
-  const {
-    currentTariffStatusStore,
+  const { currentTariffStatusStore } = auth;
 
-    paymentQuotasStore,
-  } = auth;
-
-  const { planCost } = paymentQuotasStore;
   const { isNotPaidPeriod, isGracePeriod } = currentTariffStatusStore;
 
   return {
@@ -205,15 +185,13 @@ export default inject(({ auth, payments }) => {
 
     setManagersCount,
     tariffsInfo,
-    theme,
+
     setIsLoading,
     maxAvailableManagersCount,
 
     isGracePeriod,
     isNotPaidPeriod,
 
-    priceManagerPerMonth: planCost.value,
-    currencySymbol: planCost.currencySymbol,
     getPaymentLink,
   };
 })(observer(PriceCalculation));

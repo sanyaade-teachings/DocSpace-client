@@ -33,7 +33,7 @@
   "StartupSuggestion": "{{planName}}プランに切り替えて、DocSpaceをもっと便利に活用",
   "StartupTitle": "無料の {{planName}}プランをご利用いただいています。",
   "StripeCustomerPortal": "Stripeカスタマーポータルにアクセスする",
-  "TotalPricePerMonth": "<1>{{currencySymbol}}</1><2>{{price}}</2><3>/月</3>",
+  "TotalPricePerMonth": "<1>{{price}}</1><2>/月</2>",
   "UpgradeNow": "今すぐアップグレードする",
   "UpgradePlan": "プランのアップグレード",
   "UpgradePlanInfo": "新しいユーザーを追加すると、現在の料金プランで許可されているルームメンバーの最大数を超えます。",

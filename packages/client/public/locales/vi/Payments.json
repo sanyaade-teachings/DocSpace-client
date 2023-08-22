@@ -33,7 +33,7 @@
   "StartupSuggestion": "Làm nhiều hơn với gói dịch vụ {{planName}}",
   "StartupTitle": "Bạn đang sử dụng gói dịch vụ {{planName}} miễn phí",
   "StripeCustomerPortal": "truy cập cổng thông tin khách hàng trên Stripe",
-  "TotalPricePerMonth": "<1>{{currencySymbol}} </1><2>{{price}} </2><3>/tháng</3>",
+  "TotalPricePerMonth": "<1>{{price}}</1><2>/tháng</2>",
   "UpgradeNow": "Nâng cấp ngay",
   "UpgradePlan": "Nâng cấp gói dịch vụ",
   "UpgradePlanInfo": "Việc thêm người dùng mới sẽ vượt quá số lượng thành viên tối đa được phép trong phòng theo gói dịch vụ hiện tại của bạn.",

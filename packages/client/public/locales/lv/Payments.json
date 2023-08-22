@@ -33,7 +33,7 @@
   "StartupSuggestion": "Paveiciet vairāk ar {{planName}} plānu",
   "StartupTitle": "Jūs izmantojat bezmaksas {{planName}} plānu",
   "StripeCustomerPortal": "doties uz Stripe klientu portālu",
-  "TotalPricePerMonth": "<1>{{currencySymbol}}</1><2>{{price}}</2><3>/mēnesī</3>",
+  "TotalPricePerMonth": "<1>{{price}}</1><2>/mēnesī</2>",
   "UpgradeNow": "Atjaunot tagad",
   "UpgradePlan": "Jaunināt plānu",
   "UpgradePlanInfo": "Pievienojot jaunus lietotājus, jūs pārsniegsiet jūsu pašreizējo cenu noteikšanas plānā atļauto maksimālo telpas dalībnieku skaitu.",

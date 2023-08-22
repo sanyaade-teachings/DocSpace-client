@@ -185,7 +185,7 @@
   "PayBeforeTheEndGracePeriod": "Hãy đảm bảo thực hiện thanh toán trước khi hết thời gian gia hạn.",
   "PaymentsTitle": "Thanh toán",
   "People": "Người",
-  "PerUserMonth": "<1>{{price}} </1><1>{{currencySymbol}} </1> mỗi quản trị viên/người dùng cấp cao/tháng",
+  "PerUserMonth": "<1>{{oldPrice}}</1><2>{{price}}</2> mỗi quản trị viên/người dùng cấp cao/tháng",
   "Petabyte": "PB",
   "Phone": "Điện thoại",
   "Plugin": "Plugin",

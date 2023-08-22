@@ -33,7 +33,7 @@
   "StartupSuggestion": "Правете повече с плана {{planName}}",
   "StartupTitle": "Използвате безплатен план {{planName}}",
   "StripeCustomerPortal": "отидете на Stripe портала за клиенти",
-  "TotalPricePerMonth": "<1>{{currencySymbol}}</1><2>{{price}}</2><3>/месец</3>",
+  "TotalPricePerMonth": "<1>{{price}}</1><2>/месец</2>",
   "UpgradeNow": "Надстройте сега",
   "UpgradePlan": "Надграждане на абонамента",
   "UpgradePlanInfo": "Добавянето на нови потребители ще надвиши максималния брой членове на стаята, достъпен за текущия Ви абонаментен план.",

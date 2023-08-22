@@ -185,7 +185,7 @@
   "PayBeforeTheEndGracePeriod": "Uistite sa, že ste platbu vykonali pred uplynutím doby odkladu platby.",
   "PaymentsTitle": "Platby",
   "People": "Ľudia",
-  "PerUserMonth": "<1>{{currencySymbol}}</1><1>{{price}}</1> za administrátora/mesiac",
+  "PerUserMonth": "<1>{{oldPrice}}</1><2>{{price}}</2> za administrátora/mesiac",
   "Petabyte": "PB",
   "Phone": "Telefón",
   "Plugin": "Plugin",

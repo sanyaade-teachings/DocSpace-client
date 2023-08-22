@@ -185,7 +185,7 @@
   "PayBeforeTheEndGracePeriod": "Certifique-se de fazer o pagamento antes do vencimento do período de carência.",
   "PaymentsTitle": "Pagamentos",
   "People": "Pessoas",
-  "PerUserMonth": "<1>{{currencySymbol}}</1><1>{{price}}</1> por administrador/usuário avançado/mês",
+  "PerUserMonth": "<1>{{oldPrice}}</1><2>{{price}}</2> por administrador/usuário avançado/mês",
   "Petabyte": "PB",
   "Phone": "Telefone",
   "Plugin": "Plugin",

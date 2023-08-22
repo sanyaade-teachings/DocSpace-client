@@ -5,6 +5,8 @@ import Text from "@docspace/components/text";
 import { inject, observer } from "mobx-react";
 import { smallTablet } from "@docspace/components/utils/device";
 
+import TotalPrice from "./TotalPrice";
+
 const StyledBody = styled.div`
   max-width: 272px;
   margin: 0 auto;
@@ -16,10 +18,16 @@ const StyledBody = styled.div`
   .payment_price_total-price {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
     min-height: 65px;
     margin-top: 16px;
     margin-bottom: 16px;
 
+    .payment_price_price-text {
+      line-height: 1;
+      margin: auto 0;
+      padding-top: 6px;
+    }
     .payment_price_description,
     .payment_price_price-text,
     .total-tariff_description {
@@ -33,8 +41,9 @@ const StyledBody = styled.div`
     }
     .payment_price_month-text {
       margin: auto 0;
-      margin-bottom: 9px;
+      margin-bottom: 0px;
       margin-left: 8px;
+      padding-bottom: 2px;
     }
     .payment_price_month-text,
     .payment_price_price-text {
@@ -44,6 +53,14 @@ const StyledBody = styled.div`
           color: ${props.theme.client.settings.payment.priceContainer
             .disableColor};
         `};
+    }
+
+    .payment_discount-price {
+      text-decoration: line-through;
+      margin: auto 8px 0 0;
+      padding-bottom: 4px;
+      color: ${(props) =>
+        props.theme.client.settings.payment.contactContainer.textColor};
     }
   }
 
@@ -56,15 +73,10 @@ const TotalTariffContainer = ({
   t,
   maxAvailableManagersCount,
   isDisabled,
-  theme,
-  totalPrice,
   isNeedRequest,
-  currencySymbol,
 }) => {
-  
-
   return (
-    <StyledBody isDisabled={isDisabled} theme={theme}>
+    <StyledBody isDisabled={isDisabled}>
       <div className="payment_price_total-price">
         {isNeedRequest ? (
           <Text
@@ -79,62 +91,18 @@ const TotalTariffContainer = ({
             </Trans>
           </Text>
         ) : (
-          <>
-            <Trans t={t} i18nKey="TotalPricePerMonth" ns="Payments">
-              ""
-              <Text
-                fontSize="48px"
-                as="span"
-                textAlign={"center"}
-                fontWeight={600}
-                className="payment_price_price-text"
-                noSelect
-              >
-                {{ currencySymbol }}
-              </Text>
-              <Text
-                fontSize="48px"
-                as="span"
-                fontWeight={600}
-                className="payment_price_price-text"
-                noSelect
-              >
-                {{ price: totalPrice }}
-              </Text>
-              <Text
-                as="span"
-                fontWeight={600}
-                fontSize="16px"
-                className="payment_price_month-text"
-                noSelect
-              >
-                /month
-              </Text>
-            </Trans>
-          </>
+          <TotalPrice t={t} />
         )}
       </div>
     </StyledBody>
   );
 };
 
-export default inject(({ auth, payments }) => {
-  const { paymentQuotasStore } = auth;
-  const { theme } = auth.settingsStore;
-  const {
-    isLoading,
-    totalPrice,
-    isNeedRequest,
-    maxAvailableManagersCount,
-  } = payments;
+export default inject(({ payments }) => {
+  const { isNeedRequest, maxAvailableManagersCount } = payments;
 
-  const { planCost } = paymentQuotasStore;
   return {
-    theme,
-    totalPrice,
-    isLoading,
     isNeedRequest,
     maxAvailableManagersCount,
-    currencySymbol: planCost.currencySymbol,
   };
 })(observer(TotalTariffContainer));

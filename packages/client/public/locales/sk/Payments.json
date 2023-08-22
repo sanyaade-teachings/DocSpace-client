@@ -33,7 +33,7 @@
   "StartupSuggestion": "Urobte viac s plánom {{planName}}",
   "StartupTitle": "Používate bezplatný plán {{planName}}",
   "StripeCustomerPortal": "prejdite na zákaznícky portál Stripe",
-  "TotalPricePerMonth": "<1>{{currencySymbol}}</1><2>{{price}}</2><3>/mesiac</3>",
+  "TotalPricePerMonth": "<1>{{price}}</1><2>/mesiac</2>",
   "UpgradeNow": "Aktualizovať teraz",
   "UpgradePlan": "Aktualizovať plán",
   "UpgradePlanInfo": "Pridaním nových používateľov prekročíte maximálny počet členov v miestnosti povolený vaším aktuálnym cenovým plánom.",

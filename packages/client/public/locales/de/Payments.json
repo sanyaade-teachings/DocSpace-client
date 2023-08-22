@@ -33,7 +33,7 @@
   "StartupSuggestion": "Mehr Möglichkeiten mit {{planName}} Plan",
   "StartupTitle": "Sie verwenden einen kostenlosen {{planName}}-Plan",
   "StripeCustomerPortal": "gehen Sie zum Stripe-Kundenportal",
-  "TotalPricePerMonth": "<1>{{currencySymbol}}</1><2>{{price}}</2><3>/Monat</3>",
+  "TotalPricePerMonth": "<1>{{price}}</1><2>/Monat</2>",
   "UpgradeNow": "Jetzt upgraden",
   "UpgradePlan": "Plan upgraden",
   "UpgradePlanInfo": "Das Hinzufügen neuer Benutzer überschreitet die maximale Anzahl von Raummitgliedern, die Ihr aktueller Preisplan zulässt.",

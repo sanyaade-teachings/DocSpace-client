@@ -185,7 +185,7 @@
   "PayBeforeTheEndGracePeriod": "Güzəşt müddəti bitməzdən əvvəl ödəniş etdiyinizə əmin olun.",
   "PaymentsTitle": "Ödənişlər",
   "People": "İnsanlar",
-  "PerUserMonth": "Admin/ekspert istifadəçi /aylıq <1>{{currencySymbol}}</1><1>{{price}}</1>",
+  "PerUserMonth": "Admin/ekspert istifadəçi /aylıq <1>{{oldPrice}}</1><2>{{price}}</2>",
   "Petabyte": "PB",
   "Phone": "Nömrə",
   "Plugin": "Plugin",

@@ -33,7 +33,7 @@
   "StartupSuggestion": "Կատարեք ավելին {{planName}} պլանի հետ",
   "StartupTitle": "Դուք օգտագործում եք անվճար {{planName}} պլանը",
   "StripeCustomerPortal": "գնալ Stripe հաճախորդների պորտալ",
-  "TotalPricePerMonth": "<1>{{currencySymbol}}</1><2>{{price}}</2><3>/ամիս</3>",
+  "TotalPricePerMonth": "<1>{{price}}</1><2>/ամիս</2>",
   "UpgradeNow": "Թարմացնել հիմա",
   "UpgradePlan": "Թարմացման պլան",
   "UpgradePlanInfo": "Նոր օգտվողների ավելացումը կգերազանցի սենյակի անդամների առավելագույն թիվը, որը թույլատրվում է ձեր ընթացիկ գնային պլանով:",

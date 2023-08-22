@@ -33,7 +33,7 @@
   "StartupSuggestion": "ເຮັດໄດ້ຫຼາຍຂຶ້ນກັບແຜນ {{ planName }}",
   "StartupTitle": "ທ່ານກຳລັງໃຊ້ແພັກເກດ {{ planName }} ຟຣີ",
   "StripeCustomerPortal": "ໄປທີ່ແຜງບໍລິການລູກຄ້າ Stripe",
-  "TotalPricePerMonth": "<1>{{ currencySymbol }}</1><2>{{price}}</2><3>/ເດືອນ</3>",
+  "TotalPricePerMonth": "<1>{{price}}</1><2>/ເດືອນ</2>",
   "UpgradeNow": "ອັບເກຣດດຽວນີ້",
   "UpgradePlan": "ແຜນການຍົກລະດັບ",
   "UpgradePlanInfo": "ການເພີ່ມຜູ້ໃຊ້ໃໝ່ຈະເກີນຈຳນວນສູງສຸດຂອງສະມາຊິກຫ້ອງທີ່ອະນຸຍາດໂດຍແຜນລາຄາປັດຈຸບັນຂອງທ່ານ.",

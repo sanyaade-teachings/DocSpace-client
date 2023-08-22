@@ -185,7 +185,7 @@
   "PayBeforeTheEndGracePeriod": "请确保在宽限期到期前付款。",
   "PaymentsTitle": "付款",
   "People": "人脉",
-  "PerUserMonth": "<1>{{currencySymbol}}</1><1>{{price}}</1> 每个管理员/高级用户/月",
+  "PerUserMonth": "<1>{{oldPrice}}</1><2>{{price}}</2> 每个管理员/高级用户/月",
   "Petabyte": "PB",
   "Phone": "电话",
   "Plugin": "插件",
