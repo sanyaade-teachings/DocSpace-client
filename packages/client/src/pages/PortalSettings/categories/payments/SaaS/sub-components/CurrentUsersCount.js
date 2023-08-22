@@ -1,32 +1,18 @@
 import Text from "@docspace/components/text";
 import React from "react";
-import styled, { css } from "styled-components";
 import { inject, observer } from "mobx-react";
 import SelectTotalSizeContainer from "./SelectTotalSizeContainer";
-
-const StyledCurrentUsersContainer = styled.div`
-  height: fit-content;
-  .current-admins-number {
-    ${(props) =>
-      props.isDisabled &&
-      css`
-        color: ${props.theme.client.settings.payment.priceContainer
-          .disableColor};
-      `}
-  }
-`;
+import { StyledCurrentUsersContainer } from "../StyledComponent";
 
 const CurrentUsersCountContainer = (props) => {
   const {
     isNeedPlusSign,
     maxCountManagersByQuota,
-    t,
     isDisabled,
-    theme,
     addedManagersCountTitle,
   } = props;
   return (
-    <StyledCurrentUsersContainer isDisabled={isDisabled} theme={theme}>
+    <StyledCurrentUsersContainer isDisabled={isDisabled}>
       <Text
         fontSize="16px"
         fontWeight={600}
@@ -50,12 +36,11 @@ const CurrentUsersCountContainer = (props) => {
 };
 
 export default inject(({ auth }) => {
-  const { settingsStore, currentQuotaStore, paymentQuotasStore } = auth;
+  const { currentQuotaStore, paymentQuotasStore } = auth;
   const { maxCountManagersByQuota } = currentQuotaStore;
   const { addedManagersCountTitle } = paymentQuotasStore;
-  const { theme } = settingsStore;
+
   return {
-    theme,
     maxCountManagersByQuota,
     addedManagersCountTitle,
   };

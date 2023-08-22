@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import { inject, observer } from "mobx-react";
 
 import Text from "@docspace/components/text";
-import { size, desktop } from "@docspace/components/utils/device";
+import { size } from "@docspace/components/utils/device";
 import { Consumer } from "@docspace/components/utils/context";
 import { HelpButton } from "@docspace/components";
 
@@ -14,71 +14,7 @@ import PriceCalculation from "./PriceCalculation";
 import BenefitsContainer from "./BenefitsContainer";
 import ContactContainer from "./ContactContainer";
 import PayerInformationContainer from "./PayerInformationContainer";
-
-const StyledBody = styled.div`
-  max-width: 660px;
-
-  .payment-info_suggestion,
-  .payment-info_grace-period {
-    margin-bottom: 12px;
-  }
-
-  .payment-info {
-    margin-top: 18px;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(100px, 320px));
-    grid-gap: 20px;
-    margin-bottom: 20px;
-
-    @media (max-width: ${size.smallTablet + 40}px) {
-      grid-template-columns: 1fr;
-
-      grid-template-rows: ${(props) => "1fr max-content"};
-
-      .price-calculation-container,
-      .benefits-container {
-        max-width: 600px;
-      }
-      .select-users-count-container {
-        max-width: 520px;
-      }
-    }
-
-    ${(props) =>
-      props.isChangeView &&
-      css`
-        grid-template-columns: 1fr;
-        grid-template-rows: ${(props) => "1fr max-content"};
-
-        .price-calculation-container,
-        .benefits-container {
-          -webkit-transition: all 0.8s ease;
-          transition: all 0.4s ease;
-          max-width: 600px;
-        }
-        .select-users-count-container {
-          -webkit-transition: all 0.8s ease;
-          transition: all 0.4s ease;
-          max-width: 520px;
-        }
-
-        @media ${desktop} {
-          grid-template-columns: repeat(2, minmax(100px, 320px));
-        }
-      `}
-  }
-  .payment-info_wrapper {
-    display: flex;
-
-    margin-top: 11px;
-    div {
-      margin: auto 0;
-    }
-    .payment-info_managers-price {
-      margin-right: 6px;
-    }
-  }
-`;
+import { StyledPaymentContainer } from "./StyledComponent";
 
 const PaymentContainer = (props) => {
   const {
@@ -273,8 +209,7 @@ const PaymentContainer = (props) => {
   return (
     <Consumer>
       {(context) => (
-        <StyledBody
-          theme={theme}
+        <StyledPaymentContainer
           isChangeView={
             context.sectionWidth < size.smallTablet && expandArticle
           }
@@ -326,7 +261,7 @@ const PaymentContainer = (props) => {
             <BenefitsContainer t={t} />
           </div>
           <ContactContainer t={t} />
-        </StyledBody>
+        </StyledPaymentContainer>
       )}
     </Consumer>
   );

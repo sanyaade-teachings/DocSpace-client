@@ -1,6 +1,6 @@
 ﻿import HelpReactSvgUrl from "PUBLIC_DIR/images/help.react.svg?url";
 import React from "react";
-import styled from "styled-components";
+
 import Text from "@docspace/components/text";
 import { useTranslation, Trans } from "react-i18next";
 import { inject, observer } from "mobx-react";
@@ -8,48 +8,7 @@ import { HelpButton, Link } from "@docspace/components";
 import Avatar from "@docspace/components/avatar";
 import { ColorTheme, ThemeType } from "@docspace/components/ColorTheme";
 import DefaultUserPhoto from "PUBLIC_DIR/images/default_user_photo_size_82-82.png";
-const StyledContainer = styled.div`
-  display: flex;
-  background: ${(props) => props.theme.client.settings.payment.backgroundColor};
-  min-height: 72px;
-  padding: 16px;
-  box-sizing: border-box;
-  margin-top: 16px;
-  border-radius: 6px;
-
-  .payer-info {
-    margin-left: 3px;
-  }
-
-  .payer-info_avatar {
-    margin-right: 16px;
-  }
-  .payer-info {
-    margin-right: 3px;
-  }
-  .payer-info_wrapper {
-    height: max-content;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: max-content max-content;
-    grid-gap: 4px;
-
-    .payer-info_description {
-      p {
-        margin-right: 3px;
-      }
-      div {
-        display: inline-block;
-        margin: auto 0;
-        height: 14px;
-      }
-    }
-    .payer-info_account-link {
-      cursor: pointer;
-      text-decoration: underline;
-    }
-  }
-`;
+import { StyledPayerInformation } from "./StyledComponent";
 
 const PayerInformationContainer = ({
   style,
@@ -177,7 +136,7 @@ const PayerInformationContainer = ({
     : {};
 
   return (
-    <StyledContainer style={style} theme={theme}>
+    <StyledPayerInformation style={style}>
       <div className="payer-info_avatar">
         <Avatar
           size={"base"}
@@ -200,7 +159,7 @@ const PayerInformationContainer = ({
 
         {!payerInfo ? unknownPayerInformation : payerInformation}
       </div>
-    </StyledContainer>
+    </StyledPayerInformation>
   );
 };
 

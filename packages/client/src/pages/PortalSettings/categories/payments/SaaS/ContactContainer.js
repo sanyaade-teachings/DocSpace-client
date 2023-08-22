@@ -1,17 +1,9 @@
 import React from "react";
-import styled from "styled-components";
-import { useTranslation } from "react-i18next";
+
 import { inject, observer } from "mobx-react";
 import { ColorTheme, ThemeType } from "@docspace/components/ColorTheme";
 import Text from "@docspace/components/text";
-
-const StyledContactContainer = styled.div`
-  display: flex;
-  width: 100%;
-  a {
-    margin-left: 4px;
-  }
-`;
+import { StyledContactContainer } from "./StyledComponent";
 
 const ContactContainer = ({ t, salesEmail }) => {
   return (

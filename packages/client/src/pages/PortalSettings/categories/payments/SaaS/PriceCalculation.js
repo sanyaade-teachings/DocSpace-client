@@ -1,75 +1,13 @@
 import React, { useEffect, useRef } from "react";
-import styled, { css } from "styled-components";
 import Text from "@docspace/components/text";
 import { inject, observer } from "mobx-react";
 import SelectUsersCountContainer from "./sub-components/SelectUsersCountContainer";
 import TotalTariffContainer from "./sub-components/TotalTariffContainer";
 import ButtonContainer from "./sub-components/ButtonContainer";
-import { Trans } from "react-i18next";
+
 import CurrentUsersCountContainer from "./sub-components/CurrentUsersCount";
 import PricePerUser from "./sub-components/PricePerUser";
-
-const StyledBody = styled.div`
-  border-radius: 12px;
-  border: ${(props) =>
-    props.theme.client.settings.payment.priceContainer.border};
-  background: ${(props) =>
-    props.theme.client.settings.payment.priceContainer.background};
-  max-width: 320px;
-
-  padding: 23px;
-  box-sizing: border-box;
-
-  .payment_main-title {
-    margin-bottom: 24px;
-    ${(props) =>
-      props.isDisabled &&
-      css`
-        color: ${props.theme.client.settings.payment.priceContainer
-          .disableColor};
-      `}
-  }
-  .payment_price_user {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    background: ${(props) =>
-      props.theme.client.settings.payment.priceContainer.backgroundText};
-    margin-top: 24px;
-    min-height: 38px;
-    border-radius: 6px;
-
-    margin-bottom: 5px;
-    margin-top: 5px;
-    /* padding-left: 16px;
-    padding-right: 16px; */
-
-    p {
-      text-align: center;
-      margin: auto;
-      color: ${(props) => props.theme.client.settings.payment.priceColor};
-    }
-
-    .payment_user-price {
-      margin-right: 8px;
-    }
-    .payment_discount-price {
-      text-decoration: line-through;
-      margin-right: 5px;
-      color: ${(props) =>
-        props.theme.client.settings.payment.contactContainer.textColor};
-    }
-
-    .payment_per-user {
-      ${(props) =>
-        props.isDisabled &&
-        css`
-          color: ${props.theme.client.settings.payment.priceContainer
-            .disablePriceColor};
-        `}
-    }
-  }
-`;
+import { StyledPriceCalculation } from "./StyledComponent";
 
 let timeout = null,
   controller;
@@ -126,7 +64,10 @@ const PriceCalculation = ({
   const isNeedPlusSign = managersCount > maxAvailableManagersCount;
 
   return (
-    <StyledBody className="price-calculation-container" isDisabled={isDisabled}>
+    <StyledPriceCalculation
+      className="price-calculation-container"
+      isDisabled={isDisabled}
+    >
       <Text
         fontSize="16px"
         fontWeight={600}
@@ -158,7 +99,7 @@ const PriceCalculation = ({
         t={t}
         isFreeAfterPaidPeriod={isFreeAfterPaidPeriod}
       />
-    </StyledBody>
+    </StyledPriceCalculation>
   );
 };
 

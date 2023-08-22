@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { inject, observer } from "mobx-react";
 import { Trans } from "react-i18next";
 
@@ -10,20 +10,21 @@ const textProp = {
   isBold: true,
   as: "span",
   fontWeight: 600,
-  className: "payment_per-user",
 };
 const PricePerUser = ({ t, priceManagerPerMonth, currencySymbol }) => {
   const price = `${currencySymbol}${priceManagerPerMonth}`;
   const oldPrice = `${currencySymbol}${priceManagerPerMonth}`;
 
-  const isNewPrice = false;
+  const isNewPrice = true;
 
   const newPriceComponent = isNewPrice ? (
     <ColorTheme {...textProp} themeId={ThemeType.Text}>
       {{ price }}
     </ColorTheme>
   ) : (
-    <Text {...textProp}>{{ price }}</Text>
+    <Text {...textProp} className="payment_per-user">
+      {{ price }}
+    </Text>
   );
 
   return (
@@ -51,14 +52,11 @@ const PricePerUser = ({ t, priceManagerPerMonth, currencySymbol }) => {
 };
 
 export default inject(({ auth }) => {
-  const { theme } = auth.settingsStore;
   const { paymentQuotasStore } = auth;
 
   const { planCost } = paymentQuotasStore;
 
   return {
-    theme,
-
     priceManagerPerMonth: planCost.value,
     currencySymbol: planCost.currencySymbol,
   };

@@ -1,43 +1,12 @@
 import React from "react";
-import styled from "styled-components";
+
 import Text from "@docspace/components/text";
 import { useTranslation } from "react-i18next";
 import { inject, observer } from "mobx-react";
 import { PortalFeaturesLimitations } from "@docspace/common/constants";
 import { getConvertedSize } from "@docspace/common/utils";
-import { mobile } from "@docspace/components/utils/device";
 
-const StyledCurrentTariffContainer = styled.div`
-  display: flex;
-  min-height: 40px;
-  background: ${(props) => props.theme.client.settings.payment.backgroundColor};
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-  margin-top: 14px;
-  padding: 12px 16px;
-  box-sizing: border-box;
-  padding-bottom: 0;
-  border-radius: 6px;
-
-  @media ${mobile} {
-    flex-direction: column;
-    margin-bottom: 27px;
-  }
-
-  div {
-    padding-bottom: 8px;
-    margin-right: 24px;
-  }
-
-  p {
-    margin-bottom: 0;
-    color: ${(props) => props.theme.client.settings.payment.tariffText};
-    .current-tariff_count {
-      color: ${(props) => props.theme.client.settings.payment.tariffText};
-      margin-left: 4px;
-    }
-  }
-`;
+import { StyledCurrentTariffContainer } from "./StyledComponent";
 
 const CurrentTariffContainer = ({ style, quotaCharacteristics }) => {
   const { t } = useTranslation(["Payments", "Common"]);

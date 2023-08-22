@@ -8,131 +8,10 @@ import MinusIcon from "PUBLIC_DIR/images/minus.react.svg";
 import TextInput from "@docspace/components/text-input";
 import { inject, observer } from "mobx-react";
 import SelectTotalSizeContainer from "./SelectTotalSizeContainer";
-
-const StyledBody = styled.div`
-  max-width: 272px;
-  margin: 0 auto;
-
-  .payment-slider {
-    margin-top: 20px;
-  }
-
-  .slider-track {
-    display: flex;
-    position: relative;
-    margin-top: -8px;
-    margin-left: -3px;
-    height: 16px;
-
-    .slider-track-value_min,
-    .slider-track-value_max {
-      color: ${(props) =>
-        props.theme.client.settings.payment.priceContainer.trackNumberColor};
-    }
-
-    .slider-track-value_max {
-      position: absolute;
-      right: 0;
-    }
-    .slider-track-value_min {
-      position: absolute;
-      left: 0;
-    }
-  }
-
-  .payment-operations_input {
-    width: 101px;
-    height: 60px;
-    font-size: 44px;
-    text-align: center;
-    margin-left: 20px;
-    margin-right: 20px;
-    padding: 0;
-    font-weight: 700;
-    ${(props) =>
-      props.isDisabled &&
-      css`
-        color: ${props.theme.client.settings.payment.priceContainer
-          .disableColor};
-      `};
-  }
-
-  .payment-users {
-    display: flex;
-    align-items: center;
-    margin: 0 auto;
-    width: max-content;
-    .payment-score {
-      path {
-        ${(props) =>
-          props.isDisabled &&
-          css`
-            fill: ${props.theme.text.disableColor};
-          `}
-      }
-    }
-
-    .payment-score,
-    .circle {
-      cursor: ${(props) => (props.isDisabled ? "default" : "pointer")};
-    }
-    .circle {
-      position: relative;
-      background: ${(props) =>
-        props.theme.client.settings.payment.rectangleColor};
-      border: 1px solid
-        ${(props) => props.theme.client.settings.payment.rectangleColor};
-      border-radius: 50%;
-      width: 38px;
-      height: 38px;
-
-      svg {
-        position: absolute;
-        path {
-          fill: ${(props) =>
-            props.isDisabled
-              ? props.theme.client.settings.payment.priceContainer.disableColor
-              : props.theme.text.color};
-        }
-      }
-    }
-
-    .minus-icon {
-      svg {
-        top: 44%;
-        left: 28%;
-      }
-    }
-    .plus-icon {
-      svg {
-        top: 30%;
-        left: 27%;
-      }
-    }
-  }
-  .payment-users_count {
-    margin-left: 20px;
-    margin-right: 20px;
-    text-align: center;
-    width: 102px;
-  }
-
-  .payment-users_text {
-    margin-bottom: 4px;
-    text-align: center;
-
-    ${(props) =>
-      props.isDisabled &&
-      css`
-        color: ${props.theme.client.settings.payment.priceContainer
-          .disableColor};
-      `}
-  }
-`;
+import { StyledSelectUsers } from "../StyledComponent";
 
 const SelectUsersCountContainer = ({
   managersCount,
-  theme,
   isDisabled,
   isLoading,
   minAvailableManagersValue,
@@ -217,9 +96,8 @@ const SelectUsersCountContainer = ({
     isDisabled || isUpdatingTariff ? {} : { onChange: onChangeNumber };
 
   return (
-    <StyledBody
+    <StyledSelectUsers
       className="select-users-count-container"
-      theme={theme}
       isDisabled={isDisabled || isUpdatingTariff}
     >
       <Text noSelect fontWeight={600} className="payment-users_text">
@@ -277,13 +155,13 @@ const SelectUsersCountContainer = ({
           {maxAvailableManagersCount + "+"}
         </Text>
       </div>
-    </StyledBody>
+    </StyledSelectUsers>
   );
 };
 
 export default inject(({ auth, payments }) => {
   const { paymentQuotasStore } = auth;
-  const { theme } = auth.settingsStore;
+
   const {
     isLoading,
     minAvailableManagersValue,
@@ -301,7 +179,6 @@ export default inject(({ auth, payments }) => {
 
   return {
     isAlreadyPaid,
-    theme,
     isLoading,
     minAvailableManagersValue,
     managersCount,
