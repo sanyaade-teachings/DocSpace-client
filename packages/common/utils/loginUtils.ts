@@ -9,10 +9,10 @@ export async function login(
   try {
     const response = await api.user.login(user, hash, session, captchaToken);
 
-    if (!response || (!response.token && !response.tfa))
+    if (!response || (!response.token && !response.tfa && !response.sms))
       throw response.error.message;
 
-    if (response.tfa && response.confirmUrl) {
+    if ((response.tfa || response.sms) && response.confirmUrl) {
       const url = response.confirmUrl.replace(window.location.origin, "");
       return url;
     }
