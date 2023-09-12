@@ -27,6 +27,7 @@ const InputPhone = ({
   searchPlaceholderText,
   searchEmptyMessage,
   errorMessage,
+  className,
 } = props) => {
   const [country, setCountry] = useState(defaultCountry);
   const [phoneValue, setPhoneValue] = useState(country.dialCode);
@@ -140,6 +141,7 @@ const InputPhone = ({
 
   return (
     <StyledBox
+      className={className}
       hasError={!isValid}
       displayProp="flex"
       alignItems="center"
@@ -224,6 +226,8 @@ const InputPhone = ({
 };
 
 InputPhone.propTypes = {
+  /** Accepts class */
+  className: PropTypes.string,
   /** Default selected country */
   defaultCountry: PropTypes.object.isRequired,
   /** Text displayed on the Input placeholder */
