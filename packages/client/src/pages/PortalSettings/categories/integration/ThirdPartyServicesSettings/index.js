@@ -164,9 +164,7 @@ class ThirdPartyServices extends React.Component {
       (consumer) =>
         consumer.title !== "Bitly" &&
         consumer.title !== "WordPress" &&
-        consumer.title !== "DocuSign" &&
-        consumer.name !== "clickatell" && //TODO: hide while 2fa by sms is not working
-        consumer.name !== "twilio"
+        consumer.title !== "DocuSign"
     );
 
     const imgSrc = theme.isBase ? IntegrationSvgUrl : IntegrationDarkSvgUrl;
