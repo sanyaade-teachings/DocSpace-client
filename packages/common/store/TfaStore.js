@@ -69,6 +69,10 @@ class TfaStore {
   unlinkApp = async (id) => {
     return api.settings.unlinkTfaApp(id);
   };
+
+  setMobilePhone = async (mobilePhone) => {
+    return await api.portal.setMobilePhone(mobilePhone);
+  };
 }
 
 export default TfaStore;

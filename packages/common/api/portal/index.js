@@ -298,3 +298,17 @@ export function getPortal() {
   };
   return request(options);
 }
+
+export function setMobilePhone(mobilePhone) {
+  const data = {
+    mobilePhone,
+  };
+
+  const options = {
+    method: "post",
+    url: "/authentication/setphone",
+    data,
+  };
+
+  return request(options);
+}
