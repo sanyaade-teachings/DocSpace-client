@@ -3,6 +3,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Text from "@docspace/components/text";
 import ToggleButton from "@docspace/components/toggle-button";
+import Watermarks from "../sub-components/Watermarks";
 
 const StyledVirtualDataRoomBlock = styled.div`
   .virtual-data-room-block {
@@ -22,10 +23,20 @@ const StyledVirtualDataRoomBlock = styled.div`
     .virtual-data-room-block_description {
       color: ${({ theme }) => theme.editLink.text.color};
     }
+    .virtual-data-room-block_content {
+      margin-top: 16px;
+    }
   }
 `;
 
-const Block = ({ headerText, bodyText, onChange, isDisabled, isChecked }) => {
+const Block = ({
+  headerText,
+  bodyText,
+  onChange,
+  isDisabled,
+  isChecked,
+  children,
+}) => {
   return (
     <div className="virtual-data-room-block">
       <div className="virtual-data-room-block_header">
@@ -47,7 +58,7 @@ const Block = ({ headerText, bodyText, onChange, isDisabled, isChecked }) => {
         {bodyText}
       </Text>
       {isChecked && (
-        <div className="virtual-data-room-block_content">Content</div>
+        <div className="virtual-data-room-block_content">{children}</div>
       )}
     </div>
   );
@@ -106,13 +117,16 @@ const VirtualDataRoomBlock = ({ t }) => {
         isDisabled={false}
         isChecked={copyAndDownloadChecked}
       />
+
       <Block
         headerText={t("AddWatermarksToDocuments")}
         bodyText={t("AddWatermarksToDocumentsDescription")}
         onChange={onChangeAddWatermarksToDocuments}
         isDisabled={false}
         isChecked={watermarksChecked}
-      />
+      >
+        <Watermarks />
+      </Block>
     </StyledVirtualDataRoomBlock>
   );
 };
