@@ -9,6 +9,7 @@ import { isMobileOnly } from "react-device-detect";
 import { decode } from "he";
 import { filterUserRoleOptions } from "SRC_DIR/helpers/utils";
 import { getUserRole } from "@docspace/common/utils";
+import { Box } from "@docspace/components";
 
 const User = ({
   t,
@@ -126,6 +127,14 @@ const User = ({
     user.isOwner ? t("Common:DocSpaceOwner") : t("Common:DocSpaceAdmin")
   }. ${t("Common:HasFullAccess")}`;
 
+  const withStatus = !isExpect;
+
+  const isOnline = user.isOwner;
+
+  const statusText = "In room";
+
+  const lastSeen = "last seen 6 June at 8:30 AM";
+
   return (
     <StyledUser isExpect={isExpect} key={user.id}>
       <Avatar
@@ -139,12 +148,24 @@ const User = ({
         hideRoleIcon={!withTooltip}
       />
 
-      <div className="name">
-        {isExpect ? user.email : decode(user.displayName) || user.email}
+      <div>
+        <Box displayProp="flex">
+          <div className="name">
+            {isExpect ? user.email : decode(user.displayName) || user.email}
+          </div>
+          {currentMember?.id === user.id && (
+            <div className="me-label">&nbsp;{`(${t("Common:MeLabel")})`}</div>
+          )}
+        </Box>
+        {withStatus && (
+          <div className="status-wrapper">
+            {isOnline && <div className="status-indicator" />}
+            <div className="status-text">
+              {isOnline ? statusText : lastSeen}
+            </div>
+          </div>
+        )}
       </div>
-      {currentMember?.id === user.id && (
-        <div className="me-label">&nbsp;{`(${t("Common:MeLabel")})`}</div>
-      )}
 
       {userRole && userRoleOptions && (
         <div className="role-wrapper">

@@ -6,14 +6,14 @@ const StyledUserTypeHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: ${props => (props.isExpect ? "20px" : "8px")};
+  padding-top: ${(props) => (props.isExpect ? "20px" : "8px")};
   padding-bottom: 12px;
 
   .title {
     font-weight: 600;
     font-size: 14px;
     line-height: 20px;
-    color: ${props => props.theme.infoPanel.members.subtitleColor};
+    color: ${(props) => props.theme.infoPanel.members.subtitleColor};
   }
 
   .icon {
@@ -21,13 +21,13 @@ const StyledUserTypeHeader = styled.div`
 
     path,
     rect {
-      fill: ${props => props.theme.infoPanel.members.iconColor};
+      fill: ${(props) => props.theme.infoPanel.members.iconColor};
     }
 
     &:hover {
       path,
       rect {
-        fill: ${props => props.theme.infoPanel.members.iconHoverColor};
+        fill: ${(props) => props.theme.infoPanel.members.iconHoverColor};
       }
     }
   }
@@ -56,7 +56,7 @@ const StyledUser = styled.div`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    ${props =>
+    ${(props) =>
       props.isExpect && `color: ${props.theme.infoPanel.members.isExpectName}`};
   }
 
@@ -64,19 +64,29 @@ const StyledUser = styled.div`
     font-weight: 600;
     font-size: 14px;
     line-height: 16px;
-    color: ${props => props.theme.infoPanel.members.meLabelColor};
-    ${props =>
-      props.theme.interfaceDirection === "rtl"
-        ? css`
-            margin-right: -8px;
-          `
-        : css`
-            margin-left: -8px;
-          `}
+    color: ${(props) => props.theme.infoPanel.members.meLabelColor};
+  }
+
+  .status-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .status-indicator {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: #3ba420;
+  }
+
+  .status-text {
+    font-size: 10px;
+    color: ${({ theme }) => theme.infoPanel.members.statusColor};
   }
 
   .role-wrapper {
-    ${props =>
+    ${(props) =>
       props.theme.interfaceDirection === "rtl"
         ? css`
             padding-right: 8px;
@@ -93,7 +103,7 @@ const StyledUser = styled.div`
     white-space: nowrap;
 
     .disabled-role-combobox {
-      color: ${props =>
+      color: ${(props) =>
         props.theme.infoPanel.members.disabledRoleSelectorColor};
     }
   }
@@ -102,14 +112,14 @@ const StyledUser = styled.div`
     cursor: pointer;
     svg {
       path {
-        fill: ${props => props.theme.iconButton.color};
+        fill: ${(props) => props.theme.iconButton.color};
       }
     }
 
     :hover {
       svg {
         path {
-          fill: ${props => props.theme.iconButton.hoverColor};
+          fill: ${(props) => props.theme.iconButton.hoverColor};
         }
       }
     }

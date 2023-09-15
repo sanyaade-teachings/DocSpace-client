@@ -2026,6 +2026,7 @@ const Dark = {
       roleSelectorColor: "#a3a9ae",
       disabledRoleSelectorColor: "#a3a9ae",
       roleSelectorArrowColor: "#a3a9ae",
+      statusColor: "#a3a9ae",
     },
 
     history: {
