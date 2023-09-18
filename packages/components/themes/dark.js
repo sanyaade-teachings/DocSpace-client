@@ -47,7 +47,7 @@ const {
   strongBlue,
   lightGrayishStrongBlue,
   darkRed,
-
+  darkDividersColor,
   darkErrorStatus,
 } = globalColors;
 
@@ -962,7 +962,7 @@ const Dark = {
       backgroundColor: "#d6d6d6",
       hoverBackgroundColor: "#3D3D3D",
       disableBackgroundColor: "#292929",
-
+      border: `1px solid ${darkDividersColor}`,
       title: {
         margin: "7px 15px 7px 15px",
         overflow: "hidden",
