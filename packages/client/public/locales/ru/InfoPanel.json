@@ -27,8 +27,10 @@
   "FileExtension": "Расширение файла",
   "FilesEmptyScreenText": "Здесь будут представлены свойства файлов и папок",
   "HistoryEmptyScreenText": "Здесь будет отображаться история активности",
+  "InRoom": "В комнате",
   "ItemsSelected": "Выбрано элементов",
   "LastModifiedBy": "Автор последнего корректива",
+  "LastSeenAt": "Был(а) {{date}} в {{time}}",
   "LinksToViewingIcon": "Ссылки на просмотр",
   "PendingInvitations": "Приглашения в ожидании",
   "Properties": "Cвойства",
@@ -38,6 +40,7 @@
   "SubmenuDetails": "Детали",
   "SubmenuHistory": "История",
   "SystemProperties": "Системные свойства",
+  "Today": "Сегодня",
   "UsersInRoom": "Пользователей в комнате",
   "Versions": "Версии"
 }

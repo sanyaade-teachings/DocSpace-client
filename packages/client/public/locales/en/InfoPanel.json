@@ -27,8 +27,10 @@
   "FileExtension": "File extension",
   "FilesEmptyScreenText": "See file and folder details here",
   "HistoryEmptyScreenText": "Activity history will be shown here",
+  "InRoom": "In room",
   "ItemsSelected": "Items selected",
   "LastModifiedBy": "Last modified by",
+  "LastSeenAt": "Last seen {{date}} at {{time}}",
   "LinksToViewingIcon": "Links to Viewing",
   "PendingInvitations": "Pending invitations",
   "Properties": "Properties",
@@ -38,6 +40,7 @@
   "SubmenuDetails": "Details",
   "SubmenuHistory": "History",
   "SystemProperties": "System properties",
+  "Today": "Today",
   "UsersInRoom": "Users in room",
   "Versions": "Versions"
 }

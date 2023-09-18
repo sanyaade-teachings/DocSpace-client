@@ -11,6 +11,7 @@ import { filterUserRoleOptions } from "SRC_DIR/helpers/utils";
 import { getUserRole } from "@docspace/common/utils";
 import { Box } from "@docspace/components";
 import moment from "moment";
+import { useTranslation } from "react-i18next";
 
 const User = ({
   t,
@@ -24,6 +25,8 @@ const User = ({
   changeUserType,
   setIsScrollLocked,
 }) => {
+  const { i18n } = useTranslation();
+
   if (!selectionParentRoom) return null;
   if (!user.displayName && !user.email) return null;
 
@@ -130,13 +133,15 @@ const User = ({
 
   const withStatus = !isExpect;
 
-  const isOnline = user.isOwner;
+  const isOnline = currentMember?.id === user.id;
 
-  const statusText = "In room";
+  const statusText = t("InRoom");
 
-  const dateStr = moment("2023-09-15T16:24:51.0000000+02:00");
+  const dateStr = moment("2021-09-18T16:24:51.0000000+02:00").locale(
+    i18n.language
+  );
   const date = dateStr.calendar({
-    sameDay: "[Today]",
+    sameDay: `[${t("Today")}]`,
     nextDay: "D MMMM",
     nextWeek: "D MMMM",
     lastDay: "D MMMM",
@@ -146,7 +151,7 @@ const User = ({
 
   const time = dateStr.format("LT");
 
-  const lastSeen = `last seen ${date} at ${time}`;
+  const lastSeen = t("LastSeenAt", { date, time });
 
   return (
     <StyledUser isExpect={isExpect} key={user.id}>
