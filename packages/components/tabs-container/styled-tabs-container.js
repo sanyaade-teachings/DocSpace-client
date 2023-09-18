@@ -14,6 +14,13 @@ const NavItem = styled.div`
   position: relative;
   white-space: nowrap;
   display: flex;
+
+  ${(props) =>
+    !props.withBodyScroll &&
+    css`
+      gap: 8px;
+      flex-wrap: wrap;
+    `};
 `;
 NavItem.defaultProps = { theme: Base };
 
@@ -40,7 +47,7 @@ const Label = styled.div`
   ${(props) =>
     props.selected
       ? css`
-          cursor: default;
+          cursor: ${!props.multiple ? "default" : "pointer"};
           background-color: ${(props) =>
             props.theme.tabsContainer.label.backgroundColor};
           .title_style {
