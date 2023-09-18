@@ -10,6 +10,7 @@ import { decode } from "he";
 import { filterUserRoleOptions } from "SRC_DIR/helpers/utils";
 import { getUserRole } from "@docspace/common/utils";
 import { Box } from "@docspace/components";
+import moment from "moment";
 
 const User = ({
   t,
@@ -133,7 +134,19 @@ const User = ({
 
   const statusText = "In room";
 
-  const lastSeen = "last seen 6 June at 8:30 AM";
+  const dateStr = moment("2023-09-15T16:24:51.0000000+02:00");
+  const date = dateStr.calendar({
+    sameDay: "[Today]",
+    nextDay: "D MMMM",
+    nextWeek: "D MMMM",
+    lastDay: "D MMMM",
+    lastWeek: "D MMMM",
+    sameElse: "D MMMM",
+  });
+
+  const time = dateStr.format("LT");
+
+  const lastSeen = `last seen ${date} at ${time}`;
 
   return (
     <StyledUser isExpect={isExpect} key={user.id}>
