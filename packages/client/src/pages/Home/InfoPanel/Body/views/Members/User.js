@@ -13,6 +13,28 @@ import { Box } from "@docspace/components";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
 
+const getLastSeenStatus = (date, t, i18n) => {
+  if (!date) return "-";
+
+  const momentDate = moment(date).locale(i18n.language);
+  let dateFormat = "DD MMMM";
+
+  if (momentDate.year() !== moment().year()) {
+    dateFormat = "DD.MM.YYYY";
+  }
+
+  const formattedDate = momentDate.calendar({
+    sameDay: `[${t("Today")}]`,
+    lastDay: dateFormat,
+    lastWeek: dateFormat,
+    sameElse: dateFormat,
+  });
+
+  const formattedTime = momentDate.format("LT");
+
+  return t("LastSeenAt", { date: formattedDate, time: formattedTime });
+};
+
 const User = ({
   t,
   user,
@@ -137,21 +159,9 @@ const User = ({
 
   const statusText = t("InRoom");
 
-  const dateStr = moment("2021-09-18T16:24:51.0000000+02:00").locale(
-    i18n.language
-  );
-  const date = dateStr.calendar({
-    sameDay: `[${t("Today")}]`,
-    nextDay: "D MMMM",
-    nextWeek: "D MMMM",
-    lastDay: "D MMMM",
-    lastWeek: "D MMMM",
-    sameElse: "D MMMM",
-  });
+  const dateStr = "2022-09-18T16:24:51.0000000+02:00";
 
-  const time = dateStr.format("LT");
-
-  const lastSeen = t("LastSeenAt", { date, time });
+  const lastSeen = getLastSeenStatus(dateStr, t, i18n);
 
   return (
     <StyledUser isExpect={isExpect} key={user.id}>
