@@ -6,7 +6,7 @@ const StyledUserTypeHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: ${(props) => (props.isExpect ? "20px" : "8px")};
+  padding-top: ${(props) => (props.isExpect ? "20px" : "16px")};
   padding-bottom: 12px;
 
   .title {
@@ -17,19 +17,7 @@ const StyledUserTypeHeader = styled.div`
   }
 
   .icon {
-    cursor: pointer;
-
-    path,
-    rect {
-      fill: ${(props) => props.theme.infoPanel.members.iconColor};
-    }
-
-    &:hover {
-      path,
-      rect {
-        fill: ${(props) => props.theme.infoPanel.members.iconHoverColor};
-      }
-    }
+    margin-right: 8px;
   }
 `;
 
@@ -105,6 +93,8 @@ const StyledUser = styled.div`
     .disabled-role-combobox {
       color: ${(props) =>
         props.theme.infoPanel.members.disabledRoleSelectorColor};
+
+      margin-right: 16px;
     }
   }
 

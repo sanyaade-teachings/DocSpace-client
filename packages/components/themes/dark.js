@@ -3132,6 +3132,10 @@ const Dark = {
     dashedBorder: "1px dashed #fff",
   },
 
+  dialogs: {
+    disableText: "#858585",
+  },
+
   editLink: {
     text: {
       color: "#A3A9AE",

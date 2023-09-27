@@ -3129,6 +3129,10 @@ const Base = {
     dashedBorder: "1px dashed #5299E0",
   },
 
+  dialogs: {
+    disableText: "#A3A9AE",
+  },
+
   editLink: {
     text: {
       color: "#A3A9AE",
