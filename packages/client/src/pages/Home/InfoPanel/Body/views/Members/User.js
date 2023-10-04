@@ -16,6 +16,7 @@ import IconButton from "@docspace/components/icon-button";
 import { Box } from "@docspace/components";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
+import Loaders from "@docspace/common/components/Loaders";
 
 const getLastSeenStatus = (date, t, i18n) => {
   if (!date) return "-";
@@ -40,21 +41,23 @@ const getLastSeenStatus = (date, t, i18n) => {
 };
 
 const User = ({
-  t,
-  user,
-  setMembers,
-  isExpect,
-  membersHelper,
-  currentMember,
-  updateRoomMemberRole,
-  selectionParentRoom,
-  setSelectionParentRoom,
-  changeUserType,
-  setIsScrollLocked,
-  isTitle,
-  onRepeatInvitation,
-  showInviteIcon,
-}) => {
+                t,
+                user,
+                setMembers,
+                isExpect,
+                membersHelper,
+                currentMember,
+                updateRoomMemberRole,
+                selectionParentRoom,
+                setSelectionParentRoom,
+                changeUserType,
+                setIsScrollLocked,
+                isTitle,
+                onRepeatInvitation,
+                showInviteIcon,
+                withStatus,
+                status,
+              }) => {
   const { i18n } = useTranslation();
 
   if (!selectionParentRoom) return null;
@@ -148,10 +151,10 @@ const User = ({
       option.key === "owner"
         ? "admin"
         : option.key === "roomAdmin"
-        ? "manager"
-        : option.key === "collaborator"
-        ? "collaborator"
-        : "user";
+          ? "manager"
+          : option.key === "collaborator"
+            ? "collaborator"
+            : "user";
 
     const successCallback = () => {
       updateRole(option);
@@ -184,15 +187,11 @@ const User = ({
     user.isOwner ? t("Common:DocSpaceOwner") : t("Common:DocSpaceAdmin")
   }. ${t("Common:HasFullAccess")}`;
 
-  const withStatus = !isExpect;
-
-  const isOnline = currentMember?.id === user.id;
-
-  const statusText = t("InRoom");
-
-  const dateStr = "2022-09-18T16:24:51.0000000+02:00";
-
-  const lastSeen = getLastSeenStatus(dateStr, t, i18n)
+  let statusText = null;
+  if (status?.statusText) {
+    statusText =
+      status.statusText === "InRoom" ? t("InRoom") : status.statusText;
+  }
 
   return isTitle ? (
     <StyledUserTypeHeader isExpect={isExpect}>
@@ -222,7 +221,11 @@ const User = ({
         hideRoleIcon={!withTooltip}
       />
 
-      <div>
+      <Box
+        displayProp={"flex"}
+        flexDirection={"column"}
+        justifyContent={"center"}
+      >
         <Box displayProp="flex">
           <div className="name">
             {isExpect ? user.email : decode(user.displayName) || user.email}
@@ -231,15 +234,24 @@ const User = ({
             <div className="me-label">&nbsp;{`(${t("Common:MeLabel")})`}</div>
           )}
         </Box>
-        {withStatus && (
-          <div className="status-wrapper">
-            {isOnline && <div className="status-indicator" />}
-            <div className="status-text">
-              {isOnline ? statusText : lastSeen}
+        {withStatus &&
+          (!status ? (
+            <Loaders.Rectangle
+              width={70}
+              height={10}
+              className={"status-loader"}
+            />
+          ) : (
+            <div className="status-wrapper">
+              {status.isOnline && <div className="status-indicator" />}
+              <div className="status-text">
+                {status.isOnline
+                  ? statusText
+                  : getLastSeenStatus(status.lastSeen, t, i18n)}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
+          ))}
+      </Box>
 
       {userRole && userRoleOptions && (
         <div className="role-wrapper">

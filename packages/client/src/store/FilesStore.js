@@ -2505,6 +2505,12 @@ class FilesStore {
     });
   };
 
+  getMembersStatuses = (ids) => {
+    if (!ids || !ids.length) return;
+
+    return api.rooms.getRoomMembersStatuses(ids, 1000).then((res) => res);
+  };
+
   setMembersFilter = (filter) => {
     this.membersFilter = filter;
   };

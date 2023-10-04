@@ -73,6 +73,10 @@ const StyledUser = styled.div`
     color: ${({ theme }) => theme.infoPanel.members.statusColor};
   }
 
+  .status-loader {
+    margin-top: 3px;
+  }
+
   .role-wrapper {
     ${(props) =>
       props.theme.interfaceDirection === "rtl"

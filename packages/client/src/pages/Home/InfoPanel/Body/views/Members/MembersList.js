@@ -28,9 +28,11 @@ const Item = memo(({ data, index, style }) => {
     setIsScrollLocked,
     canInviteUserInRoomAbility,
     onRepeatInvitation,
+    statuses,
   } = data;
 
   const user = members[index];
+  const status = statuses ? statuses.find((s) => s.id === user.id) : null;
 
   if (!user) {
     return (
@@ -65,6 +67,8 @@ const Item = memo(({ data, index, style }) => {
         showInviteIcon={canInviteUserInRoomAbility && user.isExpect}
         onRepeatInvitation={onRepeatInvitation}
         setMembers={setMembers}
+        withStatus={!user.isExpect}
+        status={status}
       />
     </div>
   );
@@ -87,6 +91,7 @@ const MembersList = (props) => {
     itemCount,
     onRepeatInvitation,
     loadNextPage,
+    statuses,
   } = props;
 
   const itemsCount = hasNextPage ? members.length + 1 : members.length;
@@ -174,6 +179,7 @@ const MembersList = (props) => {
                     setMembers,
                     canInviteUserInRoomAbility,
                     onRepeatInvitation,
+                    statuses,
                   }}
                   outerElementType={CustomScrollbarsVirtualList}
                   onItemsRendered={onItemsRendered}

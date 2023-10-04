@@ -26,6 +26,7 @@ const Members = ({
 
   setIsScrollLocked,
 
+  getMembersStatuses,
   getRoomMembers,
   getRoomLinks,
   updateRoomMemberRole,
@@ -42,9 +43,17 @@ const Members = ({
   setMembersList,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [membersStatuses, setMembersStatuses] = useState(null);
   const membersHelper = new MembersHelper({ t });
 
   const security = selectionParentRoom ? selectionParentRoom.security : {};
+
+  const fetchStatuses = async (members) => {
+    const ids = members.map((m) => m.id);
+    const statuses = await getMembersStatuses(ids);
+
+    setMembersStatuses([...(membersStatuses || []), ...statuses]);
+  };
 
   const fetchMembers = async (roomId, clearFilter = true) => {
     if (isLoading) return;
@@ -124,6 +133,8 @@ const Members = ({
     }
 
     setUpdateRoomMembers(false);
+
+    fetchStatuses([...administrators, ...users]);
 
     return {
       users,
@@ -236,6 +247,7 @@ const Members = ({
         isPublicRoomType={isPublicRoomType}
         withBanner={isPublicRoomType && externalLinks.length > 0}
         setMembers={setMembersList}
+        statuses={membersStatuses}
       />
     </>
   );
@@ -259,6 +271,7 @@ export default inject(
     const {
       getRoomMembers,
       getRoomLinks,
+      getMembersStatuses,
       updateRoomMemberRole,
       resendEmailInvitations,
       membersFilter,
@@ -282,6 +295,7 @@ export default inject(
 
       setIsScrollLocked,
 
+      getMembersStatuses,
       getRoomMembers,
       getRoomLinks,
       updateRoomMemberRole,
