@@ -1,17 +1,26 @@
 import io from "socket.io-client";
 
-let client = null;
-let callbacks = [];
+const sockets = {};
+let callbacks = {};
 
 class SocketIOHelper {
+  socket = null;
   socketUrl = null;
+  hub = null;
 
-  constructor(url, publicRoomKey) {
+  constructor(url, publicRoomKey, hub = "/files") {
+    this.hub = hub;
+
+    if (!callbacks[hub]) {
+      callbacks[hub] = [];
+    }
+
     if (!url) return;
 
     this.socketUrl = url;
+    this.socket = sockets[hub];
 
-    if (client) return;
+    if (this.socket) return;
 
     const origin = window.location.origin;
 
@@ -19,7 +28,7 @@ class SocketIOHelper {
       withCredentials: true,
       transports: ["websocket", "polling"],
       eio: 4,
-      path: url,
+      path: url + hub,
     };
 
     if (publicRoomKey) {
@@ -28,21 +37,22 @@ class SocketIOHelper {
       };
     }
 
-    client = io(origin, config);
+    sockets[hub] = io(origin, config);
+    this.socket = sockets[hub];
 
-    client.on("connect", () => {
+    this.socket.on("connect", () => {
       console.log("socket is connected");
-      if (callbacks?.length > 0) {
-        callbacks.forEach(({ eventName, callback }) =>
-          client.on(eventName, callback)
+      if (callbacks[this.hub]?.length > 0) {
+        callbacks[this.hub].forEach(({ eventName, callback }) =>
+          this.socket.on(eventName, callback)
         );
-        callbacks = [];
+        callbacks[this.hub] = [];
       }
     });
-    client.on("connect_error", (err) =>
+    this.socket.on("connect_error", (err) =>
       console.log("socket connect error", err)
     );
-    client.on("disconnect", () => console.log("socket is disconnected"));
+    this.socket.on("disconnect", () => console.log("socket is disconnected"));
   }
 
   get isEnabled() {
@@ -52,31 +62,33 @@ class SocketIOHelper {
   emit = ({ command, data, room = null }) => {
     if (!this.isEnabled) return;
 
-    if (!client.connected) {
-      client.on("connect", () => {
+    if (!this.socket.connected) {
+      this.socket.on("connect", () => {
         if (room !== null) {
-          client.to(room).emit(command, data);
+          this.socket.to(room).emit(command, data);
         } else {
-          client.emit(command, data);
+          this.socket.emit(command, data);
         }
       });
     } else {
-      room ? client.to(room).emit(command, data) : client.emit(command, data);
+      room
+        ? this.socket.to(room).emit(command, data)
+        : this.socket.emit(command, data);
     }
   };
 
   on = (eventName, callback) => {
     if (!this.isEnabled) {
-      callbacks.push({ eventName, callback });
+      callbacks[this.hub].push({ eventName, callback });
       return;
     }
 
-    if (!client.connected) {
-      client.on("connect", () => {
-        client.on(eventName, callback);
+    if (!this.socket.connected) {
+      this.socket.on("connect", () => {
+        this.socket.on(eventName, callback);
       });
     } else {
-      client.on(eventName, callback);
+      this.socket.on(eventName, callback);
     }
   };
 }
