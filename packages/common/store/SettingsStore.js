@@ -784,6 +784,13 @@ class SettingsStore {
     return new SocketIOHelper(socketUrl, this.publicRoomKey);
   }
 
+  get onlineUsersSocket() {
+    const socketUrl =
+      this.isPublicRoom && !this.publicRoomKey ? null : this.socketUrl;
+
+    return new SocketIOHelper(socketUrl, this.publicRoomKey, "/onlineUsers");
+  }
+
   getBuildVersionInfo = async () => {
     let versionInfo = null;
     if (window?.__ASC_INITIAL_EDITOR_STATE__?.versionInfo)
