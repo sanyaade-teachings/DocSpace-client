@@ -38,6 +38,7 @@ const Members = ({
 
   setExternalLinks,
   membersFilter,
+  setMembersFilter,
   externalLinks,
   members,
   setMembersList,
@@ -76,7 +77,7 @@ const Members = ({
     const users = [];
     const administrators = [];
     const expectedMembers = [];
-    data.map((fetchedMember) => {
+    data?.map((fetchedMember) => {
       const member = {
         access: fetchedMember.access,
         canEditAccess: fetchedMember.canEditAccess,
@@ -97,7 +98,7 @@ const Members = ({
     });
 
     let hasPrevAdminsTitle =
-      members?.roomId === roomId
+      members?.roomId === roomId && !clearFilter
         ? getHasPrevTitle(members?.administrators, "administration")
         : false;
 
@@ -110,7 +111,7 @@ const Members = ({
     }
 
     let hasPrevUsersTitle =
-      members?.roomId === roomId
+      members?.roomId === roomId && !clearFilter
         ? getHasPrevTitle(members?.users, "user")
         : false;
 
@@ -119,7 +120,7 @@ const Members = ({
     }
 
     let hasPrevExpectedTitle =
-      members?.roomId === roomId
+      members?.roomId === roomId && !clearFilter
         ? getHasPrevTitle(members?.expected, "expected")
         : false;
 
@@ -202,6 +203,7 @@ const Members = ({
     const { users, administrators, expected } = fetchedMembers;
 
     const newMembers = {
+      roomId: roomId,
       administrators: [...members.administrators, ...administrators],
       users: [...members.users, ...users],
       expected: [...members.expected, ...expected],
@@ -241,6 +243,8 @@ const Members = ({
         setSelectionParentRoom={setSelectionParentRoom}
         changeUserType={changeUserType}
         setIsScrollLocked={setIsScrollLocked}
+        membersFilter={membersFilter}
+        setMembersFilter={setMembersFilter}
         hasNextPage={membersList.length - headersCount < membersFilter.total}
         itemCount={membersFilter.total + headersCount}
         onRepeatInvitation={onRepeatInvitation}
@@ -275,6 +279,7 @@ export default inject(
       updateRoomMemberRole,
       resendEmailInvitations,
       membersFilter,
+      setMembersFilter,
     } = filesStore;
     const { id: selfId } = auth.userStore.user;
 
@@ -310,6 +315,7 @@ export default inject(
       isPublicRoomType,
       setExternalLinks,
       membersFilter,
+      setMembersFilter,
       externalLinks: roomLinks,
       members: membersList,
       setMembersList,

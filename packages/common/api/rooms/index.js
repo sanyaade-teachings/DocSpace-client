@@ -584,11 +584,9 @@ const getRoomMembersFake = async (delay = 200) => {
 
 export function getRoomMembers(id, filter) {
   let params = "";
-  const str = toUrlParams(filter);
 
-  if (str) {
-    params = `?${str}`;
-  }
+  const str = toUrlParams(filter);
+  if (str) params = `?${str}`;
 
   const options = {
     method: "get",

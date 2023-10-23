@@ -41,23 +41,27 @@ const getLastSeenStatus = (date, t, i18n) => {
 };
 
 const User = ({
-                t,
-                user,
-                setMembers,
-                isExpect,
-                membersHelper,
-                currentMember,
-                updateRoomMemberRole,
-                selectionParentRoom,
-                setSelectionParentRoom,
-                changeUserType,
-                setIsScrollLocked,
-                isTitle,
-                onRepeatInvitation,
-                showInviteIcon,
-                withStatus,
-                status,
-              }) => {
+  t,
+  user,
+  setMembers,
+  isExpect,
+  membersHelper,
+  currentMember,
+  updateRoomMemberRole,
+  selectionParentRoom,
+  setSelectionParentRoom,
+  changeUserType,
+  setIsScrollLocked,
+  isTitle,
+  onRepeatInvitation,
+  showInviteIcon,
+  membersFilter,
+  setMembersFilter,
+  fetchMembers,
+  hasNextPage,
+  withStatus,
+  status,
+}) => {
   const { i18n } = useTranslation();
 
   if (!selectionParentRoom) return null;
@@ -84,29 +88,84 @@ const User = ({
       notify: false,
       sharingMessage: "",
     })
-      .then(() => {
+      .then(async () => {
         setIsLoading(false);
         const users = selectionParentRoom.members.users;
         const administrators = selectionParentRoom.members.administrators;
         const expectedMembers = selectionParentRoom.members.expected;
         if (option.key === "remove") {
-          setMembers({
+          const newMembersFilter = JSON.parse(JSON.stringify(membersFilter));
+
+          const newMembers = {
             users: users?.filter((m) => m.id !== user.id),
             administrators: administrators?.filter((m) => m.id !== user.id),
             expected: expectedMembers?.filter((m) => m.id !== user.id),
+          };
+
+          const roomId = selectionParentRoom.id;
+          const newUsers = newMembers.users.length > 1 ? newMembers?.users : [];
+          const newAdministrators =
+            newMembers.administrators.length > 1
+              ? newMembers?.administrators
+              : [];
+          const newExpected =
+            newMembers.expected.length > 1 ? newMembers?.expected : [];
+
+          setMembers({
+            roomId,
+            users: newUsers,
+            administrators: newAdministrators,
+            expected: newExpected,
           });
+
+          newMembersFilter.total -= 1;
 
           setSelectionParentRoom({
             ...selectionParentRoom,
             members: {
-              users: users?.filter((m) => m.id !== user.id),
-              administrators: administrators?.filter((m) => m.id !== user.id),
-              expected: expectedMembers?.filter((m) => m.id !== user.id),
+              users: newUsers,
+              administrators: newAdministrators,
+              expected: newExpected,
             },
           });
+
+          if (hasNextPage) {
+            newMembersFilter.startIndex =
+              (newMembersFilter.page + 1) * newMembersFilter.pageCount - 1;
+            newMembersFilter.pageCount = 1;
+
+            const fetchedMembers = await fetchMembers(
+              selectionParentRoom.id,
+              false,
+              newMembersFilter
+            );
+
+            const newMembers = {
+              administrators: [
+                ...newAdministrators,
+                ...fetchedMembers.administrators,
+              ],
+              users: [...newUsers, ...fetchedMembers.users],
+              expected: [...newExpected, ...fetchedMembers.expected],
+            };
+
+            setMembers({
+              roomId: selectionParentRoom.id,
+              ...newMembers,
+            });
+
+            setSelectionParentRoom({
+              ...selectionParentRoom,
+              members: newMembers,
+            });
+          }
+
+          setMembersFilter(newMembersFilter);
+
           //setUserIsRemoved(true);
         } else {
           setMembers({
+            roomId: selectionParentRoom.id,
             users: users?.map((m) =>
               m.id === user.id ? { ...m, access: option.access } : m
             ),
