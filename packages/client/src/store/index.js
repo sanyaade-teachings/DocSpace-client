@@ -59,6 +59,8 @@ const tagsStore = new TagsStore();
 
 const treeFoldersStore = new TreeFoldersStore(selectedFolderStore, authStore);
 
+selectedFolderStore.treeFoldersStore = treeFoldersStore;
+
 const publicRoomStore = new PublicRoomStore();
 
 const clientLoadingStore = new ClientLoadingStore();

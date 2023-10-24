@@ -34,6 +34,8 @@ class SelectedFolderStore {
 
   socketSubscribersId = new Set();
 
+  treeFoldersStore = null;
+
   constructor(settingsStore) {
     makeAutoObservable(this);
     this.settingsStore = settingsStore;
@@ -160,6 +162,12 @@ class SelectedFolderStore {
       }
     }
   };
+
+  get currentRoom() {
+    if (!this.treeFoldersStore?.isRoom || this.isRootFolder) return null;
+
+    return this.pathParts[1];
+  }
 }
 
 export default SelectedFolderStore;
