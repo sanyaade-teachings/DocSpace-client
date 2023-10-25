@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, reaction } from "mobx";
 import { setDocumentTitle } from "SRC_DIR/helpers/utils";
 
 class SelectedFolderStore {
@@ -39,6 +39,19 @@ class SelectedFolderStore {
   constructor(settingsStore) {
     makeAutoObservable(this);
     this.settingsStore = settingsStore;
+
+    reaction(
+      () => this.currentRoomId,
+      (value, previousValue) => {
+        if (value) {
+          this.enterRoom(value);
+        }
+
+        if (previousValue) {
+          this.leaveRoom(previousValue);
+        }
+      }
+    );
   }
 
   get isRootFolder() {
@@ -163,11 +176,33 @@ class SelectedFolderStore {
     }
   };
 
-  get currentRoom() {
+  get currentRoomId() {
     if (!this.treeFoldersStore?.isRoom || this.isRootFolder) return null;
 
     return this.pathParts[1];
   }
+
+  enterRoom = (roomId) => {
+    const { onlineUsersSocket } = this.settingsStore;
+    onlineUsersSocket.emit({
+      command: "enter",
+      data: {
+        roomParts: `${roomId}`,
+      },
+    });
+    console.log(`enter room: ${roomId}`);
+  };
+
+  leaveRoom = (roomId) => {
+    const { onlineUsersSocket } = this.settingsStore;
+    onlineUsersSocket.emit({
+      command: "leave",
+      data: {
+        roomParts: `${roomId}`,
+      },
+    });
+    console.log(`leave room: ${roomId}`);
+  };
 }
 
 export default SelectedFolderStore;
