@@ -42,6 +42,7 @@ const Members = ({
   externalLinks,
   members,
   setMembersList,
+  roomType,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [membersStatuses, setMembersStatuses] = useState(null);
@@ -227,10 +228,19 @@ const Members = ({
   const expectedTitleCount = expected.length ? 1 : 0;
 
   const headersCount = adminsTitleCount + usersTitleCount + expectedTitleCount;
+  const dataReadyMembersList = selection?.id === selectionParentRoom?.id;
+
+  if (!dataReadyMembersList) return <></>;
 
   return (
     <>
-      {isPublicRoomType && <PublicRoomBlock t={t} />}
+      {isPublicRoomType && (
+        <PublicRoomBlock
+          t={t}
+          roomType={roomType}
+          roomId={selectionParentRoom.id}
+        />
+      )}
       <MembersList
         loadNextPage={loadNextPage}
         t={t}
@@ -319,6 +329,7 @@ export default inject(
       externalLinks: roomLinks,
       members: membersList,
       setMembersList,
+      roomType,
     };
   }
 )(
