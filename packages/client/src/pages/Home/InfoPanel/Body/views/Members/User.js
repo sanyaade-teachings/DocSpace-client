@@ -210,10 +210,10 @@ const User = ({
       option.key === "owner"
         ? "admin"
         : option.key === "roomAdmin"
-          ? "manager"
-          : option.key === "collaborator"
-            ? "collaborator"
-            : "user";
+        ? "manager"
+        : option.key === "collaborator"
+        ? "collaborator"
+        : "user";
 
     const successCallback = () => {
       updateRole(option);
@@ -296,8 +296,8 @@ const User = ({
         {withStatus &&
           (!status ? (
             <Loaders.Rectangle
-              width={70}
-              height={10}
+              width="70"
+              height="10"
               className={"status-loader"}
             />
           ) : (
