@@ -593,11 +593,11 @@ export function getRoomMembers(id, filter) {
     url: `/files/rooms/${id}/share${params}`,
   };
 
-  return getRoomMembersFake(100);
+  // return getRoomMembersFake(100);
 
-  // return request(options).then((res) => {
-  //   return res;
-  // });
+  return request(options).then((res) => {
+    return res;
+  });
 }
 
 const getFakeStatuses = (ids) => {
