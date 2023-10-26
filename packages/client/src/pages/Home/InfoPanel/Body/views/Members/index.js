@@ -43,6 +43,7 @@ const Members = ({
   members,
   setMembersList,
   roomType,
+  onlineUsersSocket,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [membersStatuses, setMembersStatuses] = useState(null);
@@ -190,6 +191,28 @@ const Members = ({
     updateMembersAction,
   ]);
 
+  useEffect(() => {
+    const { isRoom, isArchive, id } = selection;
+
+    if (isRoom && !isArchive) {
+      onlineUsersSocket.emit({
+        command: "subscribe",
+        data: { roomParts: `${id}` },
+      });
+      console.log("open members for room " + id);
+    }
+
+    return () => {
+      if (isRoom && !isArchive) {
+        onlineUsersSocket.emit({
+          command: "unsubscribe",
+          data: { roomParts: `${id}` },
+        });
+        console.log("close members for room " + id);
+      }
+    };
+  }, [selection]);
+
   const onRepeatInvitation = async () => {
     resendEmailInvitations(selectionParentRoom.id, true)
       .then(() =>
@@ -292,6 +315,7 @@ export default inject(
       setMembersFilter,
     } = filesStore;
     const { id: selfId } = auth.userStore.user;
+    const { onlineUsersSocket } = auth.settingsStore;
 
     const { changeType: changeUserType } = peopleStore;
     const { roomLinks, setExternalLinks } = publicRoomStore;
@@ -330,6 +354,7 @@ export default inject(
       members: membersList,
       setMembersList,
       roomType,
+      onlineUsersSocket,
     };
   }
 )(
