@@ -215,7 +215,7 @@ class SelectedFolderStore {
   get currentRoomId() {
     if (!this.treeFoldersStore?.isRoom || this.isRootFolder) return null;
 
-    return this.pathParts[1];
+    return this.pathParts[1].id;
   }
 
   enterRoom = (roomId) => {
