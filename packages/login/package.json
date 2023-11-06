@@ -107,6 +107,8 @@
   "socketPath": "/login/ws",
   "dependencies": {
     "@aws-sdk/client-cloudwatch-logs": "^3.297.0",
+    "@docspace/common": "workspace:^",
+    "@docspace/components": "workspace:^",
     "@types/ws": "^8.5.4",
     "aws-crt": "^1.15.13",
     "bufferutil": "^4.0.7",

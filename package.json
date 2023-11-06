@@ -2,23 +2,17 @@
   "name": "docspace",
   "version": "2.0.0",
   "private": true,
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
-  },
   "engines": {
     "node": ">=18",
     "yarn": ">=3"
   },
   "scripts": {
-    "build": "yarn workspaces foreach -vptiR --from '{@docspace/client,@docspace/login,@docspace/editor}' run build",
-    "bump": "yarn version apply --all",
-    "clean": "yarn workspaces foreach -vptiR run clean",
-    "deploy": "shx rm -rf ../publish/web && yarn workspaces foreach -ptR --from '{@docspace/client,@docspace/login,@docspace/editor}' run deploy && shx cp -r public ../publish/web/ && node common/scripts/minify-common-locales.js",
-    "start": "yarn workspaces foreach -vptiR --from '{@docspace/client,@docspace/login,@docspace/editor}' run start",
-    "start-prod": "yarn workspaces foreach -vptiR --from '{@docspace/client,@docspace/login,@docspace/editor}' run start-prod",
-    "storybook": "yarn workspace @docspace/components storybook",
+    "build": "pnpm --filter '@docspace/client' run build",
+    "clean": "pnpm run clean",
+    "deploy": "shx rm -rf ../publish/web && pnpm run deploy --filter @docspace/client,@docspace/login,@docspace/editor && shx cp -r public ../publish/web/ && node common/scripts/minify-common-locales.js",
+    "start": "pnpm run start --filter @docspace/client,@docspace/login,@docspace/editor",
+    "start-prod": "pnpm run start-prod --filter @docspace/client,@docspace/login,@docspace/editor",
+    "storybook": "pnpm --filter '@docspace/components' storybook",
     "storybook-build": "yarn workspace @docspace/components run storybook-build",
     "storybook-serve": "yarn workspace @docspace/components run storybook-serve",
     "test": "yarn workspace @docspace/components test",
@@ -36,7 +30,7 @@
   "devDependencies": {
     "he": "^1.2.0",
     "shx": "^0.3.4",
-    "terser": "^5.16.6"
+    "terser": "^5.24.0"
   },
   "packageManager": "yarn@3.2.4"
 }

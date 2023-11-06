@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.21.0",
+    "@docspace/components": "workspace:^",
     "@loadable/component": "^5.15.3",
     "axios": "^0.22.0",
     "cross-fetch": "3.1.5",
@@ -45,5 +46,37 @@
   },
   "devDependencies": {
     "@welldone-software/why-did-you-render": "^6.2.3"
+  },
+  "peerDependencies": {
+    "@react-spring/web": "^9.7.1",
+    "@use-gesture/react": "^10.2.24",
+    "attr-accept": "^2.2.2",
+    "csvjson-json_beautifier": "^5.0.4",
+    "email-addresses": "^3.1.0",
+    "fast-deep-equal": "^3.1.3",
+    "framer-motion": "^4.1.17",
+    "html-to-react": "^1.5.0",
+    "lodash": "4.17.21",
+    "luxon": "^3.4.0",
+    "moment": "^2.29.4",
+    "prop-types": "^15.8.1",
+    "punycode": "^2.3.0",
+    "rc-tree": "^5.7.3",
+    "react-autosize-textarea": "^7.1.0",
+    "react-countdown": "2.3.5",
+    "react-custom-scrollbars": "^4.2.1",
+    "react-device-detect": "^1.17.0",
+    "react-dropzone": "^11.7.1",
+    "react-lifecycles-compat": "^3.0.4",
+    "react-onclickoutside": "^6.13.0",
+    "react-scrollbars-custom": "^4.1.1",
+    "react-svg": "^12.1.0",
+    "react-text-mask": "^5.5.0",
+    "react-toastify": "^7.0.4",
+    "react-tooltip": "^5.21.1",
+    "react-transition-group": "^4.4.5",
+    "react-virtualized": "^9.22.3",
+    "react-window": "^1.8.8",
+    "resize-image": "^0.1.0"
   }
 }
