@@ -1,7 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import Loaders from "@docspace/common/components/Loaders";
+import DialogSkeleton from "../../skeletons/dialog";
+import DialogAsideSkeleton from "../../skeletons/dialog/aside";
 
 import Heading from "../../heading";
 import {
@@ -17,7 +18,7 @@ import ModalBackdrop from "../components/ModalBackdrop";
 import Scrollbar from "../../scrollbar";
 import { classNames } from "../../utils/classNames";
 import FormWrapper from "../components/FormWrapper";
-import { isIOS, isMobile } from "react-device-detect";
+import { isIOS, isMobileOnly } from "react-device-detect";
 
 const Modal = ({
   id,
@@ -52,7 +53,7 @@ const Modal = ({
   const contentRef = React.useRef(0);
 
   React.useEffect(() => {
-    if (isMobile && isIOS) {
+    if (isMobileOnly && isIOS) {
       window.visualViewport.addEventListener("resize", onResize);
       window.visualViewport.addEventListener("scroll", onResize);
     }
@@ -150,12 +151,12 @@ const Modal = ({
             )}
             {isLoading ? (
               currentDisplayType === "modal" ? (
-                <Loaders.DialogLoader
+                <DialogSkeleton
                   isLarge={isLarge}
                   withFooterBorder={withFooterBorder}
                 />
               ) : (
-                <Loaders.DialogAsideLoader
+                <DialogAsideSkeleton
                   withoutAside
                   withFooterBorder={withFooterBorder}
                 />

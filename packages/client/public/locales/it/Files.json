@@ -43,7 +43,6 @@
   "EmptyFilterSubheadingText": "Nessun file da visualizzare per con l'uso di filtro qui",
   "EmptyFolderDecription": "Trascina i file qui o creane di nuovi",
   "EmptyFolderDescriptionUser": "I file e le cartelle caricati dagli amministratori appariranno qui.",
-  "EmptyFolderHeader": "Non ci sono file in questa cartella",
   "EmptyRecycleBin": "Svuota cestino",
   "EmptyRootRoomHeader": "Benvenuti in DocSpace",
   "EmptyScreenFolder": "Nessun documento ancora qui",
@@ -149,7 +148,5 @@
   "ViewList": "Lista",
   "ViewOnlyRooms": "Solo visualizzazione",
   "ViewTiles": "Tegole",
-  "WantToRestoreTheRoom": "Tutti i link esterni in questa stanza diventeranno attivi e i suoi contenuti saranno disponibili a chiunque abbia il collegamento. Vuoi ripristinare la stanza?",
-  "WantToRestoreTheRooms": "Tutti i link esterni nelle stanze ripristinate diventeranno attivi e i loro contenuti saranno disponibili a chiunque abbia i link alle stanze. Vuoi ripristinare le stanze?",
   "WithSubfolders": "Con sottocartelle"
 }

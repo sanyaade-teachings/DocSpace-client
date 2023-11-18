@@ -7,17 +7,19 @@
     "yarn": ">=3"
   },
   "scripts": {
-    "build": "pnpm --filter '@docspace/client' run build",
+    "build": "node ./common/scripts/before-build.js && pnpm --filter '@docspace/client' run build",
     "clean": "pnpm run clean",
     "deploy": "shx rm -rf ../publish/web && pnpm run deploy --filter @docspace/client,@docspace/login,@docspace/editor && shx cp -r public ../publish/web/ && node common/scripts/minify-common-locales.js",
-    "start": "pnpm run start --filter @docspace/client,@docspace/login,@docspace/editor",
+    "start": "node ./common/scripts/before-build.js && pnpm run start --filter @docspace/client,@docspace/login,@docspace/editor",
     "start-prod": "pnpm run start-prod --filter @docspace/client,@docspace/login,@docspace/editor",
     "storybook": "pnpm --filter '@docspace/components' storybook",
     "storybook-build": "yarn workspace @docspace/components run storybook-build",
     "storybook-serve": "yarn workspace @docspace/components run storybook-serve",
     "test": "yarn workspace @docspace/components test",
     "wipe": "shx rm -rf node_modules yarn.lock packages/**/node_modules",
-    "licenses-audit": "yarn licenses audit --output-csv=licenses.csv --config=licenses.config.js --summary"
+    "licenses-audit": "yarn licenses audit --output-csv=licenses.csv --config=licenses.config.js --summary",
+    "check-circular": "yarn madge --circular ./packages",
+    "check-circular:graph": "yarn madge --circular --image graph.svg ./packages"
   },
   "old-scripts": {
     "build:test": "yarn workspaces foreach -vptiR --from '{@docspace/client,@docspace/login,@docspace/editor}' run build:test",
@@ -29,6 +31,7 @@
   },
   "devDependencies": {
     "he": "^1.2.0",
+    "madge": "^6.1.0",
     "shx": "^0.3.4",
     "terser": "^5.24.0"
   },

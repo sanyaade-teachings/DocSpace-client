@@ -9,6 +9,7 @@
   "DesktopThemeDescription": "Automatically switch between light and dark themes when your desktop editor.",
   "EditPhoto": "Edit photo",
   "EmailNotVerified": "Email is not verified",
+  "ErrorAccountAlreadyUse": "Linked account already in use by another user",
   "FileManagement": "File management",
   "InterfaceTheme": "Interface theme",
   "LightTheme": "Light theme",

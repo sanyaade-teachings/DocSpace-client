@@ -52,14 +52,29 @@
             "tooltip": "🛠️ Start the \"backend docker build EE\" task"
           },
           {
+            "label": "Docker : ReBuild-EE",
+            "task": "Backend | rebuild EE",
+            "tooltip": "🛠️ Start the \"backend docker rebuild EE\" task"
+          },
+          {
             "label": "Docker : Build-CE",
             "task": "Backend | build CE",
             "tooltip": "🛠️ Start the \"backend docker build CE\" task"
           },
           {
-            "label": "Docker : Build-SAAS",
-            "task": "Backend | build SAAS",
-            "tooltip": "🛠️ Start the \"backend docker build SAAS\" task"
+            "label": "Docker : Build-SAAS + dnsmasq",
+            "task": "Backend | build SAAS + dnsmasq",
+            "tooltip": "🛠️ Start the \"backend docker build SAAS + dnsmasq\" task"
+          },
+          {
+            "label": "Docker : ReBuild-SAAS + dnsmasq",
+            "task": "Backend | rebuild SAAS + dnsmasq",
+            "tooltip": "🛠️ Start the \"backend docker rebuild SAAS + dnsmasq\" task"
+          },
+          {
+            "label": "Docker : Build-EE + dnsmasq",
+            "task": "Backend | build EE + dnsmasq",
+            "tooltip": "🛠️ Start the \"backend docker build EE + dnsmasq\" task"
           },
           {
             "label": "Docker : Clear",
@@ -109,6 +124,27 @@
           }
         ],
         "tooltip": "🛠️ Client tasks"
+      },
+      {
+        "label": "Tests",
+        "tasks": [
+          {
+            "label": "translations",
+            "task": "Test | frontend-translations",
+            "tooltip": "🛠️ Start the \"frontend translation tests\" task"
+          },
+          {
+            "label": "spellcheck",
+            "task": "Test | frontend-translations-spellcheck",
+            "tooltip": "🛠️ Start the \"frontend translation spellcheck tests\" task"
+          },
+          {
+            "label": "spellcheck-force-save",
+            "task": "Test | frontend-translations-spellcheck-force-save",
+            "tooltip": "🛠️ Start the \"frontend translation spellcheck tests\" task"
+          }
+        ],
+        "tooltip": "🛠️ Client tests tasks"
       }
     ]
   },
