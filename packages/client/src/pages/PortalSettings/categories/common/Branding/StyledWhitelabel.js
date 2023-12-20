@@ -58,6 +58,7 @@ const WhiteLabelWrapper = styled.div`
 
   .logos-wrapper {
     display: flex;
+    flex-wrap: wrap;
     flex-direction: row;
     gap: 20px;
 
@@ -75,6 +76,7 @@ const WhiteLabelWrapper = styled.div`
   .logos-editor-wrapper {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 8px;
 
@@ -178,14 +180,18 @@ const WhiteLabelWrapper = styled.div`
     display: none;
   }
 
-  .save-cancel-buttons {
-    margin-top: 24px;
+  .spacer {
+    height: 24px;
   }
 
   @media ${mobile} {
     .subtitle,
     .header-container {
       display: none;
+    }
+
+    .spacer {
+      height: ${(props) => (props.showReminder ? "64px" : "24px")};
     }
   }
 `;

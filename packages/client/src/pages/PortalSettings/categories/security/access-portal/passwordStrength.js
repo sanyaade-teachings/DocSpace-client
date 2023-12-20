@@ -48,7 +48,6 @@ const MainContainer = styled.div`
 const PasswordStrength = (props) => {
   const {
     t,
-
     setPortalPasswordSettings,
     passwordSettings,
     initSettings,
@@ -98,16 +97,16 @@ const PasswordStrength = (props) => {
     checkWidth();
     window.addEventListener("resize", checkWidth);
 
-    if (!isInit) initSettings().then(() => setIsLoading(true));
+    if (!isInit) initSettings("password").then(() => setIsLoading(true));
     else setIsLoading(true);
 
     return () => window.removeEventListener("resize", checkWidth);
   }, []);
 
   useEffect(() => {
-    if (!isInit) return;
+    if (!isInit || !passwordSettings) return;
     getSettings();
-  }, [isLoading]);
+  }, [isLoading, passwordSettings]);
 
   useEffect(() => {
     if (!isLoading) return;
@@ -201,7 +200,7 @@ const PasswordStrength = (props) => {
           {t("SettingPasswordDescription")}
         </Text>
         <Text fontSize="13px" fontWeight="400" className="learn-subtitle">
-          <Trans t={t} i18nKey="SettingPasswordDescriptionSave" />
+          <Trans t={t} i18nKey="SaveToApply" />
         </Text>
         <Link
           className="link-learn-more"

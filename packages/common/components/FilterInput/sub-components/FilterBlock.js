@@ -413,7 +413,7 @@ const FilterBlock = ({
             {isLoading ? (
               <Loaders.FilterBlock isRooms={isRooms} isAccounts={isAccounts} />
             ) : (
-              <Scrollbar className="filter-body__scrollbar" stype="mediumBlack">
+              <Scrollbar className="filter-body__scrollbar">
                 {filterData.map((item, index) => {
                   return (
                     <FilterBlockItem
@@ -482,9 +482,7 @@ const FilterBlock = ({
     );
   };
 
-  return currentDeviceType === DeviceType.mobile
-    ? renderPortalFilterBlock()
-    : filterBlockComponent;
+  return renderPortalFilterBlock();
 };
 
 export default React.memo(withTranslation("Common")(FilterBlock));

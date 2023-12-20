@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { getPresignedUri } from "@docspace/common/api/files";
+import { getPresignedUri, getReferenceData } from "@docspace/common/api/files";
+import { getRestoreProgress } from "@docspace/common/api/portal";
 import {
   EDITOR_ID,
   FilesSelectorFilterTypes,
@@ -13,6 +14,7 @@ import SelectFolderDialog from "../components/SelectFolderDialog";
 const insertImageAction = "imageFileType";
 const mailMergeAction = "mailMergeFileType";
 const compareFilesAction = "documentsFileType";
+const setReferenceSourceAction = "referenceSourceType";
 
 const withDialogs = (WrappedComponent) => {
   return (props) => {
@@ -34,7 +36,9 @@ const withDialogs = (WrappedComponent) => {
       mfReady,
       //sharingSettings
     } = props;
+
     const fileInfo = config?.file;
+    const instanceId = config?.document?.referenceData.instanceId;
 
     useEffect(() => {
       if (window.authStore) {
@@ -51,12 +55,22 @@ const withDialogs = (WrappedComponent) => {
         data: { roomParts: "backup-restore" },
       });
       socketHelper.on("restore-backup", () => {
-        const message = t("Common:PreparationPortalTitle");
-        const docEditor =
-          typeof window !== "undefined" &&
-          window.DocEditor?.instances[EDITOR_ID];
+        getRestoreProgress()
+          .then((response) => {
+            if (!response) {
+              console.log("Skip denyEditingRights - empty progress response");
+              return;
+            }
+            const message = t("Common:PreparationPortalTitle");
+            const docEditor =
+              typeof window !== "undefined" &&
+              window.DocEditor?.instances[EDITOR_ID];
 
-        docEditor?.denyEditingRights(message);
+            docEditor?.denyEditingRights(message);
+          })
+          .catch((e) => {
+            console.error("getRestoreProgress", e);
+          });
       });
     };
 
@@ -104,6 +118,13 @@ const withDialogs = (WrappedComponent) => {
       setIsFileDialogVisible(true);
     };
 
+    const onSDKRequestReferenceSource = (event) => {
+      console.log("onSDKRequestReferenceSource", { event });
+      setActionEvent(event);
+      setFilesType(setReferenceSourceAction);
+      setIsFileDialogVisible(true);
+    };
+
     const insertImage = (link) => {
       const token = link.token;
 
@@ -146,6 +167,13 @@ const withDialogs = (WrappedComponent) => {
       });
     };
 
+    const setReferenceSource = (data) => {
+      const docEditor =
+        typeof window !== "undefined" && window.DocEditor?.instances[EDITOR_ID];
+
+      docEditor?.setReferenceSource(data);
+    };
+
     const fileTypeDetection = () => {
       if (filesType === insertImageAction) {
         return {
@@ -153,7 +181,10 @@ const withDialogs = (WrappedComponent) => {
           filterParam: FilesSelectorFilterTypes.IMG,
         };
       }
-      if (filesType === mailMergeAction) {
+      if (
+        filesType === mailMergeAction ||
+        filesType === setReferenceSourceAction
+      ) {
         return {
           isSelect: true,
           filterParam: FilesSelectorFilterTypes.XLSX,
@@ -170,10 +201,15 @@ const withDialogs = (WrappedComponent) => {
     const onSelectFile = async (file) => {
       try {
         const link = await getPresignedUri(file.id);
+        const data = await getReferenceData({
+          fileKey: file.id,
+          instanceId: instanceId,
+        });
 
         if (filesType === insertImageAction) insertImage(link);
         if (filesType === mailMergeAction) mailMerge(link);
         if (filesType === compareFilesAction) compareFiles(link);
+        if (filesType === setReferenceSourceAction) setReferenceSource(data);
       } catch (e) {
         console.error(e);
       }
@@ -182,6 +218,7 @@ const withDialogs = (WrappedComponent) => {
     const getFileTypeTranslation = () => {
       switch (filesType) {
         case mailMergeAction:
+        case setReferenceSourceAction:
           return t("MailMergeFileType");
         case insertImageAction:
           return t("ImageFileType");
@@ -192,7 +229,8 @@ const withDialogs = (WrappedComponent) => {
 
     const selectFilesListTitle = () => {
       const type = getFileTypeTranslation();
-      return filesType === mailMergeAction
+      return filesType === mailMergeAction ||
+        filesType === setReferenceSourceAction
         ? type
         : t("SelectFilesType", { fileType: type });
     };
@@ -281,6 +319,7 @@ const withDialogs = (WrappedComponent) => {
         onClickSaveSelectFolder={onClickSaveSelectFolder}
         titleSelectorFolder={titleSelectorFolder}
         mfReady={mfReady}
+        settings={props.filesSettings}
       />
     );
 
@@ -295,6 +334,7 @@ const withDialogs = (WrappedComponent) => {
         onSDKRequestInsertImage={onSDKRequestInsertImage}
         onSDKRequestSelectSpreadsheet={onSDKRequestSelectSpreadsheet}
         onSDKRequestSelectDocument={onSDKRequestSelectDocument}
+        onSDKRequestReferenceSource={onSDKRequestReferenceSource}
         isFileDialogVisible={isFileDialogVisible}
         selectFolderDialog={selectFolderDialog}
         onSDKRequestSaveAs={onSDKRequestSaveAs}

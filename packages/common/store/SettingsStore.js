@@ -24,7 +24,7 @@ import {
   size as deviceSize,
   isTablet,
 } from "@docspace/components/utils/device";
-import { wrongPortalNameUrl } from "@docspace/common/constants";
+import { wrongPortalNameUrl } from "../constants";
 import { ARTICLE_ALERTS } from "@docspace/client/src/helpers/constants";
 import toastr from "@docspace/components/toast/toastr";
 //import { getFromLocalStorage } from "@docspace/client/src/pages/PortalSettings/utils";
@@ -95,6 +95,7 @@ class SettingsStore {
   urlLicense = "https://gnu.org/licenses/gpl-3.0.html";
   urlSupport = "https://helpdesk.onlyoffice.com/";
 
+  forumLink = null;
   formGallery = {
     url: "",
     ext: ".oform",
@@ -130,6 +131,7 @@ class SettingsStore {
   nameSchemaId = null;
   owner = {};
   wizardToken = null;
+  limitedAccessSpace = null;
   passwordSettings = null;
   hasShortenService = false;
   withPaging = false;
@@ -152,7 +154,6 @@ class SettingsStore {
   debugInfo = false;
   socketUrl = "";
 
-  userFormValidation = /^[\p{L}\p{M}'\-]+$/gu;
   folderFormValidation = new RegExp('[*+:"<>?|\\\\/]', "gim");
 
   tenantStatus = null;
@@ -167,7 +168,8 @@ class SettingsStore {
   currentColorScheme = null;
 
   enablePlugins = false;
-  pluginOptions = [];
+  pluginOptions = { upload: false, delete: false };
+  domainValidator = null;
 
   additionalResourcesData = null;
   additionalResourcesIsDefault = true;
@@ -181,7 +183,9 @@ class SettingsStore {
   zendeskKey = null;
   bookTrainingEmail = null;
   legalTerms = null;
-  baseDomain = "onlyoffice.io";
+  baseDomain = null;
+  portals = [];
+  domain = null;
   documentationEmail = null;
   articleAlertsData = initArticleAlertsData();
   cspDomains = [];
@@ -190,6 +194,8 @@ class SettingsStore {
   numberAttempt = null;
   blockingTime = null;
   checkPeriod = null;
+
+  userNameRegex = "";
 
   windowWidth = window.innerWidth;
 
@@ -397,6 +403,13 @@ class SettingsStore {
     this.defaultPage = defaultPage;
   };
 
+  setPortalDomain = (domain) => {
+    this.baseDomain = domain;
+  };
+  setPortals = (portals) => {
+    this.portals = portals;
+  };
+
   setGreetingSettings = (greetingSettings) => {
     this.greetingSettings = greetingSettings;
   };
@@ -469,17 +482,33 @@ class SettingsStore {
         const url = new URL(wrongPortalNameUrl);
         url.searchParams.append("url", window.location.hostname);
         url.searchParams.append("ref", window.location.href);
-        // return window.location.replace(url);
+        return window.location.replace(url);
+      }
+
+      if (err?.response?.status === 403) {
+        //access to the portal is restricted
+        window.DocSpace.navigate("/access-restricted", {
+          state: { isRestrictionError: true },
+          replace: true,
+        });
       }
     });
 
     if (origSettings?.plugins?.enabled) {
       this.enablePlugins = origSettings.plugins.enabled;
-      this.pluginOptions = origSettings.plugins.allow;
+
+      this.pluginOptions = {
+        upload: origSettings.plugins.upload,
+        delete: origSettings.plugins.delete,
+      };
     }
 
     if (origSettings?.tenantAlias) {
       this.setTenantAlias(origSettings.tenantAlias);
+    }
+
+    if (origSettings?.domainValidator) {
+      this.domainValidator = origSettings.domainValidator;
     }
   };
 
@@ -615,6 +644,23 @@ class SettingsStore {
 
     this.setLogoUrls(Object.values(res));
     this.setLogoUrl(Object.values(res));
+  };
+
+  getDomainName = async () => {
+    const res = await api.management.getDomainName();
+    const { settings } = res;
+    this.setPortalDomain(settings);
+    return settings;
+  };
+
+  getAllPortals = async () => {
+    const res = await api.management.getAllPortals();
+    this.setPortals(res.tenants);
+    return res;
+  };
+
+  getPortals = async () => {
+    await this.getAllPortals();
   };
 
   restoreCompanyInfoSettings = async () => {
@@ -931,6 +977,7 @@ class SettingsStore {
   };
 
   get isFrame() {
+    console.log("get isFrame:", this.frameConfig?.name === window.name);
     return this.frameConfig?.name === window.name;
   }
 
@@ -1046,6 +1093,12 @@ class SettingsStore {
     if (isTablet(this.windowWidth)) return DeviceType.tablet;
 
     return DeviceType.desktop;
+  }
+
+  get enablePortalRename() {
+    return (
+      !this.standalone || (this.standalone && this.baseDomain !== "localhost")
+    );
   }
 }
 

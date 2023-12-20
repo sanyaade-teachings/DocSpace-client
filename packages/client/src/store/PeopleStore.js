@@ -1,4 +1,4 @@
-﻿import InfoReactSvgUrl from "PUBLIC_DIR/images/info.react.svg?url";
+﻿import InfoReactSvgUrl from "PUBLIC_DIR/images/info.outline.react.svg?url";
 import EnableReactSvgUrl from "PUBLIC_DIR/images/enable.react.svg?url";
 import DisableReactSvgUrl from "PUBLIC_DIR/images/disable.react.svg?url";
 import ChangeToEmployeeReactSvgUrl from "PUBLIC_DIR/images/change.to.employee.react.svg?url";
@@ -82,8 +82,6 @@ class PeopleStore {
     this.isInit = true;
 
     //this.authStore.settingsStore.setModuleInfo(config.homepage, config.id);
-
-    await this.authStore.settingsStore.getPortalPasswordSettings();
   };
 
   reset = () => {
@@ -177,26 +175,10 @@ class PeopleStore {
     setIsVisible(true);
   };
 
-  getHeaderMenu = (t) => {
-    const {
-      hasUsersToMakeEmployees,
-      hasUsersToActivate,
-      hasUsersToDisable,
-      hasUsersToInvite,
-      hasUsersToRemove,
-      hasOnlyOneUserToRemove,
-      hasFreeUsers,
-      userSelectionRole,
-      selection,
-    } = this.selectionStore;
-
-    const { setSendInviteDialogVisible, setDeleteProfileDialogVisible } =
-      this.dialogStore;
-    const { toggleDeleteProfileEverDialog } = this.contextOptionsStore;
+  getUsersRightsSubmenu = (t) => {
+    const { userSelectionRole, selectionUsersRights } = this.selectionStore;
 
     const { isOwner } = this.authStore.userStore.user;
-
-    const { isVisible } = this.authStore.infoPanelStore;
 
     const options = [];
 
@@ -220,22 +202,71 @@ class PeopleStore {
       key: "manager",
       isActive: userSelectionRole === "manager",
     };
-    const userOption = {
-      id: "menu_change-user_user",
-      className: "group-menu_drop-down",
-      label: t("Common:User"),
-      title: t("Common:User"),
+    // const userOption = {
+    //   id: "menu_change-user_user",
+    //   className: "group-menu_drop-down",
+    //   label: t("Common:User"),
+    //   title: t("Common:User"),
+    //   onClick: (e) => this.onChangeType(e),
+    //   "data-action": "user",
+    //   key: "user",
+    //   isActive: userSelectionRole === "user",
+    // };
+
+    const collaboratorOption = {
+      id: "menu_change-collaborator",
+      key: "collaborator",
+      title: t("Common:PowerUser"),
+      label: t("Common:PowerUser"),
+      "data-action": "collaborator",
       onClick: (e) => this.onChangeType(e),
-      "data-action": "user",
-      key: "user",
-      isActive: userSelectionRole === "user",
+      isActive: userSelectionRole === "collaborator",
     };
 
-    isOwner && options.push(adminOption);
+    const { isVisitor, isCollaborator, isRoomAdmin, isAdmin } =
+      selectionUsersRights;
 
-    options.push(managerOption);
+    if (isVisitor > 0) {
+      isOwner && options.push(adminOption);
+      options.push(managerOption);
+      options.push(collaboratorOption);
 
-    hasFreeUsers && options.push(userOption);
+      return options;
+    }
+
+    if (isCollaborator > 0 || (isRoomAdmin > 0 && isAdmin > 0)) {
+      isOwner && options.push(adminOption);
+      options.push(managerOption);
+
+      return options;
+    }
+
+    if (isRoomAdmin > 0) {
+      isOwner && options.push(adminOption);
+
+      return options;
+    }
+
+    if (isAdmin > 0) {
+      options.push(managerOption);
+
+      return options;
+    }
+  };
+  getHeaderMenu = (t) => {
+    const {
+      hasUsersToMakeEmployees,
+      hasUsersToActivate,
+      hasUsersToDisable,
+      hasUsersToInvite,
+      hasUsersToRemove,
+      selection,
+    } = this.selectionStore;
+
+    const { setSendInviteDialogVisible } = this.dialogStore;
+    const { toggleDeleteProfileEverDialog } = this.contextOptionsStore;
+
+    const { isVisible } = this.authStore.infoPanelStore;
 
     const headerMenu = [
       {
@@ -245,13 +276,16 @@ class PeopleStore {
         disabled: !hasUsersToMakeEmployees,
         iconUrl: ChangeToEmployeeReactSvgUrl,
         withDropDown: true,
-        options: options,
+        options: this.getUsersRightsSubmenu(t),
       },
       {
         id: "menu-info",
         key: "info",
         label: t("Common:Info"),
-        disabled: isVisible || !(isTablet() || isMobile() || !isDesktop()),
+        disabled:
+          isVisible ||
+          !(isTablet() || isMobile() || !isDesktop()) ||
+          selection.length > 1,
         onClick: (item) => this.onOpenInfoPanel(item),
         iconUrl: InfoReactSvgUrl,
       },
@@ -283,8 +317,8 @@ class PeopleStore {
         id: "menu-delete",
         key: "delete",
         label: t("Common:Delete"),
-        disabled: !hasOnlyOneUserToRemove,
-        onClick: () => toggleDeleteProfileEverDialog(selection[0]),
+        disabled: !hasUsersToRemove,
+        onClick: () => toggleDeleteProfileEverDialog(selection),
         iconUrl: DeleteReactSvgUrl,
       },
     ];

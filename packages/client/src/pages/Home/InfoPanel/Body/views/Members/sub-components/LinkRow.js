@@ -19,7 +19,8 @@ import LockedReactSvgUrl from "PUBLIC_DIR/images/locked.react.svg?url";
 import LoadedReactSvgUrl from "PUBLIC_DIR/images/loaded.react.svg?url";
 import TrashReactSvgUrl from "PUBLIC_DIR/images/trash.react.svg?url";
 import ClockReactSvg from "PUBLIC_DIR/images/clock.react.svg";
-import moment from "moment";
+import moment from "moment-timezone";
+import { RoomsType } from "@docspace/common/constants";
 
 import { StyledLinkRow } from "./StyledPublicRoom";
 
@@ -36,6 +37,8 @@ const LinkRow = (props) => {
     setEmbeddingPanelIsVisible,
     isArchiveFolder,
     theme,
+    setIsScrollLocked,
+    isPublicRoomType,
     ...rest
   } = props;
 
@@ -53,7 +56,9 @@ const LinkRow = (props) => {
 
   const isLocked = !!password;
   const expiryDate = !!expirationDate;
-  const date = moment(expirationDate).format("LLL");
+  const date = moment(expirationDate)
+    .tz(window.timezone || "")
+    .format("LLL");
 
   const tooltipContent = isExpired
     ? t("Translations:LinkHasExpiredAndHasBeenDisabled")
@@ -62,6 +67,7 @@ const LinkRow = (props) => {
   const onEditLink = () => {
     setEditLinkPanelIsVisible(true);
     setLinkParams({ isEdit: true, link });
+    onCloseContextMenu();
   };
 
   const onDisableLink = () => {
@@ -96,16 +102,27 @@ const LinkRow = (props) => {
   const onEmbeddingClick = () => {
     setLinkParams({ link, roomId });
     setEmbeddingPanelIsVisible(true);
+    onCloseContextMenu();
   };
 
   const onDeleteLink = () => {
     setLinkParams({ link });
     setDeleteLinkDialogVisible(true);
+    onCloseContextMenu();
   };
 
   const onCopyExternalLink = () => {
     copy(shareLink);
     toastr.success(t("Files:LinkSuccessfullyCopied"));
+    onCloseContextMenu();
+  };
+
+  const onOpenContextMenu = () => {
+    setIsScrollLocked(true);
+  };
+
+  const onCloseContextMenu = () => {
+    setIsScrollLocked(false);
   };
 
   const getData = () => {
@@ -126,16 +143,16 @@ const LinkRow = (props) => {
       //   icon: ShareReactSvgUrl,
       //   // onClick: () => args.onClickLabel("label2"),
       // },
-      !isExpired && {
-        key: "embedding-settings-key",
-        label: t("Files:EmbeddingSettings"),
-        icon: CodeReactSvgUrl,
-        onClick: onEmbeddingClick,
-      },
+      // !isExpired && {
+      //   key: "embedding-settings-key",
+      //   label: t("Files:EmbeddingSettings"),
+      //   icon: CodeReactSvgUrl,
+      //   onClick: onEmbeddingClick,
+      // },
 
       !disabled && {
         key: "copy-link-settings-key",
-        label: t("Files:CopyGeneralLink"),
+        label: primary ? t("Files:CopyGeneralLink") : t("Files:CopyLink"),
         icon: CopyToReactSvgUrl,
         onClick: onCopyExternalLink,
       },
@@ -160,8 +177,12 @@ const LinkRow = (props) => {
       },
       {
         key: "delete-link-key",
-        label: t("Common:Delete"),
-        icon: TrashReactSvgUrl,
+        label:
+          primary && isPublicRoomType
+            ? t("Files:RevokeLink")
+            : t("Common:Delete"),
+        icon:
+          primary && isPublicRoomType ? OutlineReactSvgUrl : TrashReactSvgUrl,
         onClick: onDeleteLink,
       },
     ];
@@ -216,7 +237,7 @@ const LinkRow = (props) => {
               size={16}
               iconName={CopyReactSvgUrl}
               onClick={onCopyExternalLink}
-              title={t("Files:CopyGeneralLink")}
+              title={primary ? t("Files:CopyGeneralLink") : t("Files:CopyLink")}
             />
           </>
         )}
@@ -227,6 +248,8 @@ const LinkRow = (props) => {
             isDisabled={isLoading}
             title={t("Files:ShowLinkActions")}
             directionY="both"
+            onClick={onOpenContextMenu}
+            onClose={onCloseContextMenu}
           />
         )}
       </div>
@@ -246,7 +269,7 @@ export default inject(
       setLinkParams,
     } = dialogsStore;
     const { editExternalLink, setExternalLink } = publicRoomStore;
-    const { isArchiveFolder } = treeFoldersStore;
+    const { isArchiveFolderRoot } = treeFoldersStore;
 
     return {
       setLinkParams,
@@ -256,8 +279,9 @@ export default inject(
       setEditLinkPanelIsVisible,
       setDeleteLinkDialogVisible,
       setEmbeddingPanelIsVisible,
-      isArchiveFolder,
+      isArchiveFolder: isArchiveFolderRoot,
       theme,
+      isPublicRoomType: selectionParentRoom.roomType === RoomsType.PublicRoom,
     };
   }
 )(

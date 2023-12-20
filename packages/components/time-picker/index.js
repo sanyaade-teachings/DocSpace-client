@@ -3,14 +3,14 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import styled, { css } from "styled-components";
 
-import TextInput from "@docspace/components/text-input";
+import TextInput from "../text-input";
 import Base from "../themes/base";
 
 const TimeInput = styled.div`
   width: 57px;
   height: 32px;
   box-sizing: border-box;
-  padding: 6px 8px;
+  padding: 0px 8px;
   direction: ltr;
 
   border: 1px solid #d0d5da;
@@ -19,6 +19,7 @@ const TimeInput = styled.div`
   transition: "all 0.2s ease 0s";
 
   display: flex;
+  align-items: center;
 
   border-color: ${(props) => (props.hasError ? "#f21c0e" : "#d0d5da")};
 

@@ -15,7 +15,7 @@ import BackgroundPatternPurpleReactSvgUrl from "PUBLIC_DIR/images/background.pat
 import BackgroundPatternLightBlueReactSvgUrl from "PUBLIC_DIR/images/background.pattern.lightBlue.react.svg?url";
 import BackgroundPatternBlackReactSvgUrl from "PUBLIC_DIR/images/background.pattern.black.react.svg?url";
 
-import moment from "moment";
+import moment from "moment-timezone";
 
 import { LANGUAGE, ThemeKeys, RtlLanguages } from "../constants";
 import sjcl from "sjcl";
@@ -92,7 +92,6 @@ export function getObjectByLocation(location) {
 
   try {
     const object = JSON.parse(`{"${decodedString}"}`);
-
     return object;
   } catch (e) {
     return {};
@@ -337,7 +336,7 @@ export const isLanguageRtl = (lng: string) => {
 
 // temporary function needed to replace rtl language in Editor to ltr
 export const getLtrLanguageForEditor = (
-  userLng: string,
+  userLng: string | undefined,
   portalLng: string,
   isEditor: boolean = false
 ): string => {
@@ -350,7 +349,6 @@ export const getLtrLanguageForEditor = (
 
   if ((!isEditor && !isEditorPath) || (userLng && !isUserLngRtl))
     return userLng;
-  if (portalLng && !isPortalLngRtl) return portalLng;
 
   return "en";
 };
@@ -400,6 +398,39 @@ export function convertLanguage(key) {
     case "fr-FR":
       return "fr";
   }
+
+  return key;
+}
+
+export function convertToCulture(key: string) {
+  switch (key) {
+    case "ar":
+      return "ar-SA";
+    case "en":
+      return "en-US";
+    case "el":
+      return "el-GR";
+    case "hy":
+      return "hy-AM";
+    case "ko":
+      return "ko-KR";
+    case "lo":
+      return "lo-LA";
+    case "pt":
+      return "pt-BR";
+    case "uk":
+      return "uk-UA";
+    case "ja":
+      return "ja-JP";
+    case "zh":
+      return "zh-CN";
+  }
+  return key;
+}
+
+export function convertToLanguage(key: string) {
+  const splittedKey = key.split("-");
+  if (splittedKey.length > 1) return splittedKey[0];
 
   return key;
 }
@@ -629,4 +660,24 @@ export const getSystemTheme = () => {
       window.matchMedia("(prefers-color-scheme: dark)").matches
     ? ThemeKeys.DarkStr
     : ThemeKeys.BaseStr;
+};
+
+export const getEditorTheme = (theme) => {
+  switch (theme) {
+    case ThemeKeys.BaseStr:
+      return "default-light";
+    case ThemeKeys.DarkStr:
+      return "default-dark";
+    case ThemeKeys.SystemStr: {
+      const uiTheme = getSystemTheme();
+      return uiTheme === ThemeKeys.DarkStr ? "default-dark" : "default-light";
+    }
+    default:
+      return "default-dark";
+  }
+};
+
+const languages: string[] = ["ar-SA"];
+export const isBetaLanguage = (language: string): boolean => {
+  return languages.includes(language);
 };

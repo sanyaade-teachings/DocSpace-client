@@ -1,5 +1,5 @@
 import React from "react";
-import moment from "moment";
+import moment from "moment-timezone";
 import styled from "styled-components";
 
 import Text from "@docspace/components/text";
@@ -18,7 +18,7 @@ const BarWrapper = styled.div`
   display: flex;
   justify-content: space-between;
 
-  margin-top: 24px;
+  margin-top: 25px;
 
   background: ${(props) => (props.theme.isBase ? "#f8f9f9" : "#3D3D3D")};
   border-radius: 3px;
@@ -46,7 +46,13 @@ const BarItem = styled.div`
 `;
 
 const BarItemHeader = ({ children }) => (
-  <Text as="h3" color="#A3A9AE" fontSize="12px" fontWeight={600} className="barItemHeader">
+  <Text
+    as="h3"
+    color="#A3A9AE"
+    fontSize="12px"
+    fontWeight={600}
+    className="barItemHeader"
+  >
     {children}
   </Text>
 );
@@ -61,7 +67,12 @@ const DetailsBar = ({ eventDetails }) => {
 
   const formatDate = (date) => {
     return (
-      moment(date).locale(i18n.language).format("MMM D, YYYY, h:mm:ss A") + " " + t("Common:UTC")
+      moment(date)
+        .locale(i18n.language)
+        .tz(window.timezone || "")
+        .format("MMM D, YYYY, h:mm:ss A") +
+      " " +
+      t("Common:UTC")
     );
   };
 

@@ -29,10 +29,10 @@ const PortalRenaming = (props) => {
     tenantAlias,
     initSettings,
     setIsLoaded,
-    getAllSettings,
     domain,
     currentColorScheme,
     renamingSettingsUrl,
+    domainValidator,
   } = props;
 
   const navigate = useNavigate();
@@ -74,15 +74,7 @@ const PortalRenaming = (props) => {
 
   const [isCustomizationView, setIsCustomizationView] = useState(false);
 
-  const [domainValidator, setDomainValidator] = useState(null);
-
   const [isShowModal, setIsShowModal] = useState(false);
-
-  useEffect(() => {
-    getAllSettings().then((res) => {
-      setDomainValidator(res.domainValidator);
-    });
-  }, []);
 
   useEffect(() => {
     setDocumentTitle(t("PortalRenaming"));
@@ -116,7 +108,7 @@ const PortalRenaming = (props) => {
     setIsLoadingPortalNameSave(true);
 
     setPortalRename(portalName)
-      .then((res) => {
+      .then((confirmUrl) => {
         onCloseModal();
         toastr.success(t("SuccessfullySavePortalNameMessage"));
 
@@ -124,7 +116,7 @@ const PortalRenaming = (props) => {
         setPortalNameDefault(portalName);
         sessionStorage.clear();
 
-        navigate(res);
+        window.location.replace(confirmUrl);
       })
       .catch((error) => {
         let errorMessage = "";
@@ -138,8 +130,13 @@ const PortalRenaming = (props) => {
           errorMessage = error;
         }
 
+        toastr.error(errorMessage);
+        setIsShowModal(false);
         setErrorValue(errorMessage);
         saveToSessionStorage("errorValue", errorMessage);
+      })
+      .finally(() => {
+        setIsLoadingPortalNameSave(false);
       });
 
     saveToSessionStorage("portalName", portalName);
@@ -331,6 +328,7 @@ const PortalRenaming = (props) => {
         reminderText={t("YouHaveUnsavedChanges")}
         displaySettings={true}
         hasScroll={hasScroll}
+        saveButtonDisabled={!!errorValue}
         additionalClassSaveButton="portal-renaming-save"
         additionalClassCancelButton="portal-renaming-cancel"
       />
@@ -351,8 +349,9 @@ export default inject(({ auth, setup, common }) => {
     baseDomain,
     currentColorScheme,
     renamingSettingsUrl,
+    domainValidator,
   } = auth.settingsStore;
-  const { setPortalRename, getAllSettings } = setup;
+  const { setPortalRename } = setup;
   const { isLoaded, setIsLoadedPortalRenaming, initSettings, setIsLoaded } =
     common;
 
@@ -364,10 +363,10 @@ export default inject(({ auth, setup, common }) => {
     tenantAlias,
     initSettings,
     setIsLoaded,
-    getAllSettings,
     domain: baseDomain,
     currentColorScheme,
     renamingSettingsUrl,
+    domainValidator,
   };
 })(
   withLoading(withTranslation(["Settings", "Common"])(observer(PortalRenaming)))

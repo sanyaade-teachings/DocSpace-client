@@ -71,7 +71,7 @@ const DNSSettings = (props) => {
   useEffect(() => {
     setDocumentTitle(t("DNSSettings"));
 
-    if (!isLoaded) initSettings().then(() => setIsLoaded(true));
+    if (!isLoaded) initSettings("dns-settings").then(() => setIsLoaded(true));
 
     const checkScroll = checkScrollSettingsBlock();
     checkInnerWidth();
@@ -222,6 +222,7 @@ const DNSSettings = (props) => {
           {!isSettingPaid && (
             <Badge
               className="paid-badge"
+              fontWeight="700"
               backgroundColor="#EDC409"
               label={t("Common:Paid")}
               isPaidBadge={true}

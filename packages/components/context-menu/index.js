@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import DomHelpers from "../utils/domHelpers";
 import { classNames } from "../utils/classNames";
+import { trimSeparator } from "../utils/trimSeparator";
 import { CSSTransition } from "react-transition-group";
 import { withTheme } from "styled-components";
 
@@ -14,12 +15,14 @@ import {
   isMobile as isMobileUtils,
   isTablet as isTabletUtils,
 } from "../utils/device";
+
 import Backdrop from "../backdrop";
 import Text from "../text";
 import Avatar from "../avatar";
 import IconButton from "../icon-button";
 import ArrowLeftReactUrl from "PUBLIC_DIR/images/arrow-left.react.svg?url";
-import RoomIcon from "@docspace/components/room-icon";
+import RoomIcon from "../room-icon";
+
 class ContextMenu extends Component {
   constructor(props) {
     super(props);
@@ -52,7 +55,7 @@ class ContextMenu extends Component {
 
   show = (e) => {
     if (this.props.getContextModel) {
-      const model = this.props.getContextModel();
+      const model = trimSeparator(this.props.getContextModel());
       this.setState({ model });
     }
 
@@ -381,6 +384,7 @@ class ContextMenu extends Component {
                           <RoomIcon
                             color={this.props.header.color}
                             title={this.props.header.title}
+                            isArchive={this.props.isArchive}
                           />
                         ) : (
                           <img
@@ -400,7 +404,7 @@ class ContextMenu extends Component {
                       />
                     </div>
                   )}
-                  <Text className="text" truncate={true}>
+                  <Text className="text" truncate={true} dir="auto">
                     {this.props.header.title}
                   </Text>
                 </div>
@@ -444,9 +448,13 @@ class ContextMenu extends Component {
       <>
         {this.props.withBackdrop && (
           <Backdrop
-            visible={this.state.visible}
-            withBackground={isMobile}
-            withoutBlur={!isMobile}
+            visible={
+              this.state.visible &&
+              (this.state.changeView || this.props.ignoreChangeView)
+            }
+            withBackground={true}
+            withoutBlur={false}
+            zIndex={this.props.baseZIndex}
           />
         )}
         <Portal element={element} appendTo={this.props.appendTo} />
@@ -476,6 +484,8 @@ ContextMenu.propTypes = {
   global: PropTypes.bool,
   /** Sets the context menu to be rendered with a backdrop */
   withBackdrop: PropTypes.bool,
+  /** Ignores changeView restrictions for rendering backdrop */
+  ignoreChangeView: PropTypes.bool,
   /** Sets zIndex layering value automatically */
   autoZIndex: PropTypes.bool,
   /** Sets automatic layering management */

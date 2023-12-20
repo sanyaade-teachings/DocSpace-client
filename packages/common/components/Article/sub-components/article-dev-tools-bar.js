@@ -1,5 +1,6 @@
 import DeveloperReactSvgUrl from "PUBLIC_DIR/images/catalog.developer.react.svg?url";
 import ArrowReactSvgUrl from "PUBLIC_DIR/images/arrow.right.react.svg?url";
+import React from "react";
 
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
@@ -34,7 +35,12 @@ const StyledWrapper = styled.div`
 
   .arrow {
     height: 16px;
-    margin-left: auto;
+    margin-inline-start: auto;
+
+    svg {
+      ${({ theme }) =>
+        theme.interfaceDirection === "rtl" && "transform: scaleX(-1);"}
+    }
   }
 
   .label {

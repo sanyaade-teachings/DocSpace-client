@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { inject, observer } from "mobx-react";
 import styled, { css } from "styled-components";
 import Aside from "@docspace/components/aside";
@@ -6,8 +6,7 @@ import Backdrop from "@docspace/components/backdrop";
 import PeopleSelector from "@docspace/client/src/components/PeopleSelector";
 import { withTranslation } from "react-i18next";
 import Filter from "@docspace/common/api/people/filter";
-import { EmployeeType, ShareAccessRights } from "@docspace/common/constants";
-import toastr from "@docspace/components/toast/toastr";
+import { EmployeeType } from "@docspace/common/constants";
 import { DeviceType } from "@docspace/common/constants";
 import Portal from "@docspace/components/portal";
 
@@ -43,20 +42,14 @@ const ChangeRoomOwner = (props) => {
     visible,
     setIsVisible,
     showBackButton,
-    setRoomOwner,
-    roomId,
-    setFolder,
-    updateRoomMemberRole,
-    userId,
-    isAdmin,
     setRoomParams,
-    removeFiles,
-    folders,
-    setFolders,
     currentDeviceType,
+    roomOwnerId,
+    changeRoomOwner,
   } = props;
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isChecked, setIsChecked] = useState(!showBackButton);
 
   useEffect(() => {
     document.addEventListener("keyup", onKeyUp, false);
@@ -71,47 +64,16 @@ const ChangeRoomOwner = (props) => {
     if (e.keyCode === 13 || e.which === 13) onChangeRoomOwner();
   };
 
-  const onLeaveRoom = () => {
-    setIsLoading(true);
-    updateRoomMemberRole(roomId, {
-      invitations: [{ id: userId, access: ShareAccessRights.None }],
-    })
-      .then(() => {
-        if (!isAdmin) removeFiles(null, [roomId]);
-        else {
-          const newFolders = folders;
-          const folderIndex = newFolders.findIndex((r) => r.id === roomId);
-          newFolders[folderIndex].inRoom = false;
-          setFolders(newFolders);
-        }
-        toastr.success(t("Files:LeftAndAppointNewOwner"));
-      })
+  const onChangeRoomOwner = async (user) => {
+    if (showBackButton) {
+      setRoomParams && setRoomParams(user[0]);
+    } else {
+      setIsLoading(true);
 
-      .finally(() => {
-        onClose();
-        setIsLoading(false);
-      });
-  };
-
-  const onChangeRoomOwner = (
-    user,
-    selectedAccess,
-    newFooterInputValue,
-    isChecked
-  ) => {
-    setIsLoading(true);
-
-    setRoomOwner(user[0].id, [roomId])
-      .then(async (res) => {
-        setFolder(res[0]);
-        if (isChecked) await onLeaveRoom();
-        else toastr.success(t("Files:AppointNewOwner"));
-        setRoomParams && setRoomParams(res[0].createdBy);
-      })
-      .finally(() => {
-        setIsLoading(false);
-        onClose();
-      });
+      await changeRoomOwner(t, user[0]?.id, isChecked);
+      setIsLoading(false);
+    }
+    onClose();
   };
 
   const onClose = () => {
@@ -147,13 +109,18 @@ const ChangeRoomOwner = (props) => {
           {...backClickProp}
           onAccept={onChangeRoomOwner}
           onCancel={onClose}
-          acceptButtonLabel={t("Files:AssignOwner")}
+          acceptButtonLabel={
+            showBackButton ? t("Common:SelectAction") : t("Files:AssignOwner")
+          }
           headerLabel={t("Files:ChangeTheRoomOwner")}
           filter={filter}
           isLoading={isLoading}
           withFooterCheckbox={!showBackButton}
           footerCheckboxLabel={t("Files:LeaveTheRoom")}
-          isChecked={!showBackButton}
+          isChecked={isChecked}
+          setIsChecked={setIsChecked}
+          withOutCurrentAuthorizedUser
+          filterUserId={roomOwnerId}
         />
       </Aside>
     </StyledChangeRoomOwner>
@@ -167,7 +134,13 @@ const ChangeRoomOwner = (props) => {
 };
 
 export default inject(
-  ({ auth, dialogsStore, filesStore, selectedFolderStore }) => {
+  ({
+    auth,
+    dialogsStore,
+    filesStore,
+    selectedFolderStore,
+    filesActionsStore,
+  }) => {
     const {
       changeRoomOwnerIsVisible,
       setChangeRoomOwnerIsVisible,
@@ -175,23 +148,13 @@ export default inject(
     } = dialogsStore;
     const { settingsStore } = auth;
 
-    const { user } = auth.userStore;
-    const {
-      setRoomOwner,
-      selection,
-      bufferSelection,
-      setFolder,
-      updateRoomMemberRole,
-      removeFiles,
-      folders,
-      setFolders,
-    } = filesStore;
+    const { selection, bufferSelection } = filesStore;
 
-    const roomId = selection.length
-      ? selection[0].id
+    const room = selection.length
+      ? selection[0]
       : bufferSelection
-      ? bufferSelection.id
-      : selectedFolderStore.id;
+      ? bufferSelection
+      : selectedFolderStore;
 
     const { currentDeviceType } = settingsStore;
 
@@ -200,16 +163,9 @@ export default inject(
       setIsVisible: setChangeRoomOwnerIsVisible,
       showBackButton: changeRoomOwnerData.showBackButton,
       setRoomParams: changeRoomOwnerData.setRoomParams,
-      setRoomOwner,
-      userId: user.id,
-      roomId,
-      setFolder,
-      updateRoomMemberRole,
-      isAdmin: user.isOwner || user.isAdmin,
-      removeFiles,
-      folders,
-      setFolders,
+      roomOwnerId: room?.createdBy?.id,
       currentDeviceType,
+      changeRoomOwner: filesActionsStore.changeRoomOwner,
     };
   }
 )(observer(withTranslation(["Files"])(ChangeRoomOwner)));

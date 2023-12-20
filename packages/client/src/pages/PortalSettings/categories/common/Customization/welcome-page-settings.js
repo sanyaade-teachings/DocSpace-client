@@ -35,8 +35,6 @@ const WelcomePageSettings = (props) => {
     isMobileView,
     isLoadedPage,
     greetingSettingsIsDefault,
-
-    getSettings,
     getGreetingSettingsIsDefault,
     currentColorScheme,
     welcomePageSettingsUrl,
@@ -72,6 +70,7 @@ const WelcomePageSettings = (props) => {
     greetingTitleDefaultFromSessionStorage = getFromSessionStorage(
       "greetingTitleDefault"
     );
+    getGreetingSettingsIsDefault();
 
     setDocumentTitle(t("CustomTitlesWelcome"));
 
@@ -135,22 +134,10 @@ const WelcomePageSettings = (props) => {
     if (state.greetingTitleDefault || state.greetingTitle) {
       checkChanges();
     }
-
-    if (
-      (state.isLoadingGreetingSave !== prevState.isLoadingGreetingSave &&
-        state.isLoadingGreetingSave === false) ||
-      (state.isLoadingGreetingRestore !== prevState.isLoadingGreetingRestore &&
-        state.isLoadingGreetingRestore === false)
-    ) {
-      getSettings();
-      getGreetingSettingsIsDefault();
-    }
   }, [
     isLoaded,
     setIsLoadedWelcomePageSettings,
     tReady,
-    getSettings,
-    getGreetingSettingsIsDefault,
     state.hasScroll,
     state.greetingTitle,
     state.isLoadingGreetingSave,
@@ -183,6 +170,7 @@ const WelcomePageSettings = (props) => {
 
   const onChangeGreetingTitle = (e) => {
     setState((val) => ({ ...val, greetingTitle: e.target.value }));
+    getGreetingSettingsIsDefault();
 
     if (settingIsEqualInitialValue("greetingTitle", e.target.value)) {
       saveToSessionStorage("greetingTitle", "none");
@@ -206,8 +194,10 @@ const WelcomePageSettings = (props) => {
         toastr.success(t("SuccessfullySaveGreetingSettingsMessage"));
       })
       .catch((error) => toastr.error(error))
-      .finally(() =>
-        setState((val) => ({ ...val, isLoadingGreetingSave: false }))
+      .finally(() => {
+        getGreetingSettingsIsDefault();
+        setState((val) => ({ ...val, isLoadingGreetingSave: false }));
+      }
       );
 
     setState((val) => ({ ...val, showReminder: false }));
@@ -219,9 +209,10 @@ const WelcomePageSettings = (props) => {
   const onRestoreGreetingSettings = () => {
     setState((val) => ({ ...val, isLoadingGreetingRestore: true }));
     restoreGreetingTitle()
-      .then(() => {
+      .then((defaultTitle) => {
         setState((val) => ({
           ...val,
+          greetingTitle: defaultTitle,
           showReminder: false,
         }));
 
@@ -231,8 +222,10 @@ const WelcomePageSettings = (props) => {
         toastr.success(t("SuccessfullySaveGreetingSettingsMessage"));
       })
       .catch((error) => toastr.error(error))
-      .finally(() =>
-        setState((val) => ({ ...val, isLoadingGreetingRestore: false }))
+      .finally(() => {
+        getGreetingSettingsIsDefault();
+        setState((val) => ({ ...val, isLoadingGreetingRestore: false }));
+      }
       );
   };
 
@@ -363,7 +356,6 @@ export default inject(({ auth, setup, common }) => {
     greetingSettings,
     organizationName,
     theme,
-    getSettings,
     currentColorScheme,
     welcomePageSettingsUrl,
   } = auth.settingsStore;
@@ -376,6 +368,7 @@ export default inject(({ auth, setup, common }) => {
     greetingSettingsIsDefault,
     getGreetingSettingsIsDefault,
   } = common;
+
   return {
     theme,
     greetingSettings,
@@ -386,7 +379,6 @@ export default inject(({ auth, setup, common }) => {
     setIsLoadedWelcomePageSettings,
     greetingSettingsIsDefault,
     getGreetingSettingsIsDefault,
-    getSettings,
     initSettings,
     setIsLoaded,
     currentColorScheme,

@@ -47,7 +47,7 @@ const StyledBox = styled.div`
 
   background: ${(props) => props.theme.navigation.background};
 
-  filter: drop-shadow(0px 12px 40px rgba(4, 15, 27, 0.12));
+  box-shadow: ${(props) => props.theme.navigation.boxShadow};
   border-radius: 0px 0px 6px 6px;
 
   .title-container {
@@ -121,6 +121,7 @@ const DropBox = React.forwardRef(
       burgerLogo,
       titleIcon,
       currentDeviceType,
+      navigationTitleContainerNode,
     },
     ref
   ) => {
@@ -156,26 +157,6 @@ const DropBox = React.forwardRef(
           : currentHeight
       );
     }, [sectionHeight, currentDeviceType]);
-
-    const navigationTitleNode = (
-      <div className="title-block">
-        {titleIcon && <ReactSVG className="title-icon" src={titleIcon} />}
-        <Text title={title} isOpen={true} onClick={toggleDropBox} />
-      </div>
-    );
-
-    const navigationTitleContainerNode = showRootFolderNavigation ? (
-      <div className="title-container">
-        <Text
-          title={navigationItems[navigationItems.length - 2].title}
-          isOpen={true}
-          isRootFolderTitle
-        />
-        {navigationTitleNode}
-      </div>
-    ) : (
-      navigationTitleNode
-    );
 
     const isTabletView = currentDeviceType === DeviceType.tablet;
 

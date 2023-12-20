@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import { useTranslation } from "react-i18next";
 import Avatar from "@docspace/components/avatar";
 import Text from "@docspace/components/text";
-import ContextMenuButton from "@docspace/components/context-menu-button";
+import IconButton from "@docspace/components/icon-button";
 import ContextMenu from "@docspace/components/context-menu";
 
 import {
@@ -28,20 +28,24 @@ const ArticleProfile = (props) => {
   const { t } = useTranslation("Common");
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
+  const iconRef = useRef(null);
+  const buttonMenuRef = useRef(null);
   const menuRef = useRef(null);
 
   const isTabletView = currentDeviceType === DeviceType.tablet;
   const avatarSize = isTabletView ? "min" : "base";
   const userRole = getUserRole(user);
 
-  const toggle = (e, isOpen) => {
-    isOpen ? menuRef.current.show(e) : menuRef.current.hide(e);
+  const toggle = (e, isOpen, ref) => {
+    isOpen ? ref.current.show(e) : ref.current.hide(e);
     setIsOpen(isOpen);
   };
 
+  const onClick = (e) => toggle(e, !isOpen, buttonMenuRef);
+
   const onAvatarClick = (e) => {
     if (isTabletView && !showText) {
-      toggle(e, !isOpen);
+      toggle(e, !isOpen, menuRef);
     } else {
       onProfileClick();
     }
@@ -52,7 +56,14 @@ const ArticleProfile = (props) => {
   };
 
   const model = getActions(t);
-  const username = user.displayName.split(" ");
+
+  const username = user.displayName
+    .split(" ")
+    .filter((name) => name.trim().length > 0);
+
+  const lastName = username.shift();
+  const firstName = username.join(" ");
+
   const { interfaceDirection } = useTheme();
   const isRtl = interfaceDirection === "rtl";
   const userAvatar = user.hasAvatar ? user.avatar : DefaultUserPhotoPngUrl;
@@ -91,28 +102,32 @@ const ArticleProfile = (props) => {
               length={user.displayName.length}
               onClick={onProfileClick}
             >
-              <Text fontWeight={600} noSelect truncate>
-                {username[0]}
-                &nbsp;
+              <Text fontWeight={600} noSelect truncate dir="auto">
+                {lastName}
               </Text>
-              <Text fontWeight={600} noSelect truncate>
-                {username[1]}
+              &nbsp;
+              <Text fontWeight={600} noSelect truncate dir="auto">
+                {firstName}
               </Text>
             </StyledUserName>
-            <ContextMenuButton
-              id="user-option-button"
-              className="option-button"
-              iconClassName="option-button-icon"
-              zIndex={402}
-              directionX="left"
-              directionY="top"
-              iconName={VerticalDotsReactSvgUrl}
-              size={32}
-              isFill
-              getData={() => getActions(t)}
-              isDisabled={false}
-              usePortal={true}
-            />
+            <div ref={iconRef} className="option-button">
+              <IconButton
+                className="option-button-icon"
+                onClick={onClick}
+                iconName={VerticalDotsReactSvgUrl}
+                size={32}
+                isFill
+              />
+              <ContextMenu
+                model={model}
+                containerRef={iconRef}
+                ref={buttonMenuRef}
+                onHide={onHide}
+                scaled={false}
+                leftOffset={10}
+                topOffset={15}
+              />
+            </div>
           </>
         )}
       </StyledArticleProfile>

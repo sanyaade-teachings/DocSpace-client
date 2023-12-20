@@ -1,31 +1,24 @@
-﻿import CatalogFolderReactSvgUrl from "PUBLIC_DIR/images/catalog.folder.react.svg?url";
-import ClearTrashReactSvgUrl from "PUBLIC_DIR/images/clear.trash.react.svg?url";
-import CatalogUserReactSvgUrl from "PUBLIC_DIR/images/catalog.user.react.svg?url";
-import CatalogRoomsReactSvgUrl from "PUBLIC_DIR/images/catalog.rooms.react.svg?url";
-import CatalogArchiveReactSvgUrl from "PUBLIC_DIR/images/catalog.archive.react.svg?url";
-import CatalogSharedReactSvgUrl from "PUBLIC_DIR/images/catalog.shared.react.svg?url";
-import CatalogPortfolioReactSvgUrl from "PUBLIC_DIR/images/catalog.portfolio.react.svg?url";
-import CatalogFavoritesReactSvgUrl from "PUBLIC_DIR/images/catalog.favorites.react.svg?url";
-import CatalogRecentReactSvgUrl from "PUBLIC_DIR/images/catalog.recent.react.svg?url";
-import CatalogPrivateReactSvgUrl from "PUBLIC_DIR/images/catalog.private.react.svg?url";
-import CatalogTrashReactSvgUrl from "PUBLIC_DIR/images/catalog.trash.react.svg?url";
-import React, { useState } from "react";
+﻿import PropTypes from "prop-types";
 import styled from "styled-components";
-import PropTypes from "prop-types";
+import React, { useState } from "react";
 import { inject, observer } from "mobx-react";
-import CatalogItem from "@docspace/components/catalog-item";
+import { withTranslation } from "react-i18next";
+
 import {
   FolderType,
   ShareAccessRights,
   FolderNames,
   DeviceType,
 } from "@docspace/common/constants";
-import { withTranslation } from "react-i18next";
+import { getCatalogIconUrlByType } from "@docspace/common/utils/catalogIcon.helper";
+
+import CatalogItem from "@docspace/components/catalog-item";
 import DragAndDrop from "@docspace/components/drag-and-drop";
 
-import SettingsItem from "./SettingsItem";
-import AccountsItem from "./AccountsItem";
 import BonusItem from "./BonusItem";
+import AccountsItem from "./AccountsItem";
+
+import ClearTrashReactSvgUrl from "PUBLIC_DIR/images/clear.trash.react.svg?url";
 
 const StyledDragAndDrop = styled(DragAndDrop)`
   display: contents;
@@ -40,6 +33,7 @@ const Item = ({
   item,
   dragging,
   getFolderIcon,
+  setBufferSelection,
   isActive,
   getEndOfBlock,
   showText,
@@ -109,7 +103,15 @@ const Item = ({
 
   const onClickAction = React.useCallback(
     (folderId) => {
-      onClick && onClick(folderId, item.title, item.rootFolderType);
+      setBufferSelection(null);
+
+      onClick &&
+        onClick(
+          folderId,
+          item.title,
+          item.rootFolderType,
+          item.security.Create
+        );
     },
     [onClick, item.title, item.rootFolderType]
   );
@@ -144,7 +146,7 @@ const Item = ({
         labelBadge={labelBadge}
         onClickBadge={onBadgeClick}
         iconBadge={iconBadge}
-        badgeTitle={t("RecycleBinAction")}
+        badgeTitle={labelBadge ? "" : t("RecycleBinAction")}
       />
     </StyledDragAndDrop>
   );
@@ -169,6 +171,7 @@ const Items = ({
   commonId,
   currentId,
   draggableItems,
+  setBufferSelection,
 
   moveDragItems,
 
@@ -188,6 +191,7 @@ const Items = ({
   isCommunity,
   isPaymentPageAvailable,
   currentDeviceType,
+  folderAccess,
 }) => {
   const getEndOfBlock = React.useCallback(
     (item) => {
@@ -204,41 +208,7 @@ const Items = ({
   );
 
   const getFolderIcon = React.useCallback((item) => {
-    let iconUrl = CatalogFolderReactSvgUrl;
-
-    switch (item.rootFolderType) {
-      case FolderType.USER:
-        iconUrl = CatalogUserReactSvgUrl;
-        break;
-      case FolderType.Rooms:
-        iconUrl = CatalogRoomsReactSvgUrl;
-        break;
-      case FolderType.Archive:
-        iconUrl = CatalogArchiveReactSvgUrl;
-        break;
-      case FolderType.SHARE:
-        iconUrl = CatalogSharedReactSvgUrl;
-        break;
-      case FolderType.COMMON:
-        iconUrl = CatalogPortfolioReactSvgUrl;
-        break;
-      case FolderType.Favorites:
-        iconUrl = CatalogFavoritesReactSvgUrl;
-        break;
-      case FolderType.Recent:
-        iconUrl = CatalogRecentReactSvgUrl;
-        break;
-      case FolderType.Privacy:
-        iconUrl = CatalogPrivateReactSvgUrl;
-        break;
-      case FolderType.TRASH:
-        iconUrl = CatalogTrashReactSvgUrl;
-        break;
-      default:
-        break;
-    }
-
-    return iconUrl;
+    return getCatalogIconUrlByType(item.rootFolderType);
   }, []);
 
   const showDragItems = React.useCallback(
@@ -266,24 +236,15 @@ const Items = ({
         return true;
       }
 
-      if (isAdmin) {
-        if (
-          (item.pathParts &&
-            (item.pathParts[0].id === myId ||
-              item.pathParts[0].id === commonId)) ||
-          item.rootFolderType === FolderType.USER ||
-          item.rootFolderType === FolderType.COMMON ||
-          (item.rootFolderType === FolderType.TRASH && startDrag && !isArchive)
-        ) {
-          return true;
-        }
-      } else {
-        if (
-          (item.pathParts && item.pathParts[0].id === myId) ||
-          item.rootFolderType === FolderType.USER
-        ) {
-          return true;
-        }
+      if (
+        (item.rootFolderType === FolderType.TRASH && startDrag && !isArchive) ||
+        item.rootFolderType === FolderType.USER
+      ) {
+        return (
+          folderAccess === ShareAccessRights.None ||
+          folderAccess === ShareAccessRights.FullAccess ||
+          folderAccess === ShareAccessRights.RoomManager
+        );
       }
 
       return false;
@@ -338,6 +299,7 @@ const Items = ({
             startUpload={startUpload}
             uploadEmptyFolders={uploadEmptyFolders}
             item={item}
+            setBufferSelection={setBufferSelection}
             dragging={dragging}
             getFolderIcon={getFolderIcon}
             isActive={item.id === activeItemId}
@@ -439,6 +401,7 @@ export default inject(
     const {
       selection,
       bufferSelection,
+      setBufferSelection,
       dragging,
       setDragging,
       trashIsEmpty,
@@ -453,7 +416,7 @@ export default inject(
     const { treeFolders, myFolderId, commonFolderId, isPrivacyFolder } =
       treeFoldersStore;
 
-    const { id } = selectedFolderStore;
+    const { id, access: folderAccess } = selectedFolderStore;
     const {
       moveDragItems,
       uploadEmptyFolders,
@@ -483,6 +446,7 @@ export default inject(
       dragging,
       setDragging,
       moveDragItems,
+      setBufferSelection,
       deleteAction,
       startUpload,
       uploadEmptyFolders,
@@ -495,6 +459,7 @@ export default inject(
       isCommunity,
       isPaymentPageAvailable,
       currentDeviceType,
+      folderAccess,
     };
   }
 )(withTranslation(["Files", "Common", "Translations"])(observer(Items)));

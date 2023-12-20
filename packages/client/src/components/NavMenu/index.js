@@ -22,6 +22,7 @@ import { Base } from "@docspace/components/themes";
 import { DeviceType } from "@docspace/common/constants";
 
 const StyledContainer = styled.header`
+  height: 48px;
   position: relative;
   align-items: center;
   background-color: ${(props) => props.theme.header.backgroundColor};
@@ -51,8 +52,6 @@ const StyledContainer = styled.header`
             }
 
             width: 100vw;
-
-            margin-bottom: 48px;
           }
         `}
 `;
@@ -128,22 +127,22 @@ const NavMenu = (props) => {
     isFrame,
     showHeader,
     currentDeviceType,
+
+    hideProfileMenu,
+    customHeader,
   } = props;
 
   const isAsideAvailable = !!asideContent;
-  const hideHeader = isDesktop || (!showHeader && isFrame);
+  const hideHeader = !showHeader && isFrame;
 
-  if (currentDeviceType !== DeviceType.mobile || !isMobile()) return <></>;
+  if (currentDeviceType !== DeviceType.mobile || !isMobile() || hideHeader)
+    return <></>;
 
   const isPreparationPortal = location.pathname === "/preparation-portal";
   return (
     <LayoutContextConsumer>
       {(value) => (
-        <StyledContainer
-          isLoaded={isLoaded}
-          isVisible={value.isVisible}
-          isDesktop={hideHeader}
-        >
+        <StyledContainer isLoaded={isLoaded} isVisible={value.isVisible}>
           <Backdrop
             visible={isBackdropVisible}
             onClick={backdropClick}
@@ -154,8 +153,11 @@ const NavMenu = (props) => {
           {!hideHeader &&
             (isLoaded && isAuthenticated ? (
               <>
-                {!isPreparationPortal && <HeaderNav />}
+                {!isPreparationPortal && (
+                  <HeaderNav hideProfileMenu={hideProfileMenu} />
+                )}
                 <Header
+                  customHeader={customHeader}
                   isPreparationPortal={isPreparationPortal}
                   isNavOpened={isNavOpened}
                   onClick={showNav}
@@ -227,8 +229,8 @@ const NavMenuWrapper = inject(({ auth }) => {
   };
 })(observer(withTranslation(["NavMenu", "Common"])(NavMenu)));
 
-export default () => (
+export default ({ ...props }) => (
   <I18nextProvider i18n={i18n}>
-    <NavMenuWrapper />
+    <NavMenuWrapper {...props} />
   </I18nextProvider>
 );

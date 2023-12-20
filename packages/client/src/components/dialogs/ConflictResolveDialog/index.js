@@ -47,12 +47,12 @@ const StyledModalDialog = styled(ModalDialog)`
 
     .radio-option-title {
       font-weight: 600;
-      font-size: 14px;
+      font-size: ${(props) => props.theme.getCorrectFontSize("14px")};
       line-height: 16px;
     }
 
     .radio-option-description {
-      font-size: 12px;
+      font-size: ${(props) => props.theme.getCorrectFontSize("12px")};
       line-height: 16px;
       color: #a3a9ae;
     }
@@ -69,12 +69,17 @@ const ConflictResolveDialog = (props) => {
     items,
     itemOperationToFolder,
     activeFiles,
+    activeFolders,
     setActiveFiles,
+    setActiveFolders,
     updateActiveFiles,
+    setSelected,
     setMoveToPanelVisible,
+    setRestorePanelVisible,
     setCopyPanelVisible,
     setRestoreAllPanelVisible,
     setMoveToPublicRoomVisible,
+    handleFilesUpload,
   } = props;
 
   const {
@@ -85,6 +90,7 @@ const ConflictResolveDialog = (props) => {
     folderTitle,
     isCopy,
     translations,
+    isUploadConflict
   } = conflictResolveDialogData;
 
   const [resolveType, setResolveType] = useState("overwrite");
@@ -97,18 +103,22 @@ const ConflictResolveDialog = (props) => {
   const onClosePanels = () => {
     setConflictResolveDialogVisible(false);
     setMoveToPanelVisible(false);
+    setRestorePanelVisible(false);
     setCopyPanelVisible(false);
     setRestoreAllPanelVisible(false);
     setMoveToPublicRoomVisible(false);
   };
-  const onCloseDialog = () => {
-    let newActiveFiles = activeFiles;
 
-    for (let item of fileIds) {
-      newActiveFiles = newActiveFiles.filter((f) => f !== item);
-    }
+  const differenceArray = (activeItems, ids) => {
+    return activeItems.filter((item) => !ids.includes(item.id ?? item));
+  };
+
+  const onCloseDialog = () => {
+    const newActiveFiles = differenceArray(activeFiles, fileIds);
+    const newActiveFolder = differenceArray(activeFolders, folderIds);
 
     setActiveFiles(newActiveFiles);
+    setActiveFolders(newActiveFolder);
     onClose();
   };
 
@@ -139,7 +149,11 @@ const ConflictResolveDialog = (props) => {
     }
 
     updateActiveFiles(newActiveFiles);
-    if (!folderIds.length && !newFileIds.length) return onClosePanels();
+    if (!folderIds.length && !newFileIds.length) {
+      setSelected("none");
+      onClosePanels();
+      return;
+    }
 
     const data = {
       destFolderId,
@@ -151,6 +165,7 @@ const ConflictResolveDialog = (props) => {
       translations,
     };
 
+    setSelected("none");
     onClosePanels();
     try {
       sessionStorage.setItem("filesSelectorPath", `${destFolderId}`);
@@ -159,6 +174,40 @@ const ConflictResolveDialog = (props) => {
       toastr.error(error.message ? error.message : error);
     }
   };
+
+  const onAcceptUploadType = async () => {
+    const conflictResolveType = getResolveType();
+
+    let data = conflictResolveDialogData.newUploadData
+    
+    if(conflictResolveType === ConflictResolveType.Skip){
+      let filesSize = 0;
+      const newFiles = []
+
+      for(let i = 0; i < data.files.length; i++){
+        if(!items.includes(data.files[i].file.name)){
+          filesSize += data.files[i].file.size;
+          newFiles.push(data.files[i])
+        }
+      }
+
+      data = {...data, files: newFiles, filesSize};
+    }
+
+    if (data.files.length === 0) {
+      setSelected("none");
+      onClosePanels();
+      return;
+    }
+
+    setSelected("none");
+    onClosePanels();
+    try {
+      handleFilesUpload(data, t, conflictResolveType === ConflictResolveType.Duplicate )
+    } catch (error) {
+      toastr.error(error.message ? error.message : error);
+    }
+  }
 
   const radioOptions = [
     {
@@ -248,7 +297,7 @@ const ConflictResolveDialog = (props) => {
           label={t("Common:OKButton")}
           size="normal"
           primary
-          onClick={onAcceptType}
+          onClick={isUploadConflict ? onAcceptUploadType : onAcceptType}
         />
         <Button
           key="CancelButton"
@@ -268,13 +317,21 @@ export default inject(({ auth, dialogsStore, uploadDataStore, filesStore }) => {
     conflictResolveDialogData,
     conflictResolveDialogItems: items,
     setMoveToPanelVisible,
+    setRestorePanelVisible,
     setRestoreAllPanelVisible,
     setCopyPanelVisible,
     setMoveToPublicRoomVisible,
   } = dialogsStore;
 
-  const { itemOperationToFolder } = uploadDataStore;
-  const { activeFiles, setActiveFiles, updateActiveFiles } = filesStore;
+  const { itemOperationToFolder, handleFilesUpload } = uploadDataStore;
+  const {
+    activeFiles,
+    activeFolders,
+    setActiveFiles,
+    setActiveFolders,
+    updateActiveFiles,
+    setSelected,
+  } = filesStore;
   const { settingsStore } = auth;
   const { theme } = settingsStore;
   return {
@@ -285,12 +342,17 @@ export default inject(({ auth, dialogsStore, uploadDataStore, filesStore }) => {
     setConflictResolveDialogVisible,
     itemOperationToFolder,
     activeFiles,
+    activeFolders,
     setActiveFiles,
+    setActiveFolders,
     updateActiveFiles,
+    setSelected,
     setMoveToPanelVisible,
+    setRestorePanelVisible,
     setRestoreAllPanelVisible,
     setCopyPanelVisible,
     setMoveToPublicRoomVisible,
+    handleFilesUpload
   };
 })(
   withTranslation(["ConflictResolveDialog", "Common"])(

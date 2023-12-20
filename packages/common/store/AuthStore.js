@@ -16,7 +16,6 @@ import PaymentQuotasStore from "./PaymentQuotasStore";
 
 import { LANGUAGE, COOKIE_EXPIRATION_YEAR, TenantStatus } from "../constants";
 import { getPortalTenantExtra } from "../api/portal";
-import { combineUrl } from "@docspace/common/utils";
 
 class AuthStore {
   userStore = null;
@@ -36,6 +35,7 @@ class AuthStore {
   isUpdatingTariff = false;
 
   tenantExtra = {};
+
   constructor() {
     this.userStore = new UserStore();
 
@@ -43,7 +43,7 @@ class AuthStore {
     this.tfaStore = new TfaStore();
     this.infoPanelStore = new InfoPanelStore();
     this.currentQuotaStore = new CurrentQuotasStore();
-    this.currentTariffStatusStore = new CurrentTariffStatusStore();
+    this.currentTariffStatusStore = new CurrentTariffStatusStore(this);
     this.paymentQuotasStore = new PaymentQuotasStore();
     this.bannerStore = new BannerStore();
 
@@ -100,19 +100,21 @@ class AuthStore {
     const isPortalRestore =
       this.settingsStore.tenantStatus === TenantStatus.PortalRestore;
 
+    const { user } = this.userStore;
+
     if (
       this.settingsStore.isLoaded &&
       this.settingsStore.socketUrl &&
-      !this.settingsStore.isPublicRoom
+      !this.settingsStore.isPublicRoom &&
+      !isPortalDeactivated
     ) {
-      !isPortalDeactivated &&
-        requests.push(
-          this.userStore.init(i18n).then(() => {
-            if (this.isQuotaAvailable && !isPortalRestore) {
-              this.getTenantExtra();
-            }
-          })
-        );
+      requests.push(
+        this.userStore.init(i18n).then(() => {
+          if (this.isQuotaAvailable && !isPortalRestore) {
+            this.getTenantExtra();
+          }
+        })
+      );
     } else {
       this.userStore.setIsLoaded(true);
     }
@@ -124,15 +126,23 @@ class AuthStore {
 
       if (!this.settingsStore.passwordSettings) {
         if (!isPortalRestore && !isPortalDeactivated) {
-          requests.push(
-            this.settingsStore.getPortalPasswordSettings(),
-            this.settingsStore.getCompanyInfoSettings()
-          );
+          requests.push(this.settingsStore.getCompanyInfoSettings());
         }
       }
     }
 
-    return Promise.all(requests);
+    return Promise.all(requests).then(() => {
+      const { user } = this.userStore;
+
+      if (
+        this.settingsStore.standalone &&
+        !this.settingsStore.wizardToken &&
+        this.isAuthenticated &&
+        user.isAdmin
+      ) {
+        requests.push(this.settingsStore.getPortals());
+      }
+    });
   };
 
   get isEnterprise() {
@@ -331,19 +341,20 @@ class AuthStore {
     this.settingsStore = new SettingsStore();
   };
 
-  logout = async () => {
+  logout = async (reset = true) => {
     const ssoLogoutUrl = await api.user.logout();
 
     this.isLogout = true;
 
-    setWithCredentialsStatus(false);
-
-    const { isDesktopClient: isDesktop, personal } = this.settingsStore;
+    const { isDesktopClient: isDesktop } = this.settingsStore;
 
     isDesktop && logoutDesktop();
 
     if (ssoLogoutUrl) return ssoLogoutUrl;
 
+    if (!reset) return;
+
+    setWithCredentialsStatus(false);
     this.reset(true);
     this.userStore.setUser(null);
     this.init();
@@ -432,41 +443,6 @@ class AuthStore {
     this.capabilities = capabilities;
   };
 
-  getOforms = (filter) => {
-    const culture =
-      this.userStore.user.cultureName || this.settingsStore.culture;
-
-    const formName = "&fields[0]=name_form";
-    const updatedAt = "&fields[1]=updatedAt";
-    const size = "&fields[2]=file_size";
-    const filePages = "&fields[3]=file_pages";
-    const cardPrewiew = "&populate[card_prewiew][fields][4]=url";
-    const templateImage = "&populate[template_image][fields][5]=formats";
-
-    const fields = `${formName}${updatedAt}${size}${filePages}${cardPrewiew}${templateImage}`;
-
-    const params = `?${filter.toUrlParams()}${fields}`;
-
-    const promise = new Promise(async (resolve, reject) => {
-      let oforms = await api.oforms.getOforms(
-        combineUrl(
-          this.settingsStore.formGallery.url,
-          `${params}&locale=${culture}`
-        )
-      );
-
-      if (!oforms?.data?.data.length) {
-        oforms = await api.oforms.getOforms(
-          combineUrl(this.settingsStore.formGallery.url, `${params}&locale=en`)
-        );
-      }
-
-      resolve(oforms);
-    });
-
-    return promise;
-  };
-
   getAuthProviders = async () => {
     const providers = await api.settings.getAuthProviders();
     if (providers) this.setProviders(providers);
@@ -476,6 +452,10 @@ class AuthStore {
     const capabilities = await api.settings.getCapabilities();
     if (capabilities) this.setCapabilities(capabilities);
   };
+
+  get isManagement() {
+    return window.location.pathname.includes("management");
+  }
 }
 
 export default new AuthStore();

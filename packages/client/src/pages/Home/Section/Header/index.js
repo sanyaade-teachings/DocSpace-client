@@ -27,6 +27,9 @@ import PersonManagerReactSvgUrl from "PUBLIC_DIR/images/person.manager.react.svg
 import PersonUserReactSvgUrl from "PUBLIC_DIR/images/person.user.react.svg?url";
 import InviteAgainReactSvgUrl from "PUBLIC_DIR/images/invite.again.react.svg?url";
 import PublicRoomIconUrl from "PUBLIC_DIR/images/public-room.react.svg?url";
+import PluginMoreReactSvgUrl from "PUBLIC_DIR/images/plugin.more.react.svg?url";
+import LeaveRoomSvgUrl from "PUBLIC_DIR/images/logout.react.svg?url";
+import CatalogRoomsReactSvgUrl from "PUBLIC_DIR/images/catalog.rooms.react.svg?url";
 
 import React from "react";
 import { inject, observer } from "mobx-react";
@@ -51,6 +54,7 @@ import {
   EmployeeType,
   RoomsType,
   DeviceType,
+  FolderType,
 } from "@docspace/common/constants";
 
 import { CategoryType } from "SRC_DIR/helpers/constants";
@@ -154,6 +158,7 @@ const SectionHeaderContent = (props) => {
     isHeaderChecked,
     isHeaderIndeterminate,
     showText,
+    oformsFilter,
 
     isEmptyArchive,
 
@@ -223,6 +228,10 @@ const SectionHeaderContent = (props) => {
     moveToPublicRoom,
     currentDeviceType,
     isFrame,
+    onClickArchive,
+    setLeaveRoomDialogVisible,
+    inRoom,
+    onClickCreateRoom,
   } = props;
 
   const navigate = useNavigate();
@@ -268,7 +277,10 @@ const SectionHeaderContent = (props) => {
   };
 
   const onShowGallery = () => {
-    navigate(`/form-gallery/${currentFolderId}/`);
+    const initOformFilter = (
+      oformsFilter || oformsFilter.getDefault()
+    ).toUrlParams();
+    navigate(`/form-gallery/${currentFolderId}/filter?${initOformFilter}`);
   };
 
   const createFolder = () => onCreate();
@@ -423,11 +435,23 @@ const SectionHeaderContent = (props) => {
         ];
 
     if (mainButtonItemsList && enablePlugins) {
+      const pluginItems = [];
+
       mainButtonItemsList.forEach((option) => {
-        options.splice(option.value.position, 0, {
+        pluginItems.push({
           key: option.key,
           ...option.value,
         });
+      });
+
+      options.splice(5, 0, {
+        id: "actions_more-plugins",
+        className: "main-button_drop-down",
+        icon: PluginMoreReactSvgUrl,
+        label: t("Common:More"),
+        disabled: false,
+        key: "more-plugins",
+        items: pluginItems,
       });
     }
 
@@ -450,16 +474,24 @@ const SectionHeaderContent = (props) => {
 
   const onCopyAction = () => {
     setIsFolderActions(true);
-    setBufferSelection(currentFolderId);
+    setBufferSelection(selectedFolder);
     return setCopyPanelVisible(true);
   };
 
   const onDownloadAction = () => {
-    setBufferSelection(currentFolderId);
-    setIsFolderActions(true);
+    setBufferSelection(selectedFolder);
     downloadAction(t("Translations:ArchivingData"), [currentFolderId]).catch(
       (err) => toastr.error(err)
     );
+  };
+
+  const onClickArchiveAction = (e) => {
+    setBufferSelection(selectedFolder);
+    onClickArchive(e);
+  };
+
+  const onLeaveRoom = () => {
+    setLeaveRoomDialogVisible(true);
   };
 
   const renameAction = () => {
@@ -471,7 +503,7 @@ const SectionHeaderContent = (props) => {
   };
 
   const onOpenSharingPanel = () => {
-    setBufferSelection(currentFolderId);
+    setBufferSelection(selectedFolder);
     setIsFolderActions(true);
     return setSharingPanelVisible(true);
   };
@@ -492,7 +524,7 @@ const SectionHeaderContent = (props) => {
         FolderRemoved: t("Files:FolderRemoved"),
       };
 
-      deleteAction(translations, [currentFolderId], true).catch((err) =>
+      deleteAction(translations, [selectedFolder], true).catch((err) =>
         toastr.error(err)
       );
     }
@@ -544,7 +576,6 @@ const SectionHeaderContent = (props) => {
 
   const onDownloadAll = () => {
     onDownloadAction();
-    // downloadAction(t("Translations:ArchivingData"), currentFolderId);
   };
 
   const onShareRoom = () => {
@@ -564,7 +595,6 @@ const SectionHeaderContent = (props) => {
       onClickEditRoom,
       onClickInviteUsers,
       onShowInfoPanel,
-      onClickArchive,
       onClickReconnectStorage,
 
       canRestoreAll,
@@ -736,17 +766,33 @@ const SectionHeaderContent = (props) => {
         key: "archive-room",
         label: t("MoveToArchive"),
         icon: RoomArchiveSvgUrl,
-        onClick: (e) => onClickArchive(e),
+        onClick: onClickArchiveAction,
         disabled: !isRoom || !security?.Move,
         "data-action": "archive",
         action: "archive",
+      },
+      {
+        id: "option_create-room",
+        label: t("Files:CreateRoom"),
+        key: "create-room",
+        icon: CatalogRoomsReactSvgUrl,
+        onClick: onClickCreateRoom,
+        disabled: selectedFolder.rootFolderType !== FolderType.USER,
+      },
+      {
+        id: "option_leave-room",
+        key: "leave-room",
+        label: t("LeaveTheRoom"),
+        icon: LeaveRoomSvgUrl,
+        onClick: onLeaveRoom,
+        disabled: isArchiveFolder || !inRoom || isPublicRoom,
       },
       {
         id: "header_option_download",
         key: "download",
         label: t("Common:Download"),
         onClick: onDownloadAction,
-        disabled: isDisabled,
+        disabled: !security?.Download,
         icon: DownloadReactSvgUrl,
       },
       {
@@ -870,7 +916,7 @@ const SectionHeaderContent = (props) => {
 
     const state = {
       title: selectedFolder.navigationPath[itemIdx]?.title || "",
-      isRoot: itemIdx === 0,
+      isRoot: itemIdx === selectedFolder.navigationPath.length - 1,
       isRoom: selectedFolder.navigationPath[itemIdx]?.isRoom || false,
       rootFolderType: rootFolderType,
       isPublicRoomType: selectedFolder.navigationPath[itemIdx]?.isRoom
@@ -946,6 +992,7 @@ const SectionHeaderContent = (props) => {
   }
 
   const stateTitle = location?.state?.title;
+  const stateCanCreate = location?.state?.canCreate;
   const stateIsRoot = location?.state?.isRoot;
   const stateIsRoom = location?.state?.isRoom;
   const stateRootRoomTitle = location?.state?.rootRoomTitle;
@@ -963,6 +1010,11 @@ const SectionHeaderContent = (props) => {
     : isLoading && stateTitle
     ? stateTitle
     : title;
+
+  const currentCanCreate =
+    isLoading && location?.state?.hasOwnProperty("canCreate")
+      ? stateCanCreate
+      : security?.Create;
 
   const currentRootRoomTitle =
     isLoading && stateRootRoomTitle
@@ -1008,7 +1060,7 @@ const SectionHeaderContent = (props) => {
                 showText={showText}
                 isRootFolder={isRoot}
                 canCreate={
-                  (security?.Create || isAccountsPage) &&
+                  (currentCanCreate || isAccountsPage) &&
                   !isSettingsPage &&
                   !isPublicRoom
                 }
@@ -1077,6 +1129,7 @@ export default inject(
     clientLoadingStore,
     publicRoomStore,
     contextOptionsStore,
+    oformsStore,
     pluginStore,
   }) => {
     const isOwner = auth.userStore.user?.isOwner;
@@ -1136,6 +1189,7 @@ export default inject(
       setInvitePanelOptions,
       setInviteUsersWarningDialogVisible,
       setRoomSharingPanelVisible,
+      setLeaveRoomDialogVisible,
     } = dialogsStore;
 
     const {
@@ -1156,11 +1210,14 @@ export default inject(
       onClickBack,
       emptyTrashInProgress,
       moveToPublicRoom,
+      onClickCreateRoom
     } = filesActionsStore;
+
+    const { oformsFilter } = oformsStore;
 
     const { setIsVisible, isVisible } = auth.infoPanelStore;
 
-    const { title, id, roomType, pathParts, navigationPath, security } =
+    const { title, id, roomType, pathParts, navigationPath, security, inRoom } =
       selectedFolderStore;
 
     const selectedFolder = { ...selectedFolderStore };
@@ -1233,13 +1290,14 @@ export default inject(
       isDesktop: auth.settingsStore.isDesktopClient,
       showHeaderLoader,
       isLoading,
-      isRootFolder: isRoot,
+      isRootFolder: isPublicRoom && !folderPath?.length ? true : isRoot,
       isPersonalRoom,
       title,
       isRoom,
       currentFolderId: id,
 
       navigationPath: folderPath,
+      oformsFilter,
 
       setIsInfoPanelVisible: setIsVisible,
       isInfoPanelVisible: isVisible,
@@ -1296,6 +1354,7 @@ export default inject(
       selectedFolder,
 
       onClickEditRoom,
+      onClickCreateRoom,
       onClickInviteUsers,
       onShowInfoPanel,
       onClickArchive,
@@ -1338,6 +1397,8 @@ export default inject(
       setRoomSharingPanelVisible,
       isFrame,
       currentDeviceType,
+      setLeaveRoomDialogVisible,
+      inRoom,
     };
   }
 )(
