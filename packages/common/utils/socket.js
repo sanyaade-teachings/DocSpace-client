@@ -1,8 +1,8 @@
 import io from "socket.io-client";
 
 const sockets = {};
-let callbacks = {};
-const subscribers = new Set();
+const callbacks = {};
+const subscribers = {};
 
 class SocketIOHelper {
   socket = null;
@@ -14,6 +14,10 @@ class SocketIOHelper {
 
     if (!callbacks[hub]) {
       callbacks[hub] = [];
+    }
+
+    if (!subscribers[hub]) {
+      subscribers[hub] = new Set();
     }
 
     if (!url) return;
@@ -64,7 +68,7 @@ class SocketIOHelper {
   }
 
   get socketSubscribers() {
-    return subscribers;
+    return subscribers[this.hub];
   }
 
   emit = ({ command, data, room = null }) => {
@@ -79,13 +83,13 @@ class SocketIOHelper {
 
     ids.forEach((id) => {
       if (command === "subscribe") {
-        if (subscribers.has(id)) return;
+        if (subscribers[this.hub]?.has(id)) return;
 
-        subscribers.add(id);
+        subscribers[this.hub]?.add(id);
       }
 
       if (command === "unsubscribe") {
-        subscribers.delete(id);
+        subscribers[this.hub]?.delete(id);
       }
     });
 
