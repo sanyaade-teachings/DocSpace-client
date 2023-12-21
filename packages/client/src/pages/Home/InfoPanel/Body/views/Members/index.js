@@ -427,10 +427,12 @@ const Members = ({
         itemCount={membersFilter.total + headersCount + publicRoomItemsLength}
         showPublicRoomBar={showPublicRoomBar}
         linksBlockLength={publicRoomItemsLength}
-        statuses={membersStatuses}
       >
         {publicRoomItems}
         {membersList.map((user, index) => {
+          const status =
+            membersStatuses && membersStatuses.find((s) => s.id === user.id);
+
           return (
             <User
               t={t}
@@ -458,6 +460,8 @@ const Members = ({
               hasNextPage={
                 membersList.length - headersCount < membersFilter.total
               }
+              withStatus
+              status={status}
             />
           );
         })}
@@ -567,10 +571,8 @@ export default inject(
       isPublicRoom,
 
       additionalLinks: additionalLinks,
-      isArchiveFolder: isArchiveFolderRoot,
       setLinkParams,
       setEditLinkPanelIsVisible,
-      primaryLink,
       getPrimaryLink: filesStore.getPrimaryLink,
       setExternalLink,
       withPublicRoomBlock,

@@ -16,7 +16,7 @@ import IconButton from "@docspace/components/icon-button";
 import { Box } from "@docspace/components";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
-import Loaders from "@docspace/common/components/Loaders";
+import RectangleSkeleton from "@docspace/components/skeletons/rectangle";
 
 const getLastSeenStatus = (date, t, i18n) => {
   if (!date) return "-";
@@ -295,10 +295,10 @@ const User = ({
         </Box>
         {withStatus &&
           (!status ? (
-            <Loaders.Rectangle
+            <RectangleSkeleton
               width="70"
               height="10"
-              className={"status-loader"}
+              className="status-loader"
             />
           ) : (
             <div className="status-wrapper">
