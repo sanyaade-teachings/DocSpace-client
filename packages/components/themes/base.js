@@ -3183,6 +3183,12 @@ const Base = {
     descriptionColor: "#555F65",
   },
 
+  infoBar: {
+    background: "#f8f9f9",
+    title: black,
+    description: cyanBlueDarkShade,
+  },
+
   roomIcon: {
     backgroundArchive: "#A3A9AE",
     opacityBackground: "1",
