@@ -141,6 +141,7 @@ export const RoomsType = Object.freeze({
   // ReviewRoom: 3, //TODO: Restore when certs will be done
   // ReadOnlyRoom: 4, //TODO: Restore when certs will be done
   PublicRoom: 6,
+  VirtualDataRoom: 8,
   CustomRoom: 5,
 });
 
@@ -157,6 +158,7 @@ export const RoomsTypeTranslations = Object.freeze({
   4: "Files:ViewOnlyRooms",
   5: "Files:CustomRooms",
   6: "Files:PublicRoom",
+  8: "Files:VirtualDataRoom",
 });
 /**
  * Enum for room provider type.

@@ -1237,6 +1237,13 @@ const SectionFilterContent = ({
                   group: FilterGroups.roomFilterType,
                   label: t("PublicRoom"),
                 };
+              case RoomsType.VirtualDataRoom:
+                return {
+                  id: "filter_type-virtual-data",
+                  key: RoomsType.VirtualDataRoom,
+                  group: FilterGroups.roomFilterType,
+                  label: t("VirtualDataRoom"),
+                };
               case RoomsType.CustomRoom:
               default:
                 return {

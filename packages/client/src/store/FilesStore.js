@@ -3031,6 +3031,7 @@ class FilesStore {
         viewAccessibility,
         mute,
         inRoom = true,
+        indexing,
       } = item;
 
       const thirdPartyIcon = this.thirdPartyStore.getThirdPartyIcon(
@@ -3184,6 +3185,7 @@ class FilesStore {
         viewAccessibility,
         ...pluginOptions,
         inRoom,
+        indexing,
         isForm,
       };
     });

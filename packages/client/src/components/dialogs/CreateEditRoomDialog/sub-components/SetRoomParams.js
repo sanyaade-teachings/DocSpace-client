@@ -18,6 +18,8 @@ import { getRoomTypeDefaultTagTranslation } from "../data";
 
 import ImageEditor from "@docspace/components/ImageEditor";
 import PreviewTile from "@docspace/components/ImageEditor/PreviewTile";
+import VirtualDataRoomBlock from "./VirtualDataRoomBlock";
+import { RoomsType } from "@docspace/common/constants";
 import Text from "@docspace/components/text";
 import ChangeRoomOwner from "./ChangeRoomOwner";
 
@@ -59,6 +61,8 @@ const SetRoomParams = ({
   folderFormValidation,
 }) => {
   const [previewIcon, setPreviewIcon] = React.useState(null);
+
+  const isVDRRoom = roomParams.type === RoomsType.VirtualDataRoom;
 
   const onChangeName = (e) => {
     setIsValidTitle(true);
@@ -145,6 +149,14 @@ const SetRoomParams = ({
         <ChangeRoomOwner
           roomOwner={roomParams.roomOwner}
           onOwnerChange={onOwnerChange}
+        />
+      )}
+
+      {isVDRRoom && (
+        <VirtualDataRoomBlock
+          t={t}
+          roomParams={roomParams}
+          setRoomParams={setRoomParams}
         />
       )}
 

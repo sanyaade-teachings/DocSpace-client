@@ -346,7 +346,11 @@
   "WantToContinue": "Are you sure you want to continue?",
   "Warning": "Warning",
   "Website": "Website",
-  "WED": "WED",
   "Yesterday": "Yesterday",
-  "You": "You"
+  "WED": "WED",
+  "Days": "Days",
+  "Months": "Months",
+  "Years": "Years",
+  "MoveToTrash": "Move to trash",
+  "DeletePermanently": "Delete permanently"
 }

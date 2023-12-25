@@ -76,6 +76,7 @@ const EditRoomEvent = ({
       zoom: 1,
     },
     roomOwner: item.createdBy,
+    indexing: item.indexing,
   };
 
   const updateRoom = (oldRoom, newRoom) => {
