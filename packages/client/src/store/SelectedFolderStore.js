@@ -215,7 +215,7 @@ class SelectedFolderStore {
     onlineUsersSocket.emit({
       command: "enter",
       data: {
-        roomParts: `${roomId}`,
+        roomPart: `${roomId}`,
       },
     });
     console.log(`enter room: ${roomId}`);
@@ -226,7 +226,7 @@ class SelectedFolderStore {
     onlineUsersSocket.emit({
       command: "leave",
       data: {
-        roomParts: `${roomId}`,
+        roomPart: `${roomId}`,
       },
     });
     console.log(`leave room: ${roomId}`);

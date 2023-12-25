@@ -221,7 +221,7 @@ const Members = ({
     if (isRoom && !isArchive) {
       onlineUsersSocket.emit({
         command: "subscribe",
-        data: { roomParts: `${id}` },
+        data: { roomPart: `${id}` },
       });
       console.log("open members for room " + id);
     }
@@ -230,7 +230,7 @@ const Members = ({
       if (isRoom && !isArchive) {
         onlineUsersSocket.emit({
           command: "unsubscribe",
-          data: { roomParts: `${id}` },
+          data: { roomPart: `${id}` },
         });
         console.log("close members for room " + id);
       }

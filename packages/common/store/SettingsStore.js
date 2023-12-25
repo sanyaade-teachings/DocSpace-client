@@ -828,7 +828,7 @@ class SettingsStore {
     const socketUrl =
       this.isPublicRoom && !this.publicRoomKey ? null : this.socketUrl;
 
-    return new SocketIOHelper(socketUrl, this.publicRoomKey, "/onlineUsers");
+    return new SocketIOHelper(socketUrl, this.publicRoomKey, "/onlineusers");
   }
 
   getBuildVersionInfo = async () => {
