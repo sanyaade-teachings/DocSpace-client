@@ -221,6 +221,9 @@ export const ImageViewer = ({
       width,
       height,
       scale: 1,
+      config: {
+        duration: 300,
+      },
     });
   }, [api, style.scale]);
 
@@ -239,9 +242,7 @@ export const ImageViewer = ({
 
   const rotateImage = useCallback(
     (dir: number) => {
-      if (style.rotate.isAnimating) return;
-
-      const rotate = style.rotate.get() + dir * 90;
+      const rotate = style.rotate.goal + dir * 90;
 
       const point = calculateAdjustImage(
         calculateAdjustBounds(style.x.get(), style.y.get(), 1, rotate),
@@ -455,11 +456,15 @@ export const ImageViewer = ({
     api.start({
       ...point,
       scale: newScale,
-      config: config.default,
+      config: {
+        duration: 300,
+      },
       // onChange(result) {
       //   api.start(maybeAdjustImage({ x: dx, y: dy }));
       // },
       onResolve() {
+        if (!style.scale.isAnimating) return;
+
         api.start(calculateAdjustImage(calculateAdjustBounds(dx, dy, 1)));
       },
     });
@@ -758,6 +763,7 @@ export const ImageViewer = ({
             duration: 300,
           },
           onResolve(result) {
+            if (style.x.isAnimating) return;
             api.start(
               calculateAdjustImage(
                 calculateAdjustBounds(result.value.x, result.value.y),
