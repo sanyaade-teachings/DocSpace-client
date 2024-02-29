@@ -287,13 +287,13 @@ export const ImageViewer = ({
       MinScale,
     );
 
-    const tx = ((containerWidth - width) / 2 - x) / style.scale.goal;
-    const ty = ((containerHeight - height) / 2 - y) / style.scale.goal;
+    const tx = ((containerWidth - width) / 2 - x) / style.scale.get();
+    const ty = ((containerHeight - height) / 2 - y) / style.scale.get();
 
-    const dx = style.x.goal + DefaultSpeedScale * tx;
-    const dy = style.y.goal + DefaultSpeedScale * ty;
+    const dx = style.x.get() + DefaultSpeedScale * tx;
+    const dy = style.y.get() + DefaultSpeedScale * ty;
 
-    const ratio = scaleCurrent / style.scale.goal;
+    const ratio = scaleCurrent / style.scale.get();
 
     const point = calculateAdjustImage(
       calculateAdjustBounds(dx, dy, ratio),
@@ -301,25 +301,34 @@ export const ImageViewer = ({
     );
     toolbarRef.current?.setPercentValue(scaleCurrent);
 
-    if (style.scale.isAnimating)
-      return api.update({
-        scale: scaleCurrent,
-        ...point,
-      });
-
     api.start({
       scale: scaleCurrent,
       ...point,
       config: {
         duration: 300,
       },
+      onResolve(result) {
+        if (style.scale.isAnimating) return;
+
+        api.start({
+          ...calculateAdjustImage(
+            calculateAdjustBounds(
+              result.value.x,
+              result.value.y,
+              result.value.scale / style.scale.get(),
+            ),
+          ),
+          config: {
+            duration: 250,
+          },
+        });
+      },
     });
   }, [api, calculateAdjustBounds, style.scale, style.x, style.y]);
 
   const zoomIn = useCallback(() => {
     if (
-      style.scale.isAnimating ||
-      style.scale.get() >= MaxScale ||
+      style.scale.goal >= MaxScale ||
       !imgRef.current ||
       !containerRef.current
     )
@@ -329,17 +338,26 @@ export const ImageViewer = ({
     const { width: containerWidth, height: containerHeight } =
       containerRef.current.getBoundingClientRect();
 
-    const tx = ((containerWidth - width) / 2 - x) / style.scale.get();
-    const ty = ((containerHeight - height) / 2 - y) / style.scale.get();
+    const tx = ((containerWidth - width) / 2 - x) / style.scale.goal;
+    const ty = ((containerHeight - height) / 2 - y) / style.scale.goal;
 
-    const dx = style.x.get() - DefaultSpeedScale * tx;
-    const dy = style.y.get() - DefaultSpeedScale * ty;
+    const dx = style.x.goal - DefaultSpeedScale * tx;
+    const dy = style.y.goal - DefaultSpeedScale * ty;
 
     const scaleCurrent = Math.min(
-      style.scale.get() + DefaultSpeedScale,
+      style.scale.goal + DefaultSpeedScale,
       MaxScale,
     );
+
+    // const ratio = scaleCurrent / style.scale.goal;
+
+    // const point = calculateAdjustImage(
+    //   calculateAdjustBounds(dx, dy, ratio),
+    //   ratio,
+    // );
+
     toolbarRef.current?.setPercentValue(scaleCurrent);
+
     api.start({
       x: dx,
       y: dy,
@@ -347,8 +365,24 @@ export const ImageViewer = ({
       config: {
         duration: 300,
       },
+      onResolve(result) {
+        if (style.scale.isAnimating) return;
+
+        api.start({
+          ...calculateAdjustImage(
+            calculateAdjustBounds(
+              result.value.x,
+              result.value.y,
+              result.value.scale / style.scale.get(),
+            ),
+          ),
+          config: {
+            duration: 250,
+          },
+        });
+      },
     });
-  }, [api, style.scale, style.x, style.y]);
+  }, [api, calculateAdjustBounds, style.scale, style.x, style.y]);
 
   const onKeyDown = useCallback(
     (event: KeyboardEvent) => {
