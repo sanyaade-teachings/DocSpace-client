@@ -272,8 +272,7 @@ export const ImageViewer = ({
 
   const zoomOut = useCallback(() => {
     if (
-      style.scale.isAnimating ||
-      style.scale.get() <= MinScale ||
+      style.scale.goal <= MinScale ||
       !imgRef.current ||
       !containerRef.current
     )
@@ -284,38 +283,35 @@ export const ImageViewer = ({
       containerRef.current.getBoundingClientRect();
 
     const scaleCurrent = Math.max(
-      style.scale.get() - DefaultSpeedScale,
+      style.scale.goal - DefaultSpeedScale,
       MinScale,
     );
 
-    const tx = ((containerWidth - width) / 2 - x) / style.scale.get();
-    const ty = ((containerHeight - height) / 2 - y) / style.scale.get();
+    const tx = ((containerWidth - width) / 2 - x) / style.scale.goal;
+    const ty = ((containerHeight - height) / 2 - y) / style.scale.goal;
 
-    const dx = style.x.get() + DefaultSpeedScale * tx;
-    const dy = style.y.get() + DefaultSpeedScale * ty;
+    const dx = style.x.goal + DefaultSpeedScale * tx;
+    const dy = style.y.goal + DefaultSpeedScale * ty;
 
-    const ratio = scaleCurrent / style.scale.get();
+    const ratio = scaleCurrent / style.scale.goal;
 
-    const point = calculateAdjustImage(calculateAdjustBounds(dx, dy, ratio));
+    const point = calculateAdjustImage(
+      calculateAdjustBounds(dx, dy, ratio),
+      ratio,
+    );
     toolbarRef.current?.setPercentValue(scaleCurrent);
+
+    if (style.scale.isAnimating)
+      return api.update({
+        scale: scaleCurrent,
+        ...point,
+      });
 
     api.start({
       scale: scaleCurrent,
       ...point,
       config: {
         duration: 300,
-      },
-      onResolve: (result) => {
-        api.start({
-          ...calculateAdjustImage({
-            x: result.value.x,
-            y: result.value.y,
-          }),
-          config: {
-            ...config.default,
-            duration: 100,
-          },
-        });
       },
     });
   }, [api, calculateAdjustBounds, style.scale, style.x, style.y]);
