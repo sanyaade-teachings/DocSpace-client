@@ -283,7 +283,7 @@ export const ImageViewer = ({
       containerRef.current.getBoundingClientRect();
 
     const scaleCurrent = Math.max(
-      style.scale.goal - DefaultSpeedScale,
+      style.scale.get() - DefaultSpeedScale,
       MinScale,
     );
 
@@ -338,23 +338,16 @@ export const ImageViewer = ({
     const { width: containerWidth, height: containerHeight } =
       containerRef.current.getBoundingClientRect();
 
-    const tx = ((containerWidth - width) / 2 - x) / style.scale.goal;
-    const ty = ((containerHeight - height) / 2 - y) / style.scale.goal;
+    const tx = ((containerWidth - width) / 2 - x) / style.scale.get();
+    const ty = ((containerHeight - height) / 2 - y) / style.scale.get();
 
-    const dx = style.x.goal - DefaultSpeedScale * tx;
-    const dy = style.y.goal - DefaultSpeedScale * ty;
+    const dx = style.x.get() - DefaultSpeedScale * tx;
+    const dy = style.y.get() - DefaultSpeedScale * ty;
 
     const scaleCurrent = Math.min(
-      style.scale.goal + DefaultSpeedScale,
+      style.scale.get() + DefaultSpeedScale,
       MaxScale,
     );
-
-    // const ratio = scaleCurrent / style.scale.goal;
-
-    // const point = calculateAdjustImage(
-    //   calculateAdjustBounds(dx, dy, ratio),
-    //   ratio,
-    // );
 
     toolbarRef.current?.setPercentValue(scaleCurrent);
 
