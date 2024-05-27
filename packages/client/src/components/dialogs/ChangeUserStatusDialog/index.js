@@ -57,6 +57,7 @@ class ChangeUserStatusDialogComponent extends React.Component {
     toastr.clear();
     window.DocSpace.navigate(paymentPageUrl);
   };
+
   onChangeUserStatus = () => {
     const {
       updateUserStatus,
@@ -67,8 +68,11 @@ class ChangeUserStatusDialogComponent extends React.Component {
       userIDs,
       getPeopleListItem,
       setInfoPanelSelection,
+      setInfoPanelSelectedGroup,
       infoPanelVisible,
       needResetUserSelection,
+      infoPanelSelectedGroup,
+      getGroups,
     } = this.props;
 
     this.setState({ isRequestRunning: true }, () => {
@@ -103,6 +107,19 @@ class ChangeUserStatusDialogComponent extends React.Component {
         .finally(() => {
           this.setState({ isRequestRunning: false }, () => {
             needResetUserSelection && setSelected("close");
+            if (infoPanelSelectedGroup) {
+              const updatedGroup = {
+                ...infoPanelSelectedGroup,
+                membersCount:
+                  infoPanelSelectedGroup.membersCount - userIDs.length,
+                members: infoPanelSelectedGroup.members.filter(
+                  (user) => !userIDs.includes(user.id),
+                ),
+              };
+              setInfoPanelSelection(updatedGroup);
+              setInfoPanelSelectedGroup(updatedGroup);
+            }
+            getGroups();
             onClose();
           });
         });
@@ -202,7 +219,14 @@ export default inject(({ peopleStore, infoPanelStore }) => {
   const { getPeopleListItem, updateUserStatus, needResetUserSelection } =
     peopleStore.usersStore;
 
-  const { setInfoPanelSelection, isVisible: infoPanelVisible } = infoPanelStore;
+  const { getGroups } = peopleStore.groupsStore;
+
+  const {
+    setInfoPanelSelection,
+    setInfoPanelSelectedGroup,
+    isVisible: infoPanelVisible,
+    infoPanelSelectedGroup,
+  } = infoPanelStore;
 
   return {
     needResetUserSelection,
@@ -211,8 +235,11 @@ export default inject(({ peopleStore, infoPanelStore }) => {
     setSelected,
 
     getPeopleListItem,
+    getGroups,
 
     setInfoPanelSelection,
+    setInfoPanelSelectedGroup,
     infoPanelVisible,
+    infoPanelSelectedGroup,
   };
 })(observer(ChangeUserStatusDialog));
