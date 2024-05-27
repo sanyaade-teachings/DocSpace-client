@@ -474,52 +474,57 @@ class GroupsStore {
   ) => {
     const { isRoomAdmin } = this.peopleStore.userStore.user;
 
+    const editGroupsAction = {
+      id: "edit-group",
+      key: "edit-group",
+      className: "group-menu_drop-down",
+      label: t("PeopleTranslations:EditGroup"),
+      title: t("PeopleTranslations:EditGroup"),
+      icon: PencilReactSvgUrl,
+      onClick: () => {
+        const event = new Event(Events.GROUP_EDIT);
+        event.item = item;
+        window.dispatchEvent(event);
+      },
+    };
+
+    const showInfoAction = {
+      id: "info",
+      key: "group-info",
+      className: "group-menu_drop-down",
+      label: t("Common:Info"),
+      title: t("Common:Info"),
+      icon: InfoReactSvgUrl,
+      onClick: () => {
+        if (!forInsideGroup && this.selection.length < 1) {
+          if (this.selection.length < 1) this.setBufferSelection(item);
+        } else {
+          this.peopleStore.selectionStore.setSelection([]);
+          this.peopleStore.selectionStore.setBufferSelection(null);
+        }
+        this.infoPanelStore.setIsVisible(true);
+      },
+    };
+
+    const deleteGroupsAction = {
+      id: "delete-group",
+      key: "delete-group",
+      className: "group-menu_drop-down",
+      label: t("Common:Delete"),
+      title: t("Common:Delete"),
+      icon: TrashReactSvgUrl,
+      onClick: () => this.onDeleteClick(item.name),
+    };
+
+    if (this.selection.length > 1) {
+      return [!isRoomAdmin && deleteGroupsAction];
+    }
+
     return [
-      !isRoomAdmin && {
-        id: "edit-group",
-        key: "edit-group",
-        className: "group-menu_drop-down",
-        label: t("PeopleTranslations:EditGroup"),
-        title: t("PeopleTranslations:EditGroup"),
-        icon: PencilReactSvgUrl,
-        onClick: () => {
-          const event = new Event(Events.GROUP_EDIT);
-          event.item = item;
-          window.dispatchEvent(event);
-        },
-      },
-      !forInfoPanel && {
-        id: "info",
-        key: "group-info",
-        className: "group-menu_drop-down",
-        label: t("Common:Info"),
-        title: t("Common:Info"),
-        icon: InfoReactSvgUrl,
-        onClick: () => {
-          if (!forInsideGroup) {
-            if (this.selection.length < 1) {
-              this.setBufferSelection(item);
-            }
-          } else {
-            this.peopleStore.selectionStore.setSelection([]);
-            this.peopleStore.selectionStore.setBufferSelection(null);
-          }
-          this.infoPanelStore.setIsVisible(true);
-        },
-      },
-      !isRoomAdmin && {
-        key: "separator",
-        isSeparator: true,
-      },
-      !isRoomAdmin && {
-        id: "delete-group",
-        key: "delete-group",
-        className: "group-menu_drop-down",
-        label: t("Common:Delete"),
-        title: t("Common:Delete"),
-        icon: TrashReactSvgUrl,
-        onClick: () => this.onDeleteClick(item.name),
-      },
+      !isRoomAdmin && editGroupsAction,
+      !forInfoPanel && showInfoAction,
+      !isRoomAdmin && { key: "separator", isSeparator: true },
+      !isRoomAdmin && deleteGroupsAction,
     ];
   };
 
