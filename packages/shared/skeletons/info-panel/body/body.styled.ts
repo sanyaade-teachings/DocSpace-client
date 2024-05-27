@@ -251,6 +251,7 @@ export const StyledSeveralItemsLoader = styled.div`
 
 export const StyledGroupsLoader = styled.div`
   width: 100%;
+  padding-top: 128px;
   display: flex;
   flex-direction: column;
   justify-content: center;
