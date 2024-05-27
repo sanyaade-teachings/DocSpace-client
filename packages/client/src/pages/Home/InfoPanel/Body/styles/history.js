@@ -154,7 +154,16 @@ const StyledHistoryBlockMessage = styled.div`
   .main-message {
     width: max-content;
     max-width: 100%;
-    min-width: max-content;
+
+    strong {
+      max-width: 100%;
+      display: inline-block;
+      vertical-align: top;
+      font-weight: 600;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
   }
 
   strong {
