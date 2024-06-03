@@ -60,12 +60,12 @@ const AccountsTable = (props) => {
   const typeOptions = [
     {
       key: UserTypes.DocSpaceAdmin,
-      label: t(`Common:${UserTypes.DocSpaceAdmin}`, { portalName: PORTAL }),
+      label: t("Common:PortalAdmin", { portalName: PORTAL }),
       onClick: setTypeDocspaceAdmin,
     },
     {
       key: UserTypes.RoomAdmin,
-      label: t(`Common:${UserTypes.RoomAdmin}`),
+      label: t("Common:RoomAdmin"),
       onClick: setTypeRoomAdmin,
     },
     {
