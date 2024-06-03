@@ -535,7 +535,6 @@ class SettingsStore {
   };
 
   getSettings = async () => {
-    debugger;
     let newSettings: Nullable<TSettings> = null;
 
     if (window?.__ASC_INITIAL_EDITOR_STATE__?.portalSettings)
@@ -574,7 +573,6 @@ class SettingsStore {
 
     this.setGreetingSettings(newSettings.greetingSettings);
 
-    console.log("newSettings", newSettings);
     return newSettings;
   };
 
