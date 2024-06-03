@@ -56,7 +56,7 @@ class ImportAccountsStore {
   };
 
   UserTypes = {
-    DocSpaceAdmin: "DocspaceAdmin",
+    DocSpaceAdmin: "PortalAdmin",
     RoomAdmin: "RoomAdmin",
     User: "Collaborator",
   };
@@ -102,7 +102,9 @@ class ImportAccountsStore {
   get filteredUsers() {
     return this.users.result.filter(
       (user) =>
-        !this.users.existing.some((existingUser) => existingUser.key === user.key),
+        !this.users.existing.some(
+          (existingUser) => existingUser.key === user.key,
+        ),
     );
   }
 
