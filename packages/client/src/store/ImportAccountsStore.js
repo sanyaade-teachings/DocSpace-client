@@ -292,8 +292,6 @@ class ImportAccountsStore {
       }
     } catch (e) {
       console.error(e);
-    } finally {
-      isAbort.current = false;
     }
   };
 
@@ -333,8 +331,6 @@ class ImportAccountsStore {
       }
     } catch (e) {
       console.error(e);
-    } finally {
-      isAbort.current = false;
     }
   };
 
