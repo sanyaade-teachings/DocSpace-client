@@ -111,6 +111,8 @@
   "DisableQuota": "Kvotanı deaktiv edin",
   "DisableStorageQuota": "Yaddaş kvotasını deaktiv edin",
   "Disconnect": "Bağlantını kəs",
+  "DocspaceAdmin": "{{portalName}} admini",
+  "DocspaceOwner": "{{portalName}} sahibi",
   "Documents": "Sənədlər",
   "Domain": "Domen:",
   "DomainIpAddress": "IP ünvan kimi domen dəstəklənmir",
