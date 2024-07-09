@@ -24,7 +24,7 @@
 // content are licensed under the terms of the Creative Commons Attribution-ShareAlike 4.0
 // International. See the License terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
 
-import { toUrlParams } from "../../utils/common";
+import { toUrlParams, getObjectByLocation } from "../../utils/common";
 
 const PAGE = "pagination[page]";
 const PAGE_SIZE = "pagination[pageSize]";
@@ -39,7 +39,7 @@ const SORT_ORDER = "sortorder";
 const DEFAULT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 150;
 const DEFAULT_TOTAL = 0;
-const DEFAULT_LOCALE = null;
+const DEFAULT_LOCALE = "";
 const DEFAULT_SEARCH = "";
 const DEFAULT_SORT_BY = "";
 const DEFAULT_SORT_ORDER = "";
@@ -47,6 +47,24 @@ const DEFAULT_CATEGORIZE_BY = "";
 const DEFAULT_CATEGORY_ID = "";
 
 class OformsFilter {
+  page: number;
+
+  pageSize: number;
+
+  categorizeBy: string;
+
+  categoryId: string;
+
+  locale: string;
+
+  search: string;
+
+  sortBy: string;
+
+  sortOrder: string;
+
+  total: number;
+
   constructor(
     page = DEFAULT_PAGE,
     pageSize = DEFAULT_PAGE_SIZE,
@@ -83,25 +101,25 @@ class OformsFilter {
     );
   }
 
-  static getFilter(location) {
+  static getFilter(location: Location) {
     if (!location) return this.getDefault();
 
-    const urlFilter = new URLSearchParams(location.search);
+    const urlFilter = getObjectByLocation(location);
+
     if (!urlFilter) return null;
 
     const defaultFilter = OformsFilter.getDefault();
+
     const page =
-      (urlFilter.get(PAGE) && +urlFilter.get(PAGE) - 1) || defaultFilter.page;
+      (urlFilter[PAGE] && +urlFilter[PAGE] - 1) || defaultFilter.page;
     const pageSize =
-      (urlFilter.get(PAGE_SIZE) && +urlFilter.get(PAGE_SIZE)) ||
-      defaultFilter.pageSize;
-    const categorizeBy =
-      urlFilter.get(CATEGORIZE_BY) || defaultFilter.categorizeBy;
-    const categoryId = urlFilter.get(CATEGORY_ID) || defaultFilter.categoryId;
-    const locale = urlFilter.get(LOCALE) || defaultFilter.locale;
-    const search = urlFilter.get(SEARCH) || defaultFilter.search;
-    const sortBy = urlFilter.get(SORT_BY) || defaultFilter.sortBy;
-    const sortOrder = urlFilter.get(SORT_ORDER) || defaultFilter.sortOrder;
+      (urlFilter[PAGE_SIZE] && +urlFilter[PAGE_SIZE]) || defaultFilter.pageSize;
+    const categorizeBy = urlFilter[CATEGORIZE_BY] || defaultFilter.categorizeBy;
+    const categoryId = urlFilter[CATEGORY_ID] || defaultFilter.categoryId;
+    const locale = urlFilter[LOCALE] || defaultFilter.locale;
+    const search = urlFilter[SEARCH] || defaultFilter.search;
+    const sortBy = urlFilter[SORT_BY] || defaultFilter.sortBy;
+    const sortOrder = urlFilter[SORT_ORDER] || defaultFilter.sortOrder;
 
     const newFilter = new OformsFilter(
       page,
@@ -133,10 +151,21 @@ class OformsFilter {
   }
 
   toUrlParams = () => {
-    const { categorizeBy, categoryId, locale, search, sortBy, sortOrder } =
-      this;
+    const {
+      page,
+      pageSize,
+      categorizeBy,
+      categoryId,
+      locale,
+      search,
+      sortBy,
+      sortOrder,
+    } = this;
 
-    const dtoFilter = {};
+    const dtoFilter: { [key: string]: unknown } = {};
+
+    dtoFilter[PAGE] = page;
+    dtoFilter[PAGE_SIZE] = pageSize;
     dtoFilter[CATEGORIZE_BY] = categorizeBy;
     dtoFilter[CATEGORY_ID] = categoryId;
     dtoFilter[LOCALE] = locale;
@@ -159,7 +188,8 @@ class OformsFilter {
       sortOrder,
     } = this;
 
-    const dtoFilter = {};
+    const dtoFilter: { [key: string]: unknown } = {};
+
     dtoFilter[PAGE] = page;
     dtoFilter[PAGE_SIZE] = pageSize;
     if (categorizeBy && categoryId)

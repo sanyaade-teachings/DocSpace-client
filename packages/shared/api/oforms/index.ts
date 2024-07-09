@@ -26,38 +26,61 @@
 
 import axios from "axios";
 
-export function getOforms(url) {
-  return axios.get(url);
-}
+import {
+  TOformsRequest,
+  TLocalesRequest,
+  TOformsCategoryRequest,
+} from "./types";
 
-export const getOformLocales = async (url) => {
+export const getOforms = async (url: string) => {
   const res = await axios.get(url);
-  return res?.data;
+  return res?.data as TOformsRequest;
 };
 
-export const getCategoryById = async (url, categorizeBy, id, locale) => {
+export const getOformsLocales = async (url: string) => {
+  const res = await axios.get(url);
+  return res?.data as TLocalesRequest;
+};
+
+export const getCategoryById = async (
+  url: string,
+  categorizeBy: string,
+  id: string,
+  locale: string,
+) => {
   const res = await axios.get(
     `${url}/${categorizeBy}/${id}?populate=*&locale=${locale}`,
   );
   return res?.data?.data;
 };
 
-export const getCategoryTypes = async (url, locale = "en") => {
+export const getCategoryTypes = async (url: string, locale = "en") => {
+  const res: TOformsCategoryRequest = await axios.get(
+    `${url}?populate=*&locale=${locale}`,
+  );
+  return res?.data?.data;
+};
+
+export const getCategoriesOfCategoryType = async (
+  url: string,
+  locale = "en",
+) => {
   const res = await axios.get(`${url}?populate=*&locale=${locale}`);
   return res?.data?.data;
 };
 
-export const getCategoriesOfCategoryType = async (url, locale = "en") => {
-  const res = await axios.get(`${url}?populate=*&locale=${locale}`);
-  return res?.data?.data;
-};
-
-export const getGuideLinkByLocale = async (url, locale = "en") => {
+export const getGuideLinkByLocale = async (url: string, locale = "en") => {
   const res = await axios.get(`${url}?locale=${locale}`);
   return res?.data?.data?.[0].attributes?.link;
 };
 
-export function submitToGallery(url, file, formName, language, signal) {
+export function submitToGallery(
+  url: string,
+  file,
+  formName: string,
+  language: string,
+  signal,
+) {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("formName", formName);
