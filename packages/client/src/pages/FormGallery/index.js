@@ -39,13 +39,13 @@ import Dialogs from "./Dialogs";
 import ErrorView from "./ErrorView";
 import SectionWrapper from "SRC_DIR/components/Section";
 const FormGallery = ({
-  oformsLoadError,
   currentCategory,
-  fetchCurrentCategory,
   defaultOformLocale,
-  fetchOformLocales,
-  oformsFilter,
+  fetchCurrentCategory,
   fetchOforms,
+  fetchOformsLocales,
+  oformsFilter,
+  oformsLoadError,
   setOformFromFolderId,
 }) => {
   const location = useLocation();
@@ -57,7 +57,7 @@ const FormGallery = ({
   useEffect(() => {
     const firstLoadFilter = OformsFilter.getFilter(location);
 
-    Promise.all([fetchOforms(firstLoadFilter), fetchOformLocales()]).finally(
+    Promise.all([fetchOforms(firstLoadFilter), fetchOformsLocales()]).finally(
       () => {
         setIsInitLoading(false);
       },
@@ -127,18 +127,28 @@ const FormGallery = ({
   );
 };
 
-export default inject(({ oformsStore }) => ({
-  oformsLoadError: oformsStore.oformsLoadError,
+export default inject(({ oformsStore }) => {
+  const {
+    currentCategory,
+    defaultOformLocale,
+    fetchCurrentCategory,
+    fetchOforms,
+    fetchOformsLocales,
+    oformsFilter,
+    oformsLoadError,
+    setOformFromFolderId,
+    setOformsFilter,
+  } = oformsStore;
 
-  currentCategory: oformsStore.currentCategory,
-  fetchCurrentCategory: oformsStore.fetchCurrentCategory,
-
-  defaultOformLocale: oformsStore.defaultOformLocale,
-  fetchOformLocales: oformsStore.fetchOformLocales,
-
-  oformsFilter: oformsStore.oformsFilter,
-  setOformsFilter: oformsStore.setOformsFilter,
-
-  fetchOforms: oformsStore.fetchOforms,
-  setOformFromFolderId: oformsStore.setOformFromFolderId,
-}))(observer(FormGallery));
+  return {
+    currentCategory,
+    defaultOformLocale,
+    fetchCurrentCategory,
+    fetchOforms,
+    fetchOformsLocales,
+    oformsFilter,
+    oformsLoadError,
+    setOformFromFolderId,
+    setOformsFilter,
+  };
+})(observer(FormGallery));

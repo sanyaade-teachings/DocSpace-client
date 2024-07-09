@@ -149,31 +149,49 @@ export default inject(
     clientLoadingStore,
     infoPanelStore,
   }) => {
+    const {
+      getCategoryTitle,
+      oformFromFolderId,
+      currentCategory,
+      fetchCurrentCategory,
+      setGallerySelected,
+      oformsLoadError,
+    } = oformsStore;
+
+    const { getFolderInfo } = filesStore;
+    const { canSubmitToFormGallery } = accessRightsStore;
+    const { setSubmitToGalleryDialogVisible } = dialogsStore;
+    const { isVisible, setIsVisible } = infoPanelStore;
+    const {
+      setIsSectionHeaderLoading,
+      setIsSectionFilterLoading,
+      setIsSectionBodyLoading,
+    } = clientLoadingStore;
+
     return {
-      getCategoryTitle: oformsStore.getCategoryTitle,
+      getCategoryTitle,
 
-      oformFromFolderId: oformsStore.oformFromFolderId,
+      oformFromFolderId,
 
-      currentCategory: oformsStore.currentCategory,
-      fetchCurrentCategory: oformsStore.fetchCurrentCategory,
+      currentCategory,
+      fetchCurrentCategory,
 
-      setGallerySelected: oformsStore.setGallerySelected,
+      setGallerySelected,
 
-      canSubmitToFormGallery: accessRightsStore.canSubmitToFormGallery,
-      setSubmitToGalleryDialogVisible:
-        dialogsStore.setSubmitToGalleryDialogVisible,
+      canSubmitToFormGallery,
+      setSubmitToGalleryDialogVisible,
 
-      isInfoPanelVisible: infoPanelStore.isVisible,
-      setIsInfoPanelVisible: infoPanelStore.setIsVisible,
+      isInfoPanelVisible: isVisible,
+      setIsInfoPanelVisible: setIsVisible,
 
       setIsLoading: () => {
-        clientLoadingStore.setIsSectionHeaderLoading(true, false);
-        clientLoadingStore.setIsSectionFilterLoading(true, false);
-        clientLoadingStore.setIsSectionBodyLoading(true, false);
+        setIsSectionHeaderLoading(true, false);
+        setIsSectionFilterLoading(true, false);
+        setIsSectionBodyLoading(true, false);
       },
 
-      oformsLoadError: oformsStore.oformsLoadError,
-      getFolderInfo: filesStore.getFolderInfo,
+      oformsLoadError,
+      getFolderInfo,
     };
   },
 )(withTranslation("Common")(observer(SectionHeaderContent)));
