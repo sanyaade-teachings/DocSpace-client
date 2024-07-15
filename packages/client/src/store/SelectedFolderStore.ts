@@ -349,6 +349,22 @@ class SelectedFolderStore {
       });
     }
   };
+
+  increaseFilesCount = () => {
+    this.filesCount += 1;
+  };
+
+  decreaseFilesCount = () => {
+    this.filesCount -= 1;
+  };
+
+  increaseFoldersCount = () => {
+    this.foldersCount += 1;
+  };
+
+  decreaseFoldersCount = () => {
+    this.foldersCount -= 1;
+  };
 }
 
 export default SelectedFolderStore;

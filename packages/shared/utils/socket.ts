@@ -54,7 +54,10 @@ export type TOptSocket = {
   data?: string;
   type?: "folder" | "file";
   id?: string;
-  cmd?: "create" | "update" | "delete";
+  cmd?: "create" | "update" | "delete" | "create-form";
+  folderId?: string | number;
+  fileId?: string | number;
+  count?: string | number;
 } & TOptQuota;
 
 export type TEmit = {
@@ -172,7 +175,7 @@ class SocketIOHelper {
     }
   };
 
-  on = (eventName: string, callback: (value: TOptSocket) => void) => {
+  on = (eventName: string, callback: (value: TOptSocket | string) => void) => {
     if (!this.isEnabled) {
       callbacks.push({ eventName, callback });
       return;

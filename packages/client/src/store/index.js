@@ -82,6 +82,7 @@ import InfoPanelStore from "./InfoPanelStore";
 import CampaignsStore from "./CampaignsStore";
 
 import OAuthStore from "./OAuthStore";
+import FilesSocketStore from "./FilesSocketStore";
 
 const oauthStore = new OAuthStore(userStore);
 
@@ -155,6 +156,16 @@ const filesStore = new FilesStore(
   userStore,
   currentTariffStatusStore,
   settingsStore,
+);
+
+const filesSocketStore = new FilesSocketStore(
+  settingsStore,
+  clientLoadingStore,
+  selectedFolderStore,
+  treeFoldersStore,
+  infoPanelStore,
+  userStore,
+  filesStore,
 );
 
 const mediaViewerDataStore = new MediaViewerDataStore(
@@ -324,6 +335,7 @@ const store = {
   profileActionsStore,
 
   filesStore,
+  filesSocketStore,
 
   filesSettingsStore,
   mediaViewerDataStore,
