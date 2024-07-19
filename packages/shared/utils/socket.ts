@@ -62,7 +62,7 @@ export type TOptSocket = {
 
 export type TEmit = {
   command: string;
-  data: { roomParts: string | []; individual?: boolean };
+  data: { roomParts: string | string[]; individual?: boolean };
   room?: null | boolean;
 };
 

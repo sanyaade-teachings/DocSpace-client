@@ -24,6 +24,8 @@
 // content are licensed under the terms of the Creative Commons Attribution-ShareAlike 4.0
 // International. See the License terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
 
+import { Location, NavigateFunction } from "react-router";
+
 import {
   TGetColorTheme,
   TSettings,
@@ -99,7 +101,8 @@ declare global {
     timezone: string;
     snackbar?: {};
     DocSpace: {
-      navigate: (path: string, state?: { [key: string]: unknown }) => void;
+      navigate: NavigateFunction;
+      location: Location;
     };
     ClientConfig?: {
       pdfViewerUrl: string;

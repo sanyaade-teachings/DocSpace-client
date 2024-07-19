@@ -99,7 +99,7 @@ class FilesFilter {
 
   selectedItem: { key?: string | number };
 
-  folder: string;
+  folder: string | number;
 
   searchInContent: boolean | null;
 

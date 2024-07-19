@@ -129,7 +129,7 @@ export const enum FilterSubject {
  * Enum for filter type.
  * @readonly
  */
-export const enum FilterType {
+export enum FilterType {
   None = 0,
   FilesOnly = 1,
   FoldersOnly = 2,
@@ -174,7 +174,7 @@ export const enum FileType {
  * Enum for room provider type.
  * @readonly
  */
-export const enum RoomsProviderType {
+export enum RoomsProviderType {
   Box = 1,
   DropboxV2 = 2,
   GoogleDrive = 3,
@@ -227,7 +227,7 @@ export const enum PageType {
  * Enum for root folders type.
  * @readonly
  */
-export const enum FolderType {
+export enum FolderType {
   DEFAULT = 0,
   COMMON = 1,
   BUNCH = 2,

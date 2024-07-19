@@ -17,6 +17,7 @@ import ClientLoadingStore from "./ClientLoadingStore";
 import SelectedFolderStore from "./SelectedFolderStore";
 import TreeFoldersStore from "./TreeFoldersStore";
 import InfoPanelStore from "./InfoPanelStore";
+import FilesListStore from "./FilesListStore";
 
 class FilesSocketStore {
   constructor(
@@ -26,6 +27,8 @@ class FilesSocketStore {
     private treeFoldersStore: Readonly<TreeFoldersStore>,
     private infoPanelStore: Readonly<InfoPanelStore>,
     private userStore: Readonly<UserStore>,
+
+    private filesListStore: Readonly<FilesListStore>,
 
     private filesStore: Readonly<FilesStore>,
   ) {
@@ -157,6 +160,8 @@ class FilesSocketStore {
       if (typeof opt === "string") return;
       const { fileId, count } = opt;
 
+      if (!fileId) return;
+
       const { socketSubscribers } = socketHelper;
       const pathParts = `FILE-${fileId}`;
 
@@ -164,46 +169,44 @@ class FilesSocketStore {
 
       console.log(`[WS] markasnew-file ${fileId}:${count}`);
 
-      const foundIndex =
-        fileId && this.filesStore.files.findIndex((x) => x.id === fileId);
-
       this.treeFoldersStore.fetchTreeFolders();
 
-      if (foundIndex === -1 || !foundIndex) return;
+      const fileStatus = this.filesListStore.files.get(fileId)?.fileStatus;
 
-      this.filesStore.updateFileStatus(
-        foundIndex,
-        typeof count !== "undefined" && Number(count) > 0
-          ? this.filesStore.files[foundIndex].fileStatus | FileStatus.IsNew
-          : this.filesStore.files[foundIndex].fileStatus & ~FileStatus.IsNew,
-      );
+      const status =
+        typeof count !== "undefined" && Number(count) > 0 && !fileStatus
+          ? FileStatus.IsNew
+          : fileStatus === FileStatus.IsNew
+            ? FileStatus.None
+            : fileStatus || FileStatus.None;
+
+      if (status !== fileStatus)
+        this.filesListStore.updateFileStatus(fileId, status);
     });
 
     // WAIT FOR RESPONSES OF EDITING FILE
     socketHelper.on("s:start-edit-file", (id) => {
+      if (typeof id !== "string") return;
+
       const { socketSubscribers } = socketHelper;
+
       const pathParts = `FILE-${id}`;
 
       if (!socketSubscribers.has(pathParts)) return;
 
-      const foundIndex = this.filesStore.files.findIndex((x) => x.id === id);
-      if (foundIndex === -1) return;
+      console.log(`[WS] s:start-edit-file`, id);
 
-      console.log(
-        `[WS] s:start-edit-file`,
-        id,
-        this.filesStore.files[foundIndex].title,
-      );
+      const fileStatus = this.filesListStore.files.get(id)?.fileStatus;
 
       this.filesStore.updateSelectionStatus(
         id,
-        this.filesStore.files[foundIndex].fileStatus | FileStatus.IsEditing,
+        fileStatus || FileStatus.IsEditing,
         true,
       );
 
-      this.filesStore.updateFileStatus(
-        foundIndex,
-        this.filesStore.files[foundIndex].fileStatus | FileStatus.IsEditing,
+      this.filesListStore.updateFileStatus(
+        id,
+        fileStatus || FileStatus.IsEditing,
       );
     });
 
@@ -220,6 +223,8 @@ class FilesSocketStore {
     });
 
     socketHelper.on("s:stop-edit-file", (id) => {
+      if (typeof id !== "string") return;
+
       const { socketSubscribers } = socketHelper;
       const pathParts = `FILE-${id}`;
 
@@ -228,25 +233,18 @@ class FilesSocketStore {
 
       if (!socketSubscribers.has(pathParts)) return;
 
-      const foundIndex = this.filesStore.files.findIndex((x) => x.id === id);
-      if (foundIndex == -1) return;
+      console.log(`[WS] s:stop-edit-file`, id);
 
-      console.log(
-        `[WS] s:stop-edit-file`,
-        id,
-        this.filesStore.files[foundIndex].title,
-      );
+      const currFile = this.filesListStore.files.get(id);
+      const fileStatus = currFile?.fileStatus;
+      const status =
+        fileStatus === FileStatus.IsEditing
+          ? FileStatus.None
+          : fileStatus || FileStatus.None;
 
-      this.filesStore.updateSelectionStatus(
-        id,
-        this.filesStore.files[foundIndex].fileStatus & ~FileStatus.IsEditing,
-        false,
-      );
+      this.filesStore.updateSelectionStatus(id, status, false);
 
-      this.filesStore.updateFileStatus(
-        foundIndex,
-        this.filesStore.files[foundIndex].fileStatus & ~FileStatus.IsEditing,
-      );
+      this.filesListStore.updateFileStatus(id, status);
 
       this.filesStore.getFileInfo(id).then((file) => {
         if (
@@ -258,60 +256,57 @@ class FilesSocketStore {
         }
       });
 
-      this.filesStore.createThumbnail(this.filesStore.files[foundIndex]);
+      this.filesStore.createThumbnail(currFile);
     });
 
-    this.filesStore.createNewFilesQueue.on(
-      "resolve",
-      this.filesStore.onResolveNewFile,
-    );
+    this.filesStore.createNewFilesQueue.on("resolve", this.onResolveNewFile);
   }
 
   wsModifyFolderCreate = async (opt: TOptSocket | string) => {
     if (typeof opt === "string") return;
 
     if (opt?.type === "file" && opt?.id && opt.data) {
-      const foundIndex = this.filesStore.files.findIndex(
-        (x) => x.id === opt?.id,
-      );
+      const curFile = this.filesListStore.files.get(opt.id);
 
       const file = JSON.parse(opt?.data);
 
       if (this.selectedFolderStore.id !== file.folderId) {
-        const movedToIndex = this.filesStore.getFolderIndex(file.folderId);
-        if (movedToIndex > -1)
-          this.filesStore.folders[movedToIndex].filesCount++;
+        const folder = this.filesListStore.folders.get(file.folderId);
+        if (folder)
+          this.filesListStore.folders.set(folder.id, {
+            ...folder,
+            filesCount: folder.filesCount + 1,
+          });
+
         return;
       }
 
       // To update a file version
-      if (foundIndex > -1 && !this.settingsStore.withPaging) {
+      if (curFile && !this.settingsStore.withPaging) {
         if (
-          this.filesStore.files[foundIndex].version !== file.version ||
-          this.filesStore.files[foundIndex].versionGroup !== file.versionGroup
+          curFile.version !== file.version ||
+          curFile.versionGroup !== file.versionGroup
         ) {
-          this.filesStore.files[foundIndex].version = file.version;
-          this.filesStore.files[foundIndex].versionGroup = file.versionGroup;
+          curFile.version = file.version;
+          curFile.versionGroup = file.versionGroup;
         }
         this.filesStore.checkSelection(file);
       }
 
-      if (foundIndex > -1) return;
+      if (curFile) return;
 
       setTimeout(() => {
-        const foundIndex = this.filesStore.files.findIndex(
-          (x) => x.id === file.id,
-        );
-        if (foundIndex > -1) {
+        const foundFile = this.filesListStore.files.get(file.id);
+
+        if (foundFile) {
           // console.log("Skip in timeout");
           return null;
         }
 
         this.filesStore.createNewFilesQueue.enqueue(() => {
-          const foundIndex = this.filesStore.files.findIndex(
-            (x) => x.id === file.id,
-          );
-          if (foundIndex > -1) {
+          const foundedFile = this.filesListStore.files.get(file.id);
+
+          if (foundedFile) {
             // console.log("Skip in queue");
             return null;
           }
@@ -319,19 +314,23 @@ class FilesSocketStore {
           return api.files.getFileInfo(file.id);
         });
       }, 300);
-    } else if (opt?.type === "folder" && opt?.id) {
-      const foundIndex = this.filesStore.folders.findIndex(
-        (x) => x.id === opt?.id,
-      );
+    } else if (opt?.type === "folder" && opt?.id && opt?.data) {
+      const curFolder = this.filesListStore.folders.get(opt.id);
 
-      if (foundIndex > -1) return;
+      if (curFolder) return;
 
       const folder = JSON.parse(opt?.data);
 
-      if (this.selectedFolderStore.id != folder.parentId) {
-        const movedToIndex = this.filesStore.getFolderIndex(folder.parentId);
-        if (movedToIndex > -1)
-          this.filesStore.folders[movedToIndex].foldersCount++;
+      if (
+        this.selectedFolderStore.id?.toString() !== folder.parentId.toString()
+      ) {
+        const parentFolder = this.filesListStore.folders.get(folder?.parentId);
+
+        if (parentFolder)
+          this.filesListStore.folders.set(parentFolder.id, {
+            ...parentFolder,
+            filesCount: folder.filesCount + 1,
+          });
       }
 
       if (
@@ -340,20 +339,23 @@ class FilesSocketStore {
           folder.createdBy.id === this.userStore?.user?.id &&
           this.filesStore.roomCreated)
       ) {
-        return (this.filesStore.roomCreated = false);
+        return this.filesStore.setRoomCreated(false);
       }
 
       const folderInfo = await api.files.getFolderInfo(folder.id);
 
       console.log("[WS] create new folder", folderInfo.id, folderInfo.title);
 
-      const newFolders = [folderInfo, ...this.filesStore.folders];
+      const newFolders = new Map([
+        [folder.id, folderInfo],
+        ...this.filesListStore.folders.entries(),
+      ]);
 
       if (
-        newFolders.length > this.filesStore.filter.pageCount &&
+        this.filesListStore.folders.size > this.filesStore.filter.pageCount &&
         this.settingsStore.withPaging
       ) {
-        newFolders.pop(); // Remove last
+        this.filesListStore.removeFolder(Array.from(newFolders.keys()).pop()); // Remove last
       }
 
       const newFilter = this.filesStore.filter;
@@ -361,7 +363,7 @@ class FilesSocketStore {
 
       runInAction(() => {
         this.filesStore.setFilter(newFilter);
-        this.filesStore.setFolders(newFolders);
+        this.filesListStore.addFolder(folderInfo);
       });
     }
   };
@@ -383,7 +385,7 @@ class FilesSocketStore {
 
       api.files
         .getFolderInfo(folder.id)
-        .then(this.filesStore.setFolder)
+        .then(this.filesListStore.setFolder)
         .catch(() => {
           // console.log("Folder deleted")
         });

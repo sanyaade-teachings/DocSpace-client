@@ -50,7 +50,7 @@ import LdapFormStore from "./LdapFormStore";
 import FilesStore from "./FilesStore";
 import SelectedFolderStore from "./SelectedFolderStore";
 import TreeFoldersStore from "./TreeFoldersStore";
-import thirdPartyStore from "./ThirdPartyStore";
+import ThirdPartyStore from "./ThirdPartyStore";
 import FilesSettingsStore from "./FilesSettingsStore";
 import FilesActionsStore from "./FilesActionsStore";
 import MediaViewerDataStore from "./MediaViewerDataStore";
@@ -83,6 +83,8 @@ import CampaignsStore from "./CampaignsStore";
 
 import OAuthStore from "./OAuthStore";
 import FilesSocketStore from "./FilesSocketStore";
+
+const thirdPartyStore = new ThirdPartyStore();
 
 const oauthStore = new OAuthStore(userStore);
 

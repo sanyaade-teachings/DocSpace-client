@@ -45,13 +45,13 @@ import { TLogo, TRoomSecurity } from "@docspace/shared/api/rooms/types";
 import { setDocumentTitle } from "../helpers/utils";
 
 export type TNavigationPath = {
-  id: number;
+  id: number | string;
   title: string;
   isRoom: boolean;
-  roomType: RoomsType;
-  isRootRoom: boolean;
-  shared: boolean;
-  canCopyPublicLink: boolean;
+  roomType?: RoomsType;
+  isRootRoom?: boolean;
+  shared?: boolean;
+  canCopyPublicLink?: boolean;
 };
 
 type ExcludeTypes = SettingsStore | Function;
@@ -115,6 +115,8 @@ class SelectedFolderStore {
 
   isRoom = false;
 
+  inRoom = false;
+
   isArchive = false;
 
   logo: TLogo | null = null;
@@ -127,9 +129,7 @@ class SelectedFolderStore {
 
   security: TFolderSecurity | TRoomSecurity | null = null;
 
-  type = null;
-
-  inRoom = false;
+  type: FolderType | null = null;
 
   isFolder = true;
 
