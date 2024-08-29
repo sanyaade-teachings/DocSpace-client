@@ -1144,6 +1144,7 @@ export function getLogoUrl(
   def: boolean = false,
   culture?: string,
 ) {
+  return "";
   return `/logo.ashx?logotype=${logoType}&dark=${dark}&default=${def}${culture ? `&culture=${culture}` : ""}`;
 }
 

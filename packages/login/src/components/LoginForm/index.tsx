@@ -74,7 +74,7 @@ import { StyledCaptcha } from "./LoginForm.styled";
 import { LoginDispatchContext, LoginValueContext } from "../Login";
 import OAuthClientInfo from "../ConsentInfo";
 
-// import { gitAvailablePortals } from "@/utils/actions";
+// import { getAvailablePortals } from "@/utils/actions";
 
 let showToastr = true;
 

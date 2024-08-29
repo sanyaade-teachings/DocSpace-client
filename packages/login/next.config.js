@@ -26,12 +26,23 @@
 
 /** @type {import('next').NextConfig} */
 
-const path = require("path");
 const pkg = require("./package.json");
+
+const IS_TEST = process.env.TEST;
+
+const output = IS_TEST ? {} : { output: "standalone" };
+const imgGenerator = IS_TEST
+  ? {}
+  : {
+      generator: {
+        emit: false,
+        filename: "static/chunks/[path][name][ext]?[hash]",
+      },
+    };
 
 const nextConfig = {
   basePath: "/login",
-  output: "standalone",
+  ...output,
   compiler: {
     styledComponents: true,
   },
@@ -74,10 +85,7 @@ module.exports = {
       // Reapply the existing rule, but only for svg imports ending in ?url
       {
         type: "asset/resource",
-        generator: {
-          emit: false,
-          filename: "static/chunks/[path][name][ext]?[hash]",
-        },
+        ...imgGenerator,
         test: /\.(svg|png|jpe?g|gif|ico|woff2)$/i,
         resourceQuery: /url/, // *.svg?url
       },

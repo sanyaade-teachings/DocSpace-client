@@ -26,7 +26,7 @@
 
 "use server";
 
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 
 import {
   createRequest,
@@ -53,26 +53,13 @@ import {
 } from "@/types";
 import { TScope } from "@docspace/shared/utils/oauth/types";
 import { transformToClientProps } from "@docspace/shared/utils/oauth";
-import {
-  colorThemeSuccess,
-  getMockSettingsResponse,
-  isLicenseRequiredSuccess,
-  machineNameSuccess,
-  portalCulturesSuccess,
-  settingsPasswordSuccess,
-  settingsSuccessNoAuthWizard,
-} from "@docspace/shared/__mocks__/e2e";
-import {
-  getMockResponse,
-  portalTimeZonesSuccess,
-} from "@docspace/shared/__mocks__/e2e/settings";
-
-const IS_TEST = process.env.TEST;
 
 export const checkIsAuthenticated = async () => {
   const [request] = createRequest(["/authentication"], [["", ""]], "GET");
 
-  const res = await fetch(request);
+  const res = await fetch(request, {
+    cache: "no-store",
+  });
 
   if (!res.ok) return;
 
@@ -88,9 +75,11 @@ export async function getSettings() {
     "GET",
   );
 
-  const settingsRes = IS_TEST
-    ? getMockResponse(settingsSuccessNoAuthWizard)
-    : await fetch(getSettings);
+  console.log(getSettings.url);
+
+  const settingsRes = await fetch(getSettings, {
+    cache: "no-store",
+  });
 
   if (settingsRes.status === 403) return `access-restricted`;
 
@@ -110,7 +99,9 @@ export async function getVersionBuild() {
     "GET",
   );
 
-  const res = await fetch(getSettings);
+  const res = await fetch(getSettings, {
+    cache: "no-store",
+  });
 
   if (!res.ok) return;
 
@@ -126,9 +117,11 @@ export async function getColorTheme() {
     "GET",
   );
 
-  const res = IS_TEST
-    ? getMockResponse(colorThemeSuccess)
-    : await fetch(getColorTheme);
+  console.log(Reflect.get(fetch, "__FOO"), getColorTheme.url);
+
+  const res = await fetch(getColorTheme, {
+    cache: "no-store",
+  });
 
   if (!res.ok) return;
 
@@ -144,7 +137,9 @@ export async function getThirdPartyProviders() {
     "GET",
   );
 
-  const res = await fetch(getThirdParty);
+  const res = await fetch(getThirdParty, {
+    cache: "no-store",
+  });
 
   if (!res.ok) return;
 
@@ -156,7 +151,9 @@ export async function getThirdPartyProviders() {
 export async function getCapabilities() {
   const [getCapabilities] = createRequest([`/capabilities`], [["", ""]], "GET");
 
-  const res = await fetch(getCapabilities);
+  const res = await fetch(getCapabilities, {
+    cache: "no-store",
+  });
 
   if (!res.ok) return;
 
@@ -168,7 +165,9 @@ export async function getCapabilities() {
 export async function getSSO() {
   const [getSSO] = createRequest([`/settings/ssov2`], [["", ""]], "GET");
 
-  const res = await fetch(getSSO);
+  const res = await fetch(getSSO, {
+    cache: "no-store",
+  });
 
   if (!res.ok) return;
 
@@ -184,7 +183,9 @@ export async function getUser() {
   const [getUser] = createRequest([`/people/@self`], [["", ""]], "GET");
 
   if (!cookie?.includes("asc_auth_key")) return undefined;
-  const userRes = await fetch(getUser);
+  const userRes = await fetch(getUser, {
+    cache: "no-store",
+  });
 
   if (userRes.status === 401) return undefined;
 
@@ -198,7 +199,9 @@ export async function getUser() {
 export async function getScopeList() {
   const [getScopeList] = createRequest([`/scopes`], [["", ""]], "GET");
 
-  const scopeList = await fetch(getScopeList);
+  const scopeList = await fetch(getScopeList, {
+    cache: "no-store",
+  });
 
   if (!scopeList.ok) return;
 
@@ -214,7 +217,9 @@ export async function getOAuthClient(clientId: string) {
     "GET",
   );
 
-  const oauthClient = await fetch(getOAuthClient);
+  const oauthClient = await fetch(getOAuthClient, {
+    cache: "no-store",
+  });
 
   if (!oauthClient.ok) return;
 
@@ -230,9 +235,9 @@ export async function getPortalCultures() {
     "GET",
   );
 
-  const res = IS_TEST
-    ? getMockResponse(portalCulturesSuccess)
-    : await fetch(getPortalCultures);
+  const res = await fetch(getPortalCultures, {
+    cache: "no-store",
+  });
 
   if (!res.ok) return;
 
@@ -245,7 +250,7 @@ export async function gitAvailablePortals(data: {
   email: string;
   passwordHash: string;
 }) {
-  const [gitAvailablePortals] = createRequest(
+  const [getAvailablePortals] = createRequest(
     [`/portal/signin`],
     [["Content-Type", "application/json"]],
     "POST",
@@ -253,14 +258,12 @@ export async function gitAvailablePortals(data: {
     true,
   );
 
-  console.log(gitAvailablePortals.url);
-
-  const response = await fetch(gitAvailablePortals);
+  const response = await fetch(getAvailablePortals, {
+    cache: "no-store",
+  });
   if (!response.ok) return null;
 
   const { response: portals } = await response.json();
-
-  console.log(portals);
 
   // return config;
 }
@@ -268,7 +271,9 @@ export async function gitAvailablePortals(data: {
 export async function getConfig() {
   const baseUrl = getBaseUrl();
   const config = await (
-    await fetch(`${baseUrl}/static/scripts/config.json`)
+    await fetch(`${baseUrl}/static/scripts/config.json`, {
+      cache: "no-store",
+    })
   ).json();
 
   return config;
@@ -281,7 +286,9 @@ export async function getCompanyInfoSettings() {
     "GET",
   );
 
-  const res = await fetch(getCompanyInfoSettings);
+  const res = await fetch(getCompanyInfoSettings, {
+    cache: "no-store",
+  });
 
   if (!res.ok) throw new Error(res.statusText);
 
@@ -298,9 +305,9 @@ export async function getPortalPasswordSettings(
     [confirmKey ? ["Confirm", confirmKey] : ["", ""]],
     "GET",
   );
-  const res = IS_TEST
-    ? getMockResponse(settingsPasswordSuccess)
-    : await fetch(getPortalPasswordSettings);
+  const res = await fetch(getPortalPasswordSettings, {
+    cache: "no-store",
+  });
 
   if (!res.ok) return;
 
@@ -319,7 +326,9 @@ export async function getUserFromConfirm(
     "GET",
   );
 
-  const res = await fetch(getUserFromConfirm);
+  const res = await fetch(getUserFromConfirm, {
+    cache: "no-store",
+  });
 
   if (!res.ok) return;
 
@@ -339,9 +348,9 @@ export async function getMachineName(confirmKey: string | null = null) {
     "GET",
   );
 
-  const res = IS_TEST
-    ? getMockResponse(machineNameSuccess)
-    : await fetch(getMachineName);
+  const res = await fetch(getMachineName, {
+    cache: "no-store",
+  });
 
   if (!res.ok) throw new Error(res.statusText);
 
@@ -357,9 +366,9 @@ export async function getIsLicenseRequired() {
     "GET",
   );
 
-  const res = IS_TEST
-    ? getMockResponse(isLicenseRequiredSuccess)
-    : await fetch(getIsLicenseRequired);
+  const res = await fetch(getIsLicenseRequired, {
+    cache: "no-store",
+  });
 
   if (!res.ok) throw new Error(res.statusText);
 
@@ -375,9 +384,9 @@ export async function getPortalTimeZones(confirmKey: string | null = null) {
     "GET",
   );
 
-  const res = IS_TEST
-    ? getMockResponse(portalTimeZonesSuccess)
-    : await fetch(getPortalTimeZones);
+  const res = await fetch(getPortalTimeZones, {
+    cache: "no-store",
+  });
 
   if (!res.ok) throw new Error(res.statusText);
 
@@ -393,7 +402,9 @@ export async function getTfaSecretKeyAndQR(confirmKey: string | null = null) {
     "GET",
   );
 
-  const res = await fetch(getTfaSecretKeyAndQR);
+  const res = await fetch(getTfaSecretKeyAndQR, {
+    cache: "no-store",
+  });
 
   if (!res.ok) throw new Error(res.statusText);
 
@@ -410,7 +421,9 @@ export async function checkConfirmLink(data: TConfirmLinkParams) {
     JSON.stringify(data),
   );
 
-  const response = await fetch(checkConfirmLink);
+  const response = await fetch(checkConfirmLink, {
+    cache: "no-store",
+  });
 
   if (!response.ok) throw new Error(response.statusText);
 

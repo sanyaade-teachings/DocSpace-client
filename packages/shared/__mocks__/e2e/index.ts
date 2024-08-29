@@ -1,28 +1,5 @@
-import getMockSettingsResponse, {
-  settingsSuccessNoAuth,
-  settingsError,
-  settingsForbidden,
-  settingsNotFound,
-  settingsSuccessNoAuthWizard,
-  settingsPasswordSuccess,
-  machineNameSuccess,
-  isLicenseRequiredSuccess,
-  portalTimeZonesSuccess,
-  portalCulturesSuccess,
-  colorThemeSuccess,
-} from "./settings";
+import { BASE_URL } from "./utils";
+import handlers from "./handlers";
+import { MSWProvider } from "./msw-provider";
 
-export {
-  getMockSettingsResponse,
-  settingsSuccessNoAuth,
-  settingsError,
-  settingsForbidden,
-  settingsNotFound,
-  settingsSuccessNoAuthWizard,
-  settingsPasswordSuccess,
-  machineNameSuccess,
-  isLicenseRequiredSuccess,
-  portalTimeZonesSuccess,
-  portalCulturesSuccess,
-  colorThemeSuccess,
-};
+export { BASE_URL, handlers, MSWProvider };

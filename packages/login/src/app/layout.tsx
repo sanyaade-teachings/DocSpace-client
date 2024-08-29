@@ -40,6 +40,16 @@ import {
 } from "@/utils/actions";
 
 import "../styles/globals.scss";
+import { MSWProvider } from "@docspace/shared/__mocks__/e2e";
+
+if (process.env.NEXT_RUNTIME === "nodejs") {
+  console.log("SERVER LISTEN");
+
+  const { server } = require("../mocks/node");
+  server.listen();
+
+  Reflect.set(fetch, "__FOO", "YES");
+}
 
 export default async function RootLayout({
   children,
@@ -124,20 +134,22 @@ export default async function RootLayout({
         <meta name="google" content="notranslate" />
       </head>
       <body>
-        <StyledComponentsRegistry>
-          <Providers
-            value={{
-              settings: typeof settings === "string" ? undefined : settings,
-              colorTheme,
-              systemTheme: systemTheme?.value as ThemeKeys,
-            }}
-            redirectURL={redirectUrl}
-            user={user}
-          >
-            <Toast isSSR />
-            {children}
-          </Providers>
-        </StyledComponentsRegistry>
+        <MSWProvider>
+          <StyledComponentsRegistry>
+            <Providers
+              value={{
+                settings: typeof settings === "string" ? undefined : settings,
+                colorTheme,
+                systemTheme: systemTheme?.value as ThemeKeys,
+              }}
+              redirectURL={redirectUrl}
+              user={user}
+            >
+              <Toast isSSR />
+              {children}
+            </Providers>
+          </StyledComponentsRegistry>
+        </MSWProvider>
       </body>
     </html>
   );

@@ -28,11 +28,13 @@
 
 import React from "react";
 import { I18nextProvider } from "react-i18next";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import { ThemeProvider } from "@docspace/shared/components/theme-provider";
 import { TFirebaseSettings } from "@docspace/shared/api/settings/types";
 import FirebaseHelper from "@docspace/shared/utils/firebase";
 import { TUser } from "@docspace/shared/api/people/types";
+import { MSWProvider } from "@docspace/shared/__mocks__/e2e";
 
 import { TDataContext } from "@/types";
 import useI18N from "@/hooks/useI18N";
@@ -41,7 +43,8 @@ import useTheme from "@/hooks/useTheme";
 import pkgFile from "../../package.json";
 
 import ErrorBoundaryWrapper from "./ErrorBoundary";
-import { usePathname, useSearchParams } from "next/navigation";
+
+const IS_TEST = process.env.TEST;
 
 export const Providers = ({
   children,
@@ -83,7 +86,7 @@ export const Providers = ({
     i18n,
   });
 
-  return (
+  const content = (
     <ThemeProvider theme={theme} currentColorScheme={currentColorTheme}>
       <I18nextProvider i18n={i18n}>
         <ErrorBoundaryWrapper
@@ -100,4 +103,10 @@ export const Providers = ({
       </I18nextProvider>
     </ThemeProvider>
   );
+
+  // if (IS_TEST) {
+  //   return <MSWProvider>{content}</MSWProvider>;
+  // }
+
+  return content;
 };
