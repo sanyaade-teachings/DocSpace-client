@@ -103,7 +103,7 @@ class UploadPanelComponent extends React.Component {
   };
 
   render() {
-    //console.log("UploadPanel render");
+    console.log("UploadPanel render");
     const {
       t,
       uploadPanelVisible,
