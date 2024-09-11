@@ -244,6 +244,15 @@ const Dark: TTheme = {
     bodyPadding: "16px 0",
   },
 
+  progressPanel: {
+    textColor: white,
+    progress: {
+      inAction: lightSecondMain,
+      successFinish: darkStatusPositive,
+      errorFinish: darkStatusWarning,
+    },
+  },
+
   mainButtonMobile: {
     textColor: darkGrayDark,
 

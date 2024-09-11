@@ -54,7 +54,7 @@ import {
   MainButtonMobileProps,
   ProgressOption,
 } from "./MainButtonMobile.types";
-import { ProgressBarMobile } from "./sub-components/ProgressBar";
+import { ProgressBarMobile } from "../progress-panel/ProgressPanel";
 
 const StyledButtonAlertIcon = styled(ButtonAlertReactSvg)`
   cursor: pointer;

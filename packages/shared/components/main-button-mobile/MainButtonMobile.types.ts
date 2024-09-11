@@ -102,22 +102,6 @@ export interface MainButtonMobileProps {
   dropdownStyle?: React.CSSProperties;
 }
 
-export interface ProgressBarMobileProps {
-  label?: string;
-  status?: string;
-  percent: number;
-  open: boolean;
-  onCancel?: () => void;
-  icon: string;
-  /** The function called after the progress header is clicked  */
-  onClickAction?: () => void;
-  /** The function that facilitates hiding the button */
-  hideButton?: () => void;
-  /** Changes the progress bar color, if set to true */
-  error?: boolean;
-  className?: string;
-}
-
 export interface SubmenuItemProps {
   option: ActionOption;
   toggle: (value: boolean) => void;
@@ -125,11 +109,4 @@ export interface SubmenuItemProps {
   recalculateHeight: () => void;
   openedSubmenuKey: string;
   setOpenedSubmenuKey: (value: string) => void;
-}
-
-export interface ProgressBarMobileDefaultStyles {
-  $currentColorScheme?: TColorScheme;
-  interfaceDirection?: string;
-  theme: TTheme;
-  error?: boolean;
 }

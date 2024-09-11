@@ -270,79 +270,6 @@ StyledProgressContainer.defaultProps = {
 
 StyledButtonWrapper.defaultProps = { theme: Base };
 
-const StyledProgressBarContainer = styled.div<{ isUploading?: boolean }>`
-  display: ${(props) => (props.isUploading ? "flex" : "none")};
-
-  align-items: center;
-
-  flex-wrap: wrap;
-
-  width: 100%;
-
-  box-sizing: border-box;
-
-  height: 60px;
-  padding-top: 26px;
-
-  .progress-container {
-    width: 100%;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    .progress-header {
-      width: 50%;
-
-      line-height: 16px;
-
-      color: ${(props) => props.theme.mainButtonMobile.textColor};
-      &:hover {
-        cursor: pointer;
-      }
-    }
-
-    .progress_info-container {
-      width: 50%;
-
-      display: flex;
-      align-items: center;
-
-      .progress_count {
-        width: calc(100% - 26px);
-
-        line-height: 16px;
-        color: ${(props) => props.theme.mainButtonMobile.textColor};
-
-        text-align: right;
-        margin-inline-end: 12px;
-      }
-
-      .progress_icon {
-        svg {
-          path {
-            fill: ${(props) => props.theme.mainButtonMobile.bar.icon};
-          }
-        }
-      }
-    }
-  }
-`;
-
-StyledProgressBarContainer.defaultProps = { theme: Base };
-
-const StyledMobileProgressBar = styled.div`
-  width: 100%;
-  height: 4px;
-  background-color: ${(props) =>
-    props.theme.mainButtonMobile.mobileProgressBarBackground};
-  border-radius: 2px;
-  margin-top: 14px;
-`;
-
-StyledMobileProgressBar.defaultProps = { theme: Base };
-
 const StyledBar = styled.div<{ uploadPercent: number }>`
   width: ${(props) => props.uploadPercent}%;
   height: 4px;
@@ -365,8 +292,6 @@ export {
   StyledDropDown,
   StyledDropDownItem,
   StyledContainerAction,
-  StyledProgressBarContainer,
-  StyledMobileProgressBar,
   StyledProgressContainer,
   StyledBar,
   StyledButtonWrapper,
@@ -374,18 +299,3 @@ export {
   StyledAlertIcon,
   StyledRenderItem,
 };
-
-const getDefaultProgressStyles = ({
-  $currentColorScheme,
-  theme,
-}: ProgressBarMobileDefaultStyles) =>
-  $currentColorScheme &&
-  css`
-    background: ${
-      theme.isBase ? $currentColorScheme?.main?.accent : globalColors.white
-    }};
-  `;
-
-const StyledProgressBarTheme = styled(StyledBar)(getDefaultProgressStyles);
-
-export { StyledProgressBarTheme };

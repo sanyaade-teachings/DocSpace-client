@@ -163,6 +163,8 @@ const PureHome = (props) => {
     isCurrentGroupEmpty,
     wsCreatedPDFForm,
     disableUploadPanelOpen,
+
+    activeOperations,
   } = props;
 
   //console.log(t("ComingSoon"))
@@ -363,6 +365,7 @@ const PureHome = (props) => {
   sectionProps.secondaryProgressBarIcon = secondaryProgressDataStoreIcon;
   sectionProps.showSecondaryButtonAlert = secondaryProgressDataStoreAlert;
   sectionProps.getContextModel = getContextModel;
+  sectionProps.activeOperations = activeOperations;
 
   return (
     <>
@@ -529,13 +532,16 @@ export const Component = inject(
 
     const {
       visible: primaryProgressDataVisible,
-      percent: primaryProgressDataPercent,
+
       icon: primaryProgressDataIcon,
       alert: primaryProgressDataAlert,
       disableUploadPanelOpen,
       clearPrimaryProgressData,
-    } = primaryProgressDataStore;
+      uploadProgress,
 
+      activeOperations,
+    } = primaryProgressDataStore;
+    const { percent: primaryProgressDataPercent } = uploadProgress;
     const {
       visible: secondaryProgressDataStoreVisible,
       percent: secondaryProgressDataStorePercent,
@@ -700,6 +706,7 @@ export const Component = inject(
       isEmptyGroups,
       isCurrentGroupEmpty,
       wsCreatedPDFForm,
+      activeOperations,
     };
   },
 )(observer(Home));

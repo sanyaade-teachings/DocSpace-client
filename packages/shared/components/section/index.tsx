@@ -30,8 +30,6 @@ import React, { useEffect, useMemo } from "react";
 import { Provider } from "../../utils";
 import { DeviceType } from "../../enums";
 
-import { FloatingButton } from "../floating-button";
-
 import SectionContainer from "./sub-components/SectionContainer";
 import SubSectionHeader from "./sub-components/SectionHeader";
 import SubSectionFilter from "./sub-components/SectionFilter";
@@ -58,6 +56,7 @@ import {
   SECTION_SUBMENU_NAME,
 } from "./Section.constants";
 import { parseChildren } from "./Section.utils";
+import OperationsProgress from "./sub-components/OperationsProgress";
 
 export type { SectionProps };
 
@@ -117,6 +116,7 @@ const Section = (props: SectionProps) => {
     canDisplay,
     anotherDialogOpen,
     getContextModel,
+    activeOperations,
   } = props;
 
   const [sectionSize, setSectionSize] = React.useState<{
@@ -292,7 +292,8 @@ const Section = (props: SectionProps) => {
             </SubSectionBody>
           )}
 
-          {currentDeviceType === DeviceType.desktop ? (
+          <OperationsProgress activeOperations={activeOperations} />
+          {/* {currentDeviceType === DeviceType.desktop ? (
             showTwoProgress ? (
               <div className="progress-bar_container">
                 <FloatingButton
@@ -332,7 +333,7 @@ const Section = (props: SectionProps) => {
                 />
               </div>
             ) : null
-          ) : null}
+          ) : null} */}
         </SectionContainer>
 
         {isInfoPanelAvailable && (

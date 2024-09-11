@@ -36,15 +36,92 @@ class PrimaryProgressDataStore {
   errors = 0;
   disableUploadPanelOpen = false;
 
+  conversionProgress = {
+    percent: 0,
+    label: "Convert",
+    visible: false,
+    icon: "convert",
+    alert: false,
+    errors: 0,
+  };
+
+  uploadProgress = {
+    percent: 0,
+    label: "Upload",
+    visible: false,
+    icon: "upload",
+    alert: false,
+    errors: 0,
+  };
+
+  deletionProgress = {
+    label: "Move to trash",
+    visible: false,
+    icon: "trash",
+    alert: false,
+    errors: 0,
+    withoutProgress: true,
+  };
+  moveProgress = {
+    label: "Copy",
+    visible: false,
+    icon: "trash",
+    alert: false,
+    errors: 0,
+    withoutProgress: true,
+  };
+
+  copyProgress = {
+    label: "Move",
+    visible: false,
+    icon: "trash",
+    alert: false,
+    errors: 0,
+    withoutProgress: true,
+  };
+
   constructor() {
     makeAutoObservable(this);
   }
 
-  setPrimaryProgressBarData = (primaryProgressData) => {
+  get activeOperations() {
+    let operations = [
+      this.conversionProgress,
+      this.uploadProgress,
+      this.deletionProgress,
+      this.moveProgress,
+      this.copyProgress,
+    ];
+    console.log("operations", operations);
+    return operations.filter((item) => item.visible);
+  }
+
+  setConversionProgress = (primaryProgressData) => {
     const progressDataItems = Object.keys(primaryProgressData);
     for (let key of progressDataItems) {
-      this[key] = primaryProgressData[key];
+      this.conversionProgress[key] = primaryProgressData[key];
     }
+  };
+
+  setUploadProgress = (primaryProgressData) => {
+    const progressDataItems = Object.keys(primaryProgressData);
+    for (let key of progressDataItems) {
+      this.uploadProgress[key] = primaryProgressData[key];
+    }
+  };
+
+  setDeletionProgress = (primaryProgressData) => {
+    const progressDataItems = Object.keys(primaryProgressData);
+    for (let key of progressDataItems) {
+      this.deletionProgress[key] = primaryProgressData[key];
+    }
+  };
+  setPrimaryProgressBarData = (primaryProgressData) => {
+    //deleted
+    // const progressDataItems = Object.keys(primaryProgressData);
+    // for (let key of progressDataItems) {
+    //   this[key] = primaryProgressData[key];
+    // }
   };
 
   clearPrimaryProgressData = () => {

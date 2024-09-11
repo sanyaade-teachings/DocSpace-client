@@ -303,6 +303,16 @@ export const getBaseTheme = () => {
       },
     },
 
+    progressPanel: {
+      textColor: white,
+
+      progress: {
+        inAction: lightSecondMain,
+        successFinish: lightStatusPositive,
+        errorFinish: lightStatusWarning,
+      },
+    },
+
     mainButton: {
       backgroundColor: lightBlueMain,
       disableBackgroundColor: lightBlueMainDisabled,

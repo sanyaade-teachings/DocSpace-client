@@ -44,6 +44,7 @@ import { Scrollbar } from "../scrollbar";
 import DragAndDrop from "../drag-and-drop/DragAndDrop";
 import { SectionContainerProps } from "./Section.types";
 import { SECTION_HEADER_HEIGHT } from "./Section.constants";
+import { DropDown } from "../drop-down";
 
 const StyledScrollbar = styled(Scrollbar)<{ $isScrollLocked?: boolean }>`
   ${({ $isScrollLocked }) =>
@@ -435,6 +436,10 @@ const StyledSectionContainer = styled.section<SectionContainerProps>`
     inset-inline-end: ${(props) =>
       props.isInfoPanelVisible ? INFO_PANEL_WIDTH : 0}px;
 
+    .progress-dropdown {
+      padding: 16px 0;
+    }
+
     .layout-progress-bar_wrapper {
       position: static;
       width: fit-content;
@@ -578,6 +583,26 @@ const StyledSectionSubmenu = styled.div`
   }
 `;
 
+const StyledDropDown = styled(DropDown)<{ heightProp?: string }>`
+  background-color: #555f65;
+  .progress-list {
+    padding: 0px 16px;
+
+    svg {
+      path {
+        fill: white;
+      }
+    }
+  }
+
+  &:active {
+    background-color: #555f65;
+  }
+  @media (hover: hover) {
+    background-color: #555f65;
+  }
+`;
+
 export {
   StyledSectionPaging,
   StyledSectionHeader,
@@ -593,4 +618,5 @@ export {
   StyledSpacer,
   StyledSectionContainer,
   StyledSectionSubmenu,
+  StyledDropDown,
 };

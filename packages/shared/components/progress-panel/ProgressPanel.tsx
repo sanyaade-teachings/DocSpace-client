@@ -27,26 +27,29 @@
 import { useContext } from "react";
 import { ThemeContext } from "styled-components";
 
-import { IconButton } from "../../icon-button";
-import { Text } from "../../text";
+import { IconButton } from "../icon-button";
+import { Text } from "../text";
 
 import {
   StyledMobileProgressBar,
+  StyledProgress,
   StyledProgressBarContainer,
-  StyledProgressBarTheme,
-} from "../MainButtonMobile.styled";
-import { ProgressBarMobileProps } from "../MainButtonMobile.types";
+} from "./ProgressPanel.styled";
+import { ProgressBarMobileProps } from "./ProgressPanel.types";
+import { Loader } from "../loader";
 
-const ProgressBarMobile = ({
+const ProgressPanel = ({
   label,
   status,
   percent,
   open,
   onCancel,
   icon,
+  iconUrl,
   onClickAction,
   hideButton,
   error,
+  withoutProgress,
 }: ProgressBarMobileProps) => {
   const uploadPercent = percent > 100 ? 100 : percent;
 
@@ -55,22 +58,27 @@ const ProgressBarMobile = ({
     hideButton?.();
   };
 
-  const defaultTheme = useContext(ThemeContext);
-
-  const currentColorScheme = defaultTheme?.currentColorScheme;
-
   return (
     <StyledProgressBarContainer isUploading={open}>
       <div className="progress-container">
-        <Text
-          className="progress-header"
-          fontSize="14px"
-          onClick={onClickHeaderAction}
-          truncate
-        >
-          {label}
-        </Text>
-        <div className="progress_info-container">
+        <div className="progress_main-container">
+          <IconButton
+            className="progress_icon"
+            onClick={onCancel}
+            iconName={iconUrl}
+            size={16}
+          />
+          <Text
+            className="progress-header"
+            fontSize="14px"
+            onClick={onClickHeaderAction}
+            truncate
+          >
+            {label}
+          </Text>
+        </div>
+        {withoutProgress && <div className="progress-loader" />}
+        {/* <div className="progress_info-container">
           <Text className="progress_count" fontSize="13px" truncate>
             {status}
           </Text>
@@ -80,18 +88,16 @@ const ProgressBarMobile = ({
             iconName={icon}
             size={14}
           />
-        </div>
+        </div> */}
       </div>
 
-      <StyledMobileProgressBar>
-        <StyledProgressBarTheme
-          $currentColorScheme={currentColorScheme}
-          uploadPercent={uploadPercent}
-          error={error}
-        />
-      </StyledMobileProgressBar>
+      {!withoutProgress && (
+        <StyledMobileProgressBar>
+          <StyledProgress uploadPercent={uploadPercent} error={error} />
+        </StyledMobileProgressBar>
+      )}
     </StyledProgressBarContainer>
   );
 };
 
-export { ProgressBarMobile };
+export { ProgressPanel };

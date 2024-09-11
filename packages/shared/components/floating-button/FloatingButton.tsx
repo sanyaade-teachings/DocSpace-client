@@ -37,6 +37,8 @@ import ButtonPlusIcon from "PUBLIC_DIR/images/icons/16/button.plus.react.svg";
 import ButtonMinusIcon from "PUBLIC_DIR/images/icons/16/button.minus.react.svg";
 import RefreshIcon from "PUBLIC_DIR/images/refresh.react.svg";
 import CloseIcon from "PUBLIC_DIR/images/close-icon.react.svg";
+import VerticalDotsIcon from "PUBLIC_DIR/images/vertical-dots.react.svg";
+import ArrowIcon from "PUBLIC_DIR/images/arrow.react.svg";
 
 import { FloatingButtonTheme } from "./FloatingButton.theme";
 
@@ -67,6 +69,8 @@ const icons = {
   minus: <ButtonMinusIcon />,
   refresh: <RefreshIcon />,
   duplicate: <ButtonDuplicateIcon />,
+  dots: <VerticalDotsIcon />,
+  arrow: <ArrowIcon />,
 };
 
 const FloatingButton = (props: FloatingButtonProps) => {
