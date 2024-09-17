@@ -25,6 +25,7 @@
 // International. See the License terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
 
 import { makeAutoObservable } from "mobx";
+import { getOperationsProgressTitle } from "SRC_DIR/helpers/filesUtils";
 
 class SecondaryProgressDataStore {
   percent = 0;
@@ -43,27 +44,43 @@ class SecondaryProgressDataStore {
     makeAutoObservable(this);
   }
 
+  get secondaryActiveOperations() {
+    return this.secondaryOperationsArray.filter((item) => item.visible);
+  }
+
   setSecondaryProgressBarData = (secondaryProgressData) => {
-    const progressIndex = this.secondaryOperationsArray.findIndex(
-      (p) => p.operationId === secondaryProgressData.operationId,
+    const { operation, visible, ...progressInfo } = secondaryProgressData;
+
+    const progress = {
+      operation,
+      visible,
+      items: [progressInfo],
+      label: getOperationsProgressTitle(secondaryProgressData.operation),
+    };
+
+    let progressIndex = -1;
+
+    const operationIndex = this.secondaryOperationsArray.findIndex(
+      (object) => object.operation === secondaryProgressData.operation,
     );
 
+    const operationObject = this.secondaryOperationsArray[operationIndex];
+
+    console.log("this.secondaryOperationsArray", this.secondaryOperationsArray);
+
+    if (operationIndex !== -1) {
+      progressIndex = operationObject.items.findIndex((item) => {
+        return item.operationId === secondaryProgressData.operationId;
+      });
+    }
+
     if (progressIndex !== -1) {
-      this.secondaryOperationsArray[progressIndex] = secondaryProgressData;
+      operationObject.items[progressIndex] = progress.items[0];
+
+      return;
     }
 
-    if (progressIndex === 0 || this.secondaryOperationsArray.length === 0) {
-      const progressDataItems = Object.keys(secondaryProgressData);
-      for (let key of progressDataItems) {
-        if (key in this) {
-          this[key] = secondaryProgressData[key];
-        }
-      }
-    }
-
-    if (progressIndex === -1) {
-      this.secondaryOperationsArray.push(secondaryProgressData);
-    }
+    this.secondaryOperationsArray.push(progress);
   };
 
   setItemsSelectionTitle = (itemsSelectionTitle) => {

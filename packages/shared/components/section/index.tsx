@@ -116,7 +116,8 @@ const Section = (props: SectionProps) => {
     canDisplay,
     anotherDialogOpen,
     getContextModel,
-    activeOperations,
+    secondaryActiveOperations,
+    primaryActiveOperations,
   } = props;
 
   const [sectionSize, setSectionSize] = React.useState<{
@@ -292,7 +293,10 @@ const Section = (props: SectionProps) => {
             </SubSectionBody>
           )}
 
-          <OperationsProgress activeOperations={activeOperations} />
+          <OperationsProgress
+            primaryActiveOperations={primaryActiveOperations}
+            secondaryActiveOperations={secondaryActiveOperations}
+          />
           {/* {currentDeviceType === DeviceType.desktop ? (
             showTwoProgress ? (
               <div className="progress-bar_container">

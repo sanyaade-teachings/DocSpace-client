@@ -25,6 +25,7 @@
 // International. See the License terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
 
 import { makeAutoObservable } from "mobx";
+import { getOperationsProgressTitle } from "SRC_DIR/helpers/filesUtils";
 
 class PrimaryProgressDataStore {
   percent = 0;
@@ -54,46 +55,14 @@ class PrimaryProgressDataStore {
     errors: 0,
   };
 
-  deletionProgress = {
-    label: "Move to trash",
-    visible: false,
-    icon: "trash",
-    alert: false,
-    errors: 0,
-    withoutProgress: true,
-  };
-  moveProgress = {
-    label: "Copy",
-    visible: false,
-    icon: "trash",
-    alert: false,
-    errors: 0,
-    withoutProgress: true,
-  };
-
-  copyProgress = {
-    label: "Move",
-    visible: false,
-    icon: "trash",
-    alert: false,
-    errors: 0,
-    withoutProgress: true,
-  };
-
   constructor() {
     makeAutoObservable(this);
   }
 
-  get activeOperations() {
-    let operations = [
-      this.conversionProgress,
-      this.uploadProgress,
-      this.deletionProgress,
-      this.moveProgress,
-      this.copyProgress,
-    ];
-    console.log("operations", operations);
-    return operations.filter((item) => item.visible);
+  get primaryActiveOperations() {
+    const primaryOperations = [this.conversionProgress, this.uploadProgress];
+
+    return primaryOperations.filter((item) => item.visible);
   }
 
   setConversionProgress = (primaryProgressData) => {
@@ -110,18 +79,28 @@ class PrimaryProgressDataStore {
     }
   };
 
-  setDeletionProgress = (primaryProgressData) => {
-    const progressDataItems = Object.keys(primaryProgressData);
-    for (let key of progressDataItems) {
-      this.deletionProgress[key] = primaryProgressData[key];
-    }
+  clearConversionProgress = () => {
+    this.conversionProgress = {
+      visible: false,
+      percent: 0,
+      label: "",
+      icon: "",
+      alert: false,
+      errors: 0,
+      disableUploadPanelOpen: false,
+    };
   };
-  setPrimaryProgressBarData = (primaryProgressData) => {
-    //deleted
-    // const progressDataItems = Object.keys(primaryProgressData);
-    // for (let key of progressDataItems) {
-    //   this[key] = primaryProgressData[key];
-    // }
+
+  clearUploadProgress = () => {
+    this.uploadProgress = {
+      visible: false,
+      percent: 0,
+      label: "",
+      icon: "",
+      alert: false,
+      errors: 0,
+      disableUploadPanelOpen: false,
+    };
   };
 
   clearPrimaryProgressData = () => {

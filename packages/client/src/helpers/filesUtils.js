@@ -110,6 +110,23 @@ export const getUnexpectedErrorText = () => {
   return i18n.t("Common:UnexpectedError");
 };
 
+export const getOperationsProgressTitle = (type) => {
+  switch (type) {
+    case "trash":
+      return "Move to trash";
+    case "move":
+      return "Move to";
+    case "duplicate":
+      return "Duplicate";
+    case "copy":
+      return "Copy";
+    case "download":
+      return "Download";
+    default:
+      return "";
+  }
+};
+
 export const connectedCloudsTitleTranslation = (key, t) => {
   switch (key) {
     case "Box":

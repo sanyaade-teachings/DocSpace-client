@@ -164,7 +164,8 @@ const PureHome = (props) => {
     wsCreatedPDFForm,
     disableUploadPanelOpen,
 
-    activeOperations,
+    secondaryActiveOperations,
+    primaryActiveOperations,
   } = props;
 
   //console.log(t("ComingSoon"))
@@ -365,7 +366,8 @@ const PureHome = (props) => {
   sectionProps.secondaryProgressBarIcon = secondaryProgressDataStoreIcon;
   sectionProps.showSecondaryButtonAlert = secondaryProgressDataStoreAlert;
   sectionProps.getContextModel = getContextModel;
-  sectionProps.activeOperations = activeOperations;
+  sectionProps.secondaryActiveOperations = secondaryActiveOperations;
+  sectionProps.primaryActiveOperations = primaryActiveOperations;
 
   return (
     <>
@@ -539,7 +541,7 @@ export const Component = inject(
       clearPrimaryProgressData,
       uploadProgress,
 
-      activeOperations,
+      primaryActiveOperations,
     } = primaryProgressDataStore;
     const { percent: primaryProgressDataPercent } = uploadProgress;
     const {
@@ -551,6 +553,7 @@ export const Component = inject(
       itemsSelectionLength,
       itemsSelectionTitle,
       setItemsSelectionTitle,
+      secondaryActiveOperations,
     } = secondaryProgressDataStore;
 
     const { setUploadPanelVisible, startUpload, uploaded, converted } =
@@ -598,7 +601,7 @@ export const Component = inject(
         hideLoader();
       }
     }
-
+    console.log("HOME", secondaryActiveOperations);
     return {
       //homepage: config.homepage,
       firstLoad,
@@ -706,7 +709,8 @@ export const Component = inject(
       isEmptyGroups,
       isCurrentGroupEmpty,
       wsCreatedPDFForm,
-      activeOperations,
+      secondaryActiveOperations,
+      primaryActiveOperations,
     };
   },
 )(observer(Home));

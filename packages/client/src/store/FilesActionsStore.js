@@ -287,7 +287,7 @@ class FilesActionStore {
   createFoldersTree = async (t, files, folderId) => {
     //console.log("createFoldersTree", files, folderId);
 
-    const { setPrimaryProgressBarData, clearPrimaryProgressData } =
+    const { setUploadProgress, clearUploadProgress } =
       this.uploadDataStore.primaryProgressDataStore;
 
     const roomFolder = this.selectedFolderStore.navigationPath.find(
@@ -308,7 +308,7 @@ class FilesActionStore {
       }, 0);
 
       if (filesSize > freeSpace) {
-        clearPrimaryProgressData();
+        clearUploadProgress();
 
         const size = getConvertedSize(t, roomFolder.quotaLimit);
 
@@ -328,11 +328,10 @@ class FilesActionStore {
       icon: "upload",
       visible: true,
       percent: 0,
-      label: "",
       alert: false,
     };
 
-    setPrimaryProgressBarData({ ...pbData, disableUploadPanelOpen: true });
+    setUploadProgress({ ...pbData, disableUploadPanelOpen: true });
 
     const tree = this.convertToTree(withoutHiddenFiles);
 
@@ -342,9 +341,9 @@ class FilesActionStore {
     this.updateCurrentFolder(null, [folderId], null, operationId);
 
     if (!filesList.length) {
-      setTimeout(() => clearPrimaryProgressData(), TIMEOUT);
+      setTimeout(() => clearUploadProgress(), TIMEOUT);
     } else {
-      setPrimaryProgressBarData({ ...pbData, disableUploadPanelOpen: false });
+      setUploadProgress({ ...pbData, disableUploadPanelOpen: false });
     }
 
     return filesList;
@@ -375,10 +374,14 @@ class FilesActionStore {
       activeFiles,
       activeFolders,
     } = this.filesStore;
-    const { secondaryProgressDataStore, clearActiveOperations } =
-      this.uploadDataStore;
+    const {
+      secondaryProgressDataStore,
+
+      clearActiveOperations,
+    } = this.uploadDataStore;
     const { setSecondaryProgressBarData, clearSecondaryProgressData } =
       secondaryProgressDataStore;
+
     const { withPaging } = this.settingsStore;
 
     let selection = newSelection
@@ -420,15 +423,15 @@ class FilesActionStore {
     }
 
     if (!folderIds.length && !fileIds.length) return;
-    const filesCount = folderIds.length + fileIds.length;
+    //const filesCount = folderIds.length + fileIds.length;
+    const operation = "trash";
 
     setSecondaryProgressBarData({
-      icon: "trash",
+      operation,
       visible: true,
       percent: 0,
-      label: translations.deleteOperation,
       alert: false,
-      filesCount,
+      // filesCount,
       operationId,
     });
 
@@ -446,7 +449,7 @@ class FilesActionStore {
             if (res[0]?.error) return Promise.reject(res[0].error);
             const data = res[0] ? res[0] : null;
             const pbData = {
-              icon: "trash",
+              operation,
               label: translations.deleteOperation,
               operationId,
             };
@@ -501,6 +504,7 @@ class FilesActionStore {
           visible: true,
           alert: true,
           operationId,
+          operation,
         });
         setTimeout(() => clearSecondaryProgressData(operationId), TIMEOUT);
         return toastr.error(err.message ? err.message : err);
@@ -533,8 +537,10 @@ class FilesActionStore {
 
     this.emptyTrashInProgress = true;
 
+    const operation = "trash";
+
     setSecondaryProgressBarData({
-      icon: "trash",
+      operation,
       visible: true,
       percent: 0,
       label: translations.deleteOperation,
@@ -547,7 +553,7 @@ class FilesActionStore {
         if (res[0]?.error) return Promise.reject(res[0].error);
         const data = res[0] ? res[0] : null;
         const pbData = {
-          icon: "trash",
+          operation,
           label: translations.deleteOperation,
           operationId,
         };
@@ -563,6 +569,7 @@ class FilesActionStore {
         visible: true,
         alert: true,
         operationId,
+        operation,
       });
       setTimeout(() => clearSecondaryProgressData(operationId), TIMEOUT);
       return toastr.error(err.message ? err.message : err);
@@ -586,9 +593,10 @@ class FilesActionStore {
     if (isArchiveFolder) addActiveItems(null, folderIds);
 
     const operationId = uniqueid("operation_");
+    const operation = "trash";
 
     setSecondaryProgressBarData({
-      icon: "trash",
+      operation,
       visible: true,
       percent: 0,
       label: translations.deleteOperation,
@@ -601,7 +609,7 @@ class FilesActionStore {
         if (res[0]?.error) return Promise.reject(res[0].error);
         const data = res[0] ? res[0] : null;
         const pbData = {
-          icon: "trash",
+          operation,
           label: translations.deleteOperation,
           operationId,
         };
@@ -617,6 +625,7 @@ class FilesActionStore {
         visible: true,
         alert: true,
         operationId,
+        operation,
       });
       setTimeout(() => clearSecondaryProgressData(operationId), TIMEOUT);
 
@@ -642,9 +651,9 @@ class FilesActionStore {
     this.setIsBulkDownload(true);
 
     const operationId = uniqueid("operation_");
-
+    console.log("downloadFiles");
     setSecondaryProgressBarData({
-      icon: "file",
+      icon: "download",
       visible: true,
       percent: 0,
       label,
@@ -830,10 +839,14 @@ class FilesActionStore {
     isThirdParty,
     isRoom,
   ) => {
-    const { secondaryProgressDataStore, clearActiveOperations } =
-      this.uploadDataStore;
+    const {
+      secondaryProgressDataStore,
+      primaryProgressDataStore,
+      clearActiveOperations,
+    } = this.uploadDataStore;
     const { setSecondaryProgressBarData, clearSecondaryProgressData } =
       secondaryProgressDataStore;
+
     if (
       this.filesSettingsStore.confirmDelete ||
       this.treeFoldersStore.isPrivacyFolder ||
@@ -846,7 +859,7 @@ class FilesActionStore {
       const operationId = uniqueid("operation_");
 
       setSecondaryProgressBarData({
-        icon: "trash",
+        operation,
         visible: true,
         percent: 0,
         label: translations?.deleteOperation,
@@ -887,7 +900,7 @@ class FilesActionStore {
     const { isRecycleBinFolder, recycleBinFolderId } = this.treeFoldersStore;
 
     const pbData = {
-      icon: "trash",
+      operation: "trash",
       label: translations?.deleteOperation,
       operationId,
     };
@@ -1025,11 +1038,15 @@ class FilesActionStore {
     const fileIds = [];
     item.fileExst ? fileIds.push(item.id) : folderIds.push(item.id);
 
-    const icon = item.isRoom ? "duplicate-room" : "duplicate";
+    const icon = "duplicate";
+    const operation = "duplicate";
     const operationId = uniqueid("operation_");
+    console.log("HELLO COPY");
+    console.log("duplicateAction", icon, "operationId", operationId);
 
+    //debugger;
     setSecondaryProgressBarData({
-      icon,
+      operation,
       visible: true,
       percent: 0,
       alert: false,
@@ -1044,7 +1061,7 @@ class FilesActionStore {
 
         if (lastResult?.error) return Promise.reject(lastResult.error);
 
-        const pbData = { icon, operationId };
+        const pbData = { operation, operationId };
         const data = lastResult || null;
 
         const operationData = await this.uploadDataStore.loopFilesOperations(
@@ -1066,7 +1083,7 @@ class FilesActionStore {
       .catch((err) => {
         clearActiveOperations(fileIds, folderIds);
         setSecondaryProgressBarData({
-          icon,
+          operation,
           visible: true,
           alert: true,
           operationId,
@@ -1653,7 +1670,7 @@ class FilesActionStore {
       );
   };
 
-  moveDragItems = (destFolderId, folderTitle, translations) => {
+  moveDragItems = (destFolderId, folderTitle) => {
     const folderIds = [];
     const fileIds = [];
     const deleteAfter = false;
@@ -1676,7 +1693,6 @@ class FilesActionStore {
       folderIds,
       fileIds,
       deleteAfter,
-      translations,
       folderTitle,
       isCopy,
     };
@@ -1897,9 +1913,10 @@ class FilesActionStore {
       secondaryProgressDataStore;
 
     const operationId = uniqueid("operation_");
+    const operation = "trash";
 
     setSecondaryProgressBarData({
-      icon: "trash",
+      operation,
       visible: true,
       percent: 0,
       label: translations?.deleteOperation,
@@ -1925,6 +1942,7 @@ class FilesActionStore {
         visible: true,
         alert: true,
         operationId,
+        operation,
       });
       setTimeout(() => clearSecondaryProgressData(operationId), TIMEOUT);
       return toastr.error(err.message ? err.message : err);

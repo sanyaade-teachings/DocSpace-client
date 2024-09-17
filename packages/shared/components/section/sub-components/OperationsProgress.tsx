@@ -26,15 +26,27 @@
 import { useState } from "react";
 import RefreshReactSvgUrl from "PUBLIC_DIR/images/refresh.react.svg?url";
 import UploadSvgUrl from "PUBLIC_DIR/images/icons/16/upload.react.svg?url";
+import DuplicateIconUrl from "PUBLIC_DIR/images/button.duplicate.react.svg?url";
 
 import { StyledDropDown } from "../Section.styled";
 import { FloatingButton } from "../../floating-button";
 import { ProgressPanel } from "../../progress-panel/ProgressPanel";
 
-const OperationsProgress = ({ activeOperations }) => {
+const OperationsProgress = ({
+  primaryActiveOperations,
+  secondaryActiveOperations,
+}) => {
   const [isOpenPanel, setIsOpenPanel] = useState<boolean>(false);
 
-  if (!activeOperations) return <></>;
+  console.log(
+    "secondaryActiveOperations",
+    secondaryActiveOperations,
+    secondaryActiveOperations.length,
+  );
+
+  if (!primaryActiveOperations && !secondaryActiveOperations) return <></>;
+  if (!primaryActiveOperations.length && !secondaryActiveOperations.length)
+    return <></>;
 
   const onOpenProgressPanel = () => {
     setIsOpenPanel(!isOpenPanel);
@@ -46,30 +58,52 @@ const OperationsProgress = ({ activeOperations }) => {
         return UploadSvgUrl;
       case "convert":
         return RefreshReactSvgUrl;
+      case "copy":
+      case "duplicate":
+        return DuplicateIconUrl;
       default:
         return UploadSvgUrl;
     }
   };
 
-  console.log("============activeOperations", activeOperations);
+  const isSeveralOperations =
+    (primaryActiveOperations.length | secondaryActiveOperations.length) > 1;
+
   const progressList = () => {
-    return activeOperations.map((item) => (
-      <div className="progress-list">
-        <ProgressPanel
-          label={item.label}
-          percent={item.percent}
-          open
-          iconUrl={getIcon(item.icon)}
-          withoutProgress={item.withoutProgress}
-          //status="Done"
-        />
+    return (
+      <div className="progress-container">
+        {secondaryActiveOperations.map((item) => {
+          return (
+            <div className="progress-list">
+              <ProgressPanel
+                label={item.label}
+                percent={item.items[0].percent}
+                open
+                iconUrl={getIcon(item.operation)}
+                withoutProgress
+                //status="Done"
+              />
+            </div>
+          );
+        })}
+        {primaryActiveOperations.map((item) => (
+          <div className="progress-list">
+            <ProgressPanel
+              label={item.label}
+              percent={item.percent}
+              open
+              iconUrl={getIcon(item.icon)}
+
+              //status="Done"
+            />
+          </div>
+        ))}
+        ;
       </div>
-    ));
+    );
   };
 
-  const isSeveralOperations = activeOperations.length > 1;
-
-  if (isSeveralOperations) {
+  if (true) {
     return (
       <div className="progress-bar_container">
         <FloatingButton
@@ -95,17 +129,17 @@ const OperationsProgress = ({ activeOperations }) => {
       </div>
     );
   }
-
-  if (activeOperations.length === 0) return <></>;
+  const activeOperations =
+    primaryActiveOperations[0] ?? secondaryActiveOperations[0];
 
   return (
     <div className="progress-bar_container">
       <FloatingButton
         className="layout-progress-bar"
         icon={activeOperations.icon}
-        //alert={showPrimaryButtonAlert}
+        alert={activeOperations.alert}
         onClick={onOpenProgressPanel}
-        percent={activeOperations[0].percent}
+        percent={activeOperations.percent}
         // clearUploadedFilesHistory={clearUploadedFilesHistory}
       />
     </div>
