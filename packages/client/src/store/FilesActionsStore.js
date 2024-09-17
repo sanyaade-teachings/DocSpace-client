@@ -1041,7 +1041,7 @@ class FilesActionStore {
     const icon = "duplicate";
     const operation = "duplicate";
     const operationId = uniqueid("operation_");
-    console.log("HELLO COPY");
+
     console.log("duplicateAction", icon, "operationId", operationId);
 
     //debugger;
