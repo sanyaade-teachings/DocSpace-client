@@ -201,6 +201,7 @@ class UploadDataStore {
   };
 
   getUploadedFile = (id) => {
+    console.log("getUploadedFile");
     return this.files.filter((f) => f.uniqueId === id);
   };
 
